@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import { useI18n } from '../../contexts/I18nContext'
 import { cn } from '../../utils/cn'
-import { SafeHERLogo } from '../common/SafeHERLogo'
+import { SafeHERBrandLockup } from '../common/SafeHERBrandLockup'
 
 interface SidebarProps {
   mobileOpen?: boolean
@@ -53,29 +53,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
       <div className="space-y-5">
         {onCloseMobile ? (
           <div className="flex items-center justify-between px-2 pt-1 pb-3 md:hidden border-b border-[#A6AEC8]/15">
-            <div className="flex items-center gap-2.5">
-              <SafeHERLogo size="sm" />
-              <span className="text-xs font-mono font-bold text-[#F4F5FF] tracking-wider">SAFEHER</span>
-            </div>
+            <SafeHERBrandLockup logoSize="sm" compact showSubtitle={false} />
             <button
               onClick={onCloseMobile}
-              className="p-1 text-[#A6AEC8] hover:text-[#F4F5FF] transition-colors"
+              className="p-1 text-[#A6AEC8] hover:text-[#F4F5FF] transition-colors shrink-0"
               aria-label={t.sidebar.closeNavigation}
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         ) : (
-          <div className="hidden md:flex items-center gap-3 px-3 pt-1 pb-3 border-b border-[#A6AEC8]/12">
-            <SafeHERLogo size="md" />
-            <div className="min-w-0">
-              <span className="text-sm font-bold text-[#F4F5FF] tracking-wide block leading-tight">
-                {t.appName}
-              </span>
-              <span className="text-[10px] font-mono text-[#8B7CFF] uppercase tracking-wider block">
-                {t.sidebar.digitalTrust}
-              </span>
-            </div>
+          <div className="hidden md:flex items-center px-3 pt-1 pb-3 border-b border-[#A6AEC8]/12">
+            <SafeHERBrandLockup
+              logoSize="md"
+              compact
+              subtitleText={t.sidebar.digitalTrust}
+            />
           </div>
         )}
 

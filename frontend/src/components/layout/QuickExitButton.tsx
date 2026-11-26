@@ -69,11 +69,12 @@ export const QuickExitButton: React.FC = () => {
         type="button"
         onClick={handleQuickExit}
         data-testid="quick-exit-button"
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600/90 hover:bg-rose-600 text-white font-medium text-xs rounded-xl shadow-critical-glow hover:shadow-lg transition-all duration-200 active:scale-95 focus-visible:ring-2 focus-visible:ring-rose-400 whitespace-nowrap shrink-0"
+        className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-rose-600/90 hover:bg-rose-600 text-white font-medium text-xs rounded-xl shadow-critical-glow hover:shadow-lg transition-all duration-200 active:scale-95 focus-visible:ring-2 focus-visible:ring-rose-400 whitespace-nowrap shrink-0"
         aria-label={t.quickExitAria || t.quickExitTooltip}
       >
         <LogOut className="w-3.5 h-3.5 shrink-0" />
-        <span>{t.quickExit}</span>
+        <span className="sm:hidden">{t.quickExit.replace(/\s*\(Alt\s*\+\s*Q\)/i, '')}</span>
+        <span className="hidden sm:inline">{t.quickExit}</span>
       </button>
     </Tooltip>
   )

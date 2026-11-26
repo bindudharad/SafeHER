@@ -22,7 +22,7 @@ export const en: TranslationDictionary = {
   },
   navbar: {
     workspace: 'WORKSPACE',
-    subtitle: 'AI Evidence & Abuse Intelligence',
+    subtitle: 'AI DIGITAL ABUSE & EVIDENCE RESPONSE',
     liveBackend: 'LIVE BACKEND + AI',
     offlineDemo: 'OFFLINE DEMO MODE',
     sec65bReady: 'SEC 65B READY',
