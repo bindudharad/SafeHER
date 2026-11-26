@@ -1,0 +1,26 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+
+# Python & Backend Runtime
+__pycache__/
+*.py[cod]
+.pytest_cache/
+backend/safeher.db
+backend/safeher.db-wal
+backend/safeher.db-shm
+*.db
+backend/storage/
+
+# Node & Frontend Build
+frontend/node_modules/
+frontend/dist/
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
