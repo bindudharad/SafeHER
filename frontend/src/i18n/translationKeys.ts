@@ -1,0 +1,393 @@
+// ==========================================
+// SafeHER Centralized Translation Keys & Types
+// Languages: English (en), Kannada (kn), Hindi (hi)
+// ==========================================
+
+export type Language = 'en' | 'kn' | 'hi'
+
+export interface TranslationDictionary {
+  appName: string
+  tagline: string
+  quickExit: string
+  quickExitTooltip: string
+  quickExitAria: string
+  discardDraft: string
+  nav: {
+    dashboard: string
+    incidents: string
+    evidenceVault: string
+    aiScanner: string
+    threatAssessment: string
+    complaintGenerator: string
+    reportingAssistant: string
+    caseTracking: string
+    settings: string
+    logout: string
+  }
+  navbar: {
+    workspace: string
+    subtitle: string
+    liveBackend: string
+    offlineDemo: string
+    sec65bReady: string
+    selectLanguage: string
+    toggleMenu: string
+    signOut: string
+    defaultUser: string
+  }
+  sidebar: {
+    mainWorkspace: string
+    digitalTrust: string
+    home: string
+    realityTrustCenter: string
+    knowledgeHub: string
+    detect: string
+    dashboard: string
+    evidenceVault: string
+    reportIncident: string
+    quickBadge: string
+    savedIncidents: string
+    caseTracking: string
+    threatIntelligence: string
+    complaintAssistant: string
+    helpSafety: string
+    privacySettings: string
+    closeNavigation: string
+  }
+  landing: {
+    nav: {
+      realityTrustCenter: string
+      knowledgeHub: string
+      detectMediaVerifier: string
+      dashboard: string
+      evidenceVault: string
+      reportIncident: string
+      openSafeHER: string
+      toggleMenu: string
+    }
+    waitlistModal: {
+      title: string
+      subtitle: string
+      emailLabel: string
+      emailPlaceholder: string
+      submit: string
+      close: string
+    }
+    hero: {
+      word1: string
+      word2: string
+      headline: string
+      scriptLine: string
+      subtitle: string
+      getStarted: string
+      watchIntro: string
+      exploreSafeHER: string
+      meeraLabel: string
+      meeraOpenAria: string
+      meeraCloseAria: string
+      meeraMuteAria: string
+      meeraUnmuteAria: string
+      meeraTranscript: string
+    }
+    provenScale: {
+      titleMain1: string
+      titleScript: string
+      titleMain2: string
+      stat1Val: string
+      stat1Desc: string
+      stat2Val: string
+      stat2Desc: string
+      stat3Val: string
+      stat3Desc: string
+      testMediaCta: string
+      openVaultCta: string
+    }
+    whatWeDo: {
+      label: string
+      point1Annotation: string
+      point1Title: string
+      point1Desc: string
+      point2Annotation: string
+      point2Title: string
+      point2Desc: string
+      point3Annotation: string
+      point3Title: string
+      point3Desc: string
+    }
+    coreRisk: {
+      title: string
+      subtitle: string
+      card1Title: string
+      card1Tag: string
+      card1Desc: string
+      card2Title: string
+      card2Tag: string
+      card2Desc: string
+      card3Title: string
+      card3Tag: string
+      card3Desc: string
+      card4Title: string
+      card4Tag: string
+      card4Desc: string
+      card5Title: string
+      card5Tag: string
+      card5Desc: string
+    }
+    recognized: {
+      badge: string
+      title: string
+      desc: string
+    }
+    mediaCoverage: {
+      title1: string
+      title2: string
+      desc: string
+      statLabel: string
+      readArticle: string
+    }
+    manifesto: {
+      line1: string
+      line2: string
+      line3: string
+      line4: string
+    }
+    whitePaper: {
+      badge: string
+      titleMain: string
+      subA: string
+      subScript: string
+      subRest: string
+      abstract: string
+      downloadCta: string
+      downloadAria: string
+      meta: string
+      tag: string
+    }
+    footer: {
+      byline: string
+      taglineLine1: string
+      taglineLine2: string
+      coverageTitle: string
+      platformTitle: string
+      legalTitle: string
+      deepfakeVideo: string
+      voiceCloning: string
+      syntheticIdentity: string
+      fakeKyc: string
+      evidenceVault: string
+      threatAnalysis: string
+      complaintWizard: string
+      realityTrustCenter: string
+      privacyPolicy: string
+      dpdpCompliance: string
+      sec65bGuide: string
+      copyright: string
+    }
+    introModal: {
+      eyebrow: string
+      title: string
+      body: string
+      cta: string
+      explore: string
+      closeAria: string
+    }
+  }
+  auth: {
+    welcome: string
+    subtitle: string
+    login: string
+    register: string
+    email: string
+    password: string
+    confirmPassword: string
+    fullName: string
+    consentNotice: string
+    consentCheckbox: string
+    loginButton: string
+    registerButton: string
+    noAccount: string
+    haveAccount: string
+    errorEmpty: string
+    errorMismatch: string
+    errorConsent: string
+  }
+  dashboard: {
+    title: string
+    welcomeBack: string
+    createIncident: string
+    addEvidence: string
+    viewCases: string
+    totalIncidents: string
+    activeCases: string
+    evidenceItems: string
+    completedAnalyses: string
+    pendingFollowUps: string
+    recentIncidents: string
+    recentEvidence: string
+    pendingActions: string
+    emptyIncidents: string
+    emptyEvidence: string
+    noPendingActions: string
+  }
+  incidents: {
+    title: string
+    newIncident: string
+    formTitle: string
+    incidentTitle: string
+    category: string
+    description: string
+    incidentDate: string
+    incidentTime: string
+    platform: string
+    relevantUrls: string
+    suspectedAbuse: string
+    notes: string
+    autoSaveSession: string
+    autoSaveDisclaimer: string
+    submit: string
+    cancel: string
+    discardDraftPrompt: string
+  }
+  evidence: {
+    title: string
+    uploadHeader: string
+    dragDropText: string
+    browseFiles: string
+    allowedTypesNotice: string
+    sha256Label: string
+    integrityVerified: string
+    integrityPending: string
+    malwareClean: string
+    malwareScanning: string
+    malwareQuarantined: string
+    duplicateDetected: string
+    noDuplicate: string
+    downloadEvidence: string
+    integrityExplanation: string
+  }
+  ai: {
+    mediaScannerTitle: string
+    threatAnalysisTitle: string
+    uncalibratedWarning: string
+    decisionSignals: string
+    safeDecision: string
+    suspiciousDecision: string
+    blockedDecision: string
+    deepfakeScore: string
+    nudityScore: string
+    threatScore: string
+    urgencyLevel: string
+    limitationsTitle: string
+    disclaimerBanner: string
+  }
+  detect: {
+    badge: string
+    title: string
+    subtitle: string
+    textTab: string
+    imageTab: string
+    textLabel: string
+    textPlaceholder: string
+    analyzeTextBtn: string
+    analyzingText: string
+    imageLabel: string
+    imageDropPrompt: string
+    imageTypesHint: string
+    analyzeImageBtn: string
+    analyzingImage: string
+    resultHeading: string
+    decisionLabel: string
+    toxicityLabel: string
+    insultLabel: string
+    threatLabel: string
+    nudityLabel: string
+    deepfakeLabel: string
+    uncalibratedNote: string
+    emptyResultPrompt: string
+    errorTextRequired: string
+    errorImageRequired: string
+    saveToVaultCta: string
+  }
+  knowledge: {
+    badge: string
+    title: string
+    subtitle: string
+    searchPlaceholder: string
+    allCategories: string
+    readGuide: string
+    backToHub: string
+    readTime: string
+    emptySearch: string
+    keyTakeaways: string
+  }
+  trust: {
+    badge: string
+    title: string
+    subtitle: string
+    activeModelsTitle: string
+    limitationsTitle: string
+    privacyTitle: string
+    c2paTitle: string
+    verifyNowCta: string
+  }
+  complaint: {
+    wizardTitle: string
+    selectIncident: string
+    reviewFacts: string
+    selectEvidence: string
+    missingInfoTitle: string
+    generateDraft: string
+    editDraft: string
+    exportPdf: string
+    legalDisclaimer: string
+    userConfirmedNotice: string
+  }
+  reporting: {
+    title: string
+    subtitle: string
+    selectPlatform: string
+    officialPortalNotice: string
+    instructionsTitle: string
+    recordSubmission: string
+    referenceNumber: string
+    submissionDate: string
+    saveRecord: string
+  }
+  cases: {
+    title: string
+    caseId: string
+    status: string
+    followUpDate: string
+    updateStatus: string
+    emptyCases: string
+  }
+  settings: {
+    title: string
+    profile: string
+    language: string
+    privacyConsent: string
+    retentionInfo: string
+    sessionSecurity: string
+    exportData: string
+  }
+  notFound: {
+    code: string
+    title: string
+    description: string
+    backHome: string
+    goDashboard: string
+  }
+  common: {
+    loading: string
+    success: string
+    error: string
+    retry: string
+    cancel: string
+    save: string
+    delete: string
+    viewDetails: string
+    status: string
+    actions: string
+    unreviewedTranslationNote: string
+  }
+}

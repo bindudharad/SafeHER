@@ -1,0 +1,168 @@
+{
+  "viewports": [
+    {
+      "overflow": false,
+      "scrollWidth": 1920,
+      "innerWidth": 1920,
+      "hasNavigatorGpu": true,
+      "canvases": 0,
+      "viewport": "1920x1080",
+      "load_ms": 5816.9,
+      "pageErrors": []
+    },
+    {
+      "overflow": false,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "hasNavigatorGpu": true,
+      "canvases": 0,
+      "viewport": "1440x900",
+      "load_ms": 4318.4,
+      "pageErrors": []
+    },
+    {
+      "overflow": false,
+      "scrollWidth": 1280,
+      "innerWidth": 1280,
+      "hasNavigatorGpu": true,
+      "canvases": 0,
+      "viewport": "1280x800",
+      "load_ms": 4388.0,
+      "pageErrors": []
+    },
+    {
+      "overflow": false,
+      "scrollWidth": 1024,
+      "innerWidth": 1024,
+      "hasNavigatorGpu": true,
+      "canvases": 0,
+      "viewport": "1024x768",
+      "load_ms": 4247.9,
+      "pageErrors": []
+    },
+    {
+      "overflow": false,
+      "scrollWidth": 768,
+      "innerWidth": 768,
+      "hasNavigatorGpu": true,
+      "canvases": 0,
+      "viewport": "768x1024",
+      "load_ms": 3861.3,
+      "pageErrors": []
+    },
+    {
+      "overflow": false,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "hasNavigatorGpu": true,
+      "canvases": 0,
+      "viewport": "390x844",
+      "load_ms": 5012.9,
+      "pageErrors": []
+    },
+    {
+      "overflow": false,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "hasNavigatorGpu": true,
+      "canvases": 0,
+      "viewport": "360x800",
+      "load_ms": 4148.0,
+      "pageErrors": []
+    }
+  ],
+  "routes": [
+    {
+      "path": "/reality-trust-center",
+      "overflow": false,
+      "h1": "Understand the Threat. Take Back Control.",
+      "canvases": 1,
+      "requested": "/reality-trust-center",
+      "ms": 3721.7
+    },
+    {
+      "path": "/knowledge-hub",
+      "overflow": false,
+      "h1": "Understand Digital Threats. Stay One Step Ahead.",
+      "canvases": 0,
+      "requested": "/knowledge-hub",
+      "ms": 4780.3
+    },
+    {
+      "path": "/detect",
+      "overflow": false,
+      "h1": "Verify Before You Trust.",
+      "canvases": 1,
+      "requested": "/detect",
+      "ms": 2708.4
+    },
+    {
+      "path": "/dashboard",
+      "overflow": false,
+      "h1": "Incident Intelligence & Active Safety Console",
+      "canvases": 0,
+      "requested": "/dashboard",
+      "ms": 2997.8
+    },
+    {
+      "path": "/evidence",
+      "overflow": false,
+      "h1": "Cryptographic Digital Evidence Custody",
+      "canvases": 0,
+      "requested": "/evidence",
+      "ms": 2699.4
+    },
+    {
+      "path": "/incidents/new",
+      "overflow": false,
+      "h1": "Document Digital Abuse Incident",
+      "canvases": 0,
+      "requested": "/incidents/new",
+      "ms": 2724.5
+    },
+    {
+      "path": "/incidents",
+      "overflow": false,
+      "h1": "Recorded Incident Dossiers",
+      "canvases": 0,
+      "requested": "/incidents",
+      "ms": 2644.3
+    },
+    {
+      "path": "/complaints",
+      "overflow": false,
+      "h1": "Formal Legal Complaint Preparation",
+      "canvases": 0,
+      "requested": "/complaints",
+      "ms": 2659.7
+    },
+    {
+      "path": "/cases",
+      "overflow": false,
+      "h1": "Grievance & Authority Case Lifecycle",
+      "canvases": 0,
+      "requested": "/cases",
+      "ms": 2760.2
+    },
+    {
+      "path": "/reporting",
+      "overflow": false,
+      "h1": "Official Grievance & Law Enforcement Direct Channels",
+      "canvases": 0,
+      "requested": "/reporting",
+      "ms": 2757.4
+    },
+    {
+      "path": "/settings",
+      "overflow": false,
+      "h1": "Privacy, Consent & Cryptographic Controls",
+      "canvases": 0,
+      "requested": "/settings",
+      "ms": 2687.2
+    }
+  ],
+  "routePageErrors": [
+    "Incident not found",
+    "Incident not found"
+  ]
+}
