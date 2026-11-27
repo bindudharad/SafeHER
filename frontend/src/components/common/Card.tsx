@@ -9,10 +9,10 @@ export const Card: React.FC<CardProps> = ({ className, glass = true, children, .
   return (
     <div
       className={cn(
-        'rounded-2xl border transition-all duration-200',
+        'rounded-[4px] border transition-all duration-200 text-left',
         glass
-          ? 'bg-[#171D35]/85 backdrop-blur-xl border-[#A6AEC8]/15 shadow-[0_12px_32px_rgba(0,0,0,0.35)] hover:border-[#8B7CFF]/30'
-          : 'bg-[#1D2540] border-[#A6AEC8]/15 shadow-[0_8px_24px_rgba(0,0,0,0.3)]',
+          ? 'bg-[#0d1110]/90 backdrop-blur-xl border-[rgba(225,239,221,0.15)] shadow-[0_14px_36px_rgba(0,0,0,0.45)] hover:border-[rgba(213,255,84,0.38)]'
+          : 'bg-[#111716] border-[rgba(225,239,221,0.15)] shadow-[0_10px_28px_rgba(0,0,0,0.4)]',
         className
       )}
       {...props}
@@ -27,7 +27,13 @@ export const CardHeader: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   children,
   ...props
 }) => (
-  <div className={cn('px-6 py-5 border-b border-[#A6AEC8]/15 flex items-center justify-between', className)} {...props}>
+  <div
+    className={cn(
+      'px-6 py-5 border-b border-[rgba(225,239,221,0.15)] flex items-center justify-between gap-4',
+      className
+    )}
+    {...props}
+  >
     {children}
   </div>
 )
@@ -37,7 +43,13 @@ export const CardTitle: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({
   children,
   ...props
 }) => (
-  <h3 className={cn('text-base font-semibold text-[#F4F5FF] tracking-tight', className)} {...props}>
+  <h3
+    className={cn(
+      'font-display text-xl font-bold uppercase tracking-wide text-[#f0f2eb]',
+      className
+    )}
+    {...props}
+  >
     {children}
   </h3>
 )
@@ -47,7 +59,7 @@ export const CardDescription: React.FC<React.HTMLAttributes<HTMLParagraphElement
   children,
   ...props
 }) => (
-  <p className={cn('text-xs text-[#A6AEC8] mt-1', className)} {...props}>
+  <p className={cn('text-xs text-[#929b93] mt-1 font-sans', className)} {...props}>
     {children}
   </p>
 )
@@ -67,7 +79,13 @@ export const CardFooter: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   children,
   ...props
 }) => (
-  <div className={cn('px-6 py-4 border-t border-[#A6AEC8]/15 flex items-center justify-between', className)} {...props}>
+  <div
+    className={cn(
+      'px-6 py-4 border-t border-[rgba(225,239,221,0.15)] flex items-center justify-between',
+      className
+    )}
+    {...props}
+  >
     {children}
   </div>
 )

@@ -1,0 +1,32 @@
+# SafeHER Staging Caddyfile (Let's Encrypt Staging CA to avoid rate limits)
+{
+	email {$SAFEHER_ACME_EMAIL:ops@safeher.example.org}
+	acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+{$SAFEHER_DOMAIN:staging.safeher.example.org} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=86400; includeSubDomains"
+		X-Frame-Options "DENY"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	request_body {
+		max_size 25MB
+	}
+
+	handle /api/* {
+		reverse_proxy backend:8000 {
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	handle {
+		reverse_proxy frontend:8080
+	}
+}

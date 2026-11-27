@@ -18,9 +18,9 @@
   "taxonomy_metrics": {
     "primary_category_recall": 0.9417,
     "any_label_overlap": 0.9917,
-    "language_id_accuracy": 0.9583
+    "language_id_accuracy": 0.975
   },
-  "avg_latency_ms": 274.54,
+  "avg_latency_ms": 183.74,
   "by_language": {
     "kn": {
       "n": 20,
@@ -34,14 +34,14 @@
       "accuracy": 1.0,
       "f1_macro": 1.0,
       "primary_category_recall": 0.95,
-      "language_id_accuracy": 1.0
+      "language_id_accuracy": 0.9
     },
     "kn-en": {
       "n": 20,
       "accuracy": 1.0,
       "f1_macro": 1.0,
       "primary_category_recall": 0.95,
-      "language_id_accuracy": 0.8
+      "language_id_accuracy": 1.0
     },
     "hi": {
       "n": 20,

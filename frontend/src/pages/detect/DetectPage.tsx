@@ -37,6 +37,7 @@ import { apiClient } from '../../services/api/client'
 import type { Incident, Evidence } from '../../types'
 import { Button } from '../../components/common/Button'
 import { Badge } from '../../components/common/Badge'
+import { Interactive3DSurface } from '../../components/ui/Interactive3DSurface'
 import { formatBytes, computeFileHash } from '../../utils/crypto'
 
 interface LiveAnalysisResult {
@@ -268,13 +269,13 @@ export const DetectPage: React.FC = () => {
       {/* ======================================================== */}
       {/* 1. PROFESSIONAL WORKBENCH HEADER                         */}
       {/* ======================================================== */}
-      <header className="border-b border-[#A6AEC8]/15 pb-6 space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-[#A6AEC8]">
+      <header className="border-b border-[rgba(225,239,221,0.15)] pb-6 space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-[#929b93]">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#8B7CFF] animate-pulse" />
-            <span className="text-[#8B7CFF] font-bold tracking-wider">SAFEHER DETECT • FORENSIC AI SCANNER</span>
+            <span className="w-2 h-2 rounded-full bg-[#d5ff54] animate-pulse" />
+            <span className="text-[#d5ff54] font-bold tracking-wider">SAFEHER DETECT • FORENSIC AI SCANNER</span>
             <span>•</span>
-            <span className="text-[#52D6B2]">ViT NEURAL ENGINE</span>
+            <span className="text-[#a8db35]">ViT NEURAL ENGINE</span>
           </div>
           <div className="flex items-center gap-2">
             <span>CLIENT-SIDE SHA-256</span>
@@ -285,25 +286,25 @@ export const DetectPage: React.FC = () => {
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-1.5 max-w-2xl">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#F4F5FF]">
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl uppercase font-extrabold tracking-[0.01em] text-[#f0f2eb] leading-[0.95]">
               {t.detect.title}
             </h1>
-            <p className="text-sm sm:text-base text-[#A6AEC8] leading-relaxed">
+            <p className="text-sm sm:text-base text-[#929b93] leading-relaxed">
               {t.detect.subtitle}
             </p>
           </div>
 
-          <div className="text-xs font-mono text-[#727D9C] flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-[#52D6B2]" />
+          <div className="text-xs font-mono text-[#929b93] flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-[#a8db35]" />
             <span>{t.evidence.integrityExplanation}</span>
           </div>
         </div>
 
         {/* Model Capability Transparency Notice */}
-        <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/20 flex items-start gap-2.5 text-xs text-[#A6AEC8]">
-          <Info className="w-4 h-4 text-[#8B7CFF] shrink-0 mt-0.5" />
+        <div className="p-3 bg-[#0d1110] rounded-xl border border-[rgba(225,239,221,0.20)] flex items-start gap-2.5 text-xs text-[#929b93]">
+          <Info className="w-4 h-4 text-[#d5ff54] shrink-0 mt-0.5" />
           <p className="text-[11.5px] leading-relaxed">
-            <strong className="text-[#F4F5FF]">{t.ai.limitationsTitle}:</strong> {t.ai.disclaimerBanner}
+            <strong className="text-[#f0f2eb]">{t.ai.limitationsTitle}:</strong> {t.ai.disclaimerBanner}
           </p>
         </div>
       </header>
@@ -315,7 +316,7 @@ export const DetectPage: React.FC = () => {
         <section className="space-y-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-[#F4F5FF]">
+              <h2 className="text-base font-bold text-[#f0f2eb]">
                 Upload Media File for Forensic Scan
               </h2>
               {selectedFile && (
@@ -326,7 +327,7 @@ export const DetectPage: React.FC = () => {
             </div>
 
             {uploadError && (
-              <div className="p-3.5 bg-[#FF718A]/10 border border-[#FF718A]/30 rounded-xl flex items-center gap-2 text-xs text-[#FF718A]">
+              <div className="p-3.5 bg-[#ff927e]/10 border border-[#ff927e]/30 rounded-xl flex items-center gap-2 text-xs text-[#ff927e]">
                 <AlertTriangle className="w-4 h-4 shrink-0" />
                 <span>{uploadError}</span>
               </div>
@@ -345,8 +346,8 @@ export const DetectPage: React.FC = () => {
                   onClick={() => fileInputRef.current?.click()}
                   className={`lg:col-span-7 relative rounded-3xl p-8 sm:p-12 text-center cursor-pointer transition-all border-2 border-dashed flex flex-col items-center justify-center ${
                     isDragOver
-                      ? 'border-[#8B7CFF] bg-[#8B7CFF]/10 scale-[1.01]'
-                      : 'border-[#A6AEC8]/25 bg-[#171D35]/80 hover:border-[#8B7CFF]/60 hover:bg-[#171D35]'
+                      ? 'border-[#d5ff54] bg-[#d5ff54]/10 scale-[1.01]'
+                      : 'border-[rgba(225,239,221,0.24)] bg-[#111716]/80 hover:border-[#d5ff54]/60 hover:bg-[#111716]'
                   }`}
                 >
                   <input
@@ -361,57 +362,64 @@ export const DetectPage: React.FC = () => {
                     }}
                   />
 
-                  <div className="w-16 h-16 rounded-2xl bg-[#8B7CFF]/15 border border-[#8B7CFF]/30 flex items-center justify-center mx-auto mb-4 text-[#8B7CFF] shadow-[0_0_20px_rgba(139,124,255,0.2)]">
+                  <div className="w-16 h-16 rounded-2xl bg-[#d5ff54]/15 border border-[#d5ff54]/30 flex items-center justify-center mx-auto mb-4 text-[#d5ff54] shadow-[0_0_20px_rgba(213,255,84,0.2)]">
                     <Upload className="w-8 h-8" />
                   </div>
 
-                  <h3 className="text-base font-bold text-[#F4F5FF]">
-                    Drag and drop suspicious image here, or <span className="text-[#8B7CFF] underline underline-offset-4">browse files</span>
+                  <h3 className="text-base font-bold text-[#f0f2eb]">
+                    Drag and drop suspicious image here, or <span className="text-[#d5ff54] underline underline-offset-4">browse files</span>
                   </h3>
 
-                  <p className="text-xs text-[#A6AEC8] mt-1.5">
+                  <p className="text-xs text-[#929b93] mt-1.5">
                     Accepts JPEG, PNG, or WEBP up to 15MB.
                   </p>
 
-                  <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#080B18] border border-[#A6AEC8]/20 text-[11px] font-mono text-[#727D9C]">
-                    <Lock className="w-3 h-3 text-[#52D6B2]" />
+                  <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#070908] border border-[rgba(225,239,221,0.20)] text-[11px] font-mono text-[#929b93]">
+                    <Lock className="w-3 h-3 text-[#a8db35]" />
                     <span>Privacy Guarantee: Files analyzed in isolated memory; no third-party data sharing.</span>
                   </div>
                 </div>
 
                 {/* Live 3D Holographic Scanner Viewport */}
-                <div className="lg:col-span-5 rounded-3xl bg-[#0D1224]/90 border border-[#8B7CFF]/25 p-5 flex flex-col justify-between shadow-xl">
-                  <div className="flex items-center justify-between text-[10px] font-mono text-[#A6AEC8]">
-                    <span className="text-[#55D6E8] font-bold tracking-wider">HOLOGRAPHIC SCANNER</span>
-                    <span className="px-2 py-0.5 rounded bg-[#171D35] border border-[#8B7CFF]/30 text-[#8B7CFF]">
+                <Interactive3DSurface
+                  intensity={5}
+                  className="lg:col-span-5 rounded-3xl bg-[#0d1110]/90 border border-[#d5ff54]/28 p-5 flex flex-col justify-between shadow-xl"
+                >
+                  <div className="flex items-center justify-between text-[10px] font-mono text-[#929b93]">
+                    <span className="text-[#d5ff54] font-bold tracking-wider">HOLOGRAPHIC SCANNER</span>
+                    <span className="px-2 py-0.5 rounded bg-[#111716] border border-[#d5ff54]/30 text-[#d5ff54]">
                       READY • ViT
                     </span>
                   </div>
-                  <div className="h-[200px] w-full my-2">
-                    <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-xs font-mono text-[#727D9C]">Initializing 3D Viewport...</div>}>
+                  <div className="h-[215px] w-full my-2 relative">
+                    <div className="pointer-events-none absolute top-0 left-0 w-3 h-3 border-t border-l border-[#d5ff54]/45" />
+                    <div className="pointer-events-none absolute top-0 right-0 w-3 h-3 border-t border-r border-[#d5ff54]/45" />
+                    <div className="pointer-events-none absolute bottom-0 left-0 w-3 h-3 border-b border-l border-[#d5ff54]/45" />
+                    <div className="pointer-events-none absolute bottom-0 right-0 w-3 h-3 border-b border-r border-[#d5ff54]/45" />
+                    <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-xs font-mono text-[#929b93]">Initializing 3D Viewport...</div>}>
                       <MediaScanner3D status={scannerStatus} />
                     </Suspense>
                   </div>
-                  <div className="text-[11px] font-mono text-[#727D9C] border-t border-[#A6AEC8]/10 pt-3 flex items-center justify-between">
-                    <span>Local SHA-256 + Neural Scan</span>
-                    <span className="text-[#52D6B2]">Standby</span>
+                  <div className="text-[11px] font-mono text-[#929b93] border-t border-[rgba(225,239,221,0.10)] pt-3 flex items-center justify-between">
+                    <span>Drag 3D Shield • Local SHA-256</span>
+                    <span className="text-[#a8db35]">Standby</span>
                   </div>
-                </div>
+                </Interactive3DSurface>
               </div>
             ) : (
               /* Inspection Staging Console */
-              <div className="bg-[#171D35]/90 border border-[#A6AEC8]/20 rounded-2xl p-6 sm:p-7 space-y-6 shadow-xl">
+              <div className="bg-[#111716]/90 border border-[rgba(225,239,221,0.20)] rounded-2xl p-6 sm:p-7 space-y-6 shadow-xl">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                   <div className="md:col-span-5 flex justify-center">
                     {previewUrl && (
-                      <div className="relative rounded-xl overflow-hidden aspect-square w-full max-w-[240px] bg-[#080B18] border border-[#8B7CFF]/30 shadow-lg group">
+                      <div className="relative rounded-xl overflow-hidden aspect-square w-full max-w-[240px] bg-[#070908] border border-[#d5ff54]/30 shadow-lg group">
                         <img
                           src={previewUrl}
                           alt="Forensic inspection staging"
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 border border-[#8B7CFF]/40 pointer-events-none" />
-                        <div className="absolute bottom-2 left-2 right-2 px-2 py-1 bg-[#080B18]/85 backdrop-blur-md rounded text-[10px] font-mono text-[#8B7CFF] truncate">
+                        <div className="absolute inset-0 border border-[#d5ff54]/40 pointer-events-none" />
+                        <div className="absolute bottom-2 left-2 right-2 px-2 py-1 bg-[#070908]/85 backdrop-blur-md rounded text-[10px] font-mono text-[#d5ff54] truncate">
                           TARGET: {selectedFile.name}
                         </div>
                       </div>
@@ -420,23 +428,23 @@ export const DetectPage: React.FC = () => {
 
                   <div className="md:col-span-7 space-y-4">
                     <div>
-                      <span className="text-[10px] font-mono uppercase font-bold text-[#8B7CFF] tracking-wider">
+                      <span className="text-[10px] font-mono uppercase font-bold text-[#d5ff54] tracking-wider">
                         STAGED FOR NEURAL INSPECTION
                       </span>
-                      <h3 className="text-lg font-bold text-[#F4F5FF] truncate" title={selectedFile.name}>
+                      <h3 className="text-lg font-bold text-[#f0f2eb] truncate" title={selectedFile.name}>
                         {selectedFile.name}
                       </h3>
-                      <p className="text-xs text-[#A6AEC8] font-mono mt-0.5">
+                      <p className="text-xs text-[#929b93] font-mono mt-0.5">
                         {selectedFile.type.toUpperCase()} • {formatBytes(selectedFile.size)}
                       </p>
                     </div>
 
-                    <div className="p-3.5 bg-[#080B18] rounded-xl border border-[#A6AEC8]/20 space-y-1">
-                      <div className="flex items-center justify-between text-[10px] font-mono text-[#A6AEC8]">
+                    <div className="p-3.5 bg-[#070908] rounded-xl border border-[rgba(225,239,221,0.20)] space-y-1">
+                      <div className="flex items-center justify-between text-[10px] font-mono text-[#929b93]">
                         <span className="uppercase font-semibold">Pre-Flight SHA-256 Fingerprint:</span>
-                        <span className="text-[#52D6B2]">Verified Locally</span>
+                        <span className="text-[#a8db35]">Verified Locally</span>
                       </div>
-                      <p className="text-[11px] font-mono text-[#55D6E8] truncate select-all">
+                      <p className="text-[11px] font-mono text-[#d5ff54] truncate select-all">
                         {isHashing ? 'Computing cryptographic digest...' : fileHash}
                       </p>
                     </div>
@@ -462,8 +470,8 @@ export const DetectPage: React.FC = () => {
           {/* Quick-Test Forensic Benchmarks */}
           <div className="space-y-3 pt-2">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#8B7CFF]" />
-              <h3 className="text-xs font-mono font-bold text-[#F4F5FF] uppercase tracking-wider">
+              <Sparkles className="w-4 h-4 text-[#d5ff54]" />
+              <h3 className="text-xs font-mono font-bold text-[#f0f2eb] uppercase tracking-wider">
                 Or Test with Benchmark Forensic Samples:
               </h3>
             </div>
@@ -473,19 +481,19 @@ export const DetectPage: React.FC = () => {
                 <button
                   key={sample.id}
                   onClick={() => handleLoadSample(sample)}
-                  className="p-3.5 bg-[#171D35]/80 rounded-2xl border border-[#A6AEC8]/15 hover:border-[#8B7CFF]/40 text-left transition-all group flex items-center gap-3 shadow-md"
+                  className="p-3.5 bg-[#111716]/85 rounded-2xl border border-[rgba(225,239,221,0.15)] hover:border-[#d5ff54]/45 hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(0,0,0,0.6),0_0_22px_rgba(213,255,84,0.12)] text-left transition-all duration-200 group flex items-center gap-3 shadow-md"
                 >
                   <img
                     src={sample.url}
                     alt={sample.name}
-                    className="w-14 h-14 rounded-xl object-cover border border-[#A6AEC8]/20 group-hover:scale-105 transition-transform shrink-0"
+                    className="w-14 h-14 rounded-xl object-cover border border-[rgba(225,239,221,0.20)] group-hover:scale-105 transition-transform shrink-0"
                   />
                   <div className="overflow-hidden space-y-0.5">
-                    <p className="text-xs font-bold text-[#F4F5FF] truncate group-hover:text-[#8B7CFF] transition-colors">
+                    <p className="text-xs font-bold text-[#f0f2eb] truncate group-hover:text-[#d5ff54] transition-colors">
                       {sample.name}
                     </p>
-                    <p className="text-[11px] text-[#55D6E8] font-medium truncate">{sample.hint}</p>
-                    <span className="text-[10px] font-mono text-[#727D9C]">Click to load</span>
+                    <p className="text-[11px] text-[#d5ff54] font-medium truncate">{sample.hint}</p>
+                    <span className="text-[10px] font-mono text-[#929b93]">Click to load</span>
                   </div>
                 </button>
               ))}
@@ -498,7 +506,7 @@ export const DetectPage: React.FC = () => {
       {/* 3. CINEMATIC SCANNING EXPERIENCE                         */}
       {/* ======================================================== */}
       {isScanning && (
-        <section className="p-8 sm:p-12 bg-[#171D35]/95 border border-[#8B7CFF]/40 rounded-3xl text-center shadow-2xl relative overflow-hidden">
+        <section className="p-8 sm:p-12 bg-[#111716]/95 border border-[#d5ff54]/40 rounded-3xl text-center shadow-2xl relative overflow-hidden">
           <div className="relative z-10 max-w-lg mx-auto space-y-5">
             <div className="h-[220px] w-full max-w-[280px] mx-auto">
               <Suspense fallback={null}>
@@ -507,13 +515,13 @@ export const DetectPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <span className="text-[11px] font-mono uppercase tracking-widest text-[#55D6E8] font-bold">
+              <span className="text-[11px] font-mono uppercase tracking-widest text-[#d5ff54] font-bold">
                 SAFEHER AI TRUST SCAN IN PROGRESS
               </span>
-              <h2 className="text-lg font-bold text-[#F4F5FF]">
+              <h2 className="text-lg font-bold text-[#f0f2eb]">
                 {scanStage}
               </h2>
-              <p className="text-xs text-[#A6AEC8]">
+              <p className="text-xs text-[#929b93]">
                 Evaluating pixel matrices, frequency anomalies, and cryptographic hashes.
               </p>
             </div>
@@ -524,7 +532,7 @@ export const DetectPage: React.FC = () => {
                 <div
                   key={i}
                   className={`h-1.5 rounded-full transition-all duration-300 ${
-                    i <= scanStepIndex ? 'w-8 bg-[#55D6E8]' : 'w-2 bg-[#A6AEC8]/20'
+                    i <= scanStepIndex ? 'w-8 bg-[#d5ff54]' : 'w-2 bg-[#929b93]/20'
                   }`}
                 />
               ))}
@@ -537,12 +545,12 @@ export const DetectPage: React.FC = () => {
       {/* 4. BALANCED FORENSIC INSPECTION REPORT                   */}
       {/* ======================================================== */}
       {result && (
-        <section className="bg-[#171D35]/95 border border-[#A6AEC8]/20 rounded-3xl p-6 sm:p-8 space-y-8 shadow-2xl">
+        <section className="bg-[#111716]/95 border border-[rgba(225,239,221,0.20)] rounded-3xl p-6 sm:p-8 space-y-8 shadow-2xl">
           {/* Executive Verdict Banner */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#A6AEC8]/15 pb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[rgba(225,239,221,0.15)] pb-6">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono uppercase text-[#A6AEC8]">Inspection Verdict:</span>
+                <span className="text-xs font-mono uppercase text-[#929b93]">Inspection Verdict:</span>
                 <Badge
                   variant={
                     result.decision === 'SAFE'
@@ -562,8 +570,8 @@ export const DetectPage: React.FC = () => {
                 </Badge>
               </div>
 
-              <h2 className="text-2xl font-bold text-[#F4F5FF]">{result.fileName}</h2>
-              <p className="text-xs font-mono text-[#A6AEC8]">
+              <h2 className="text-2xl font-bold text-[#f0f2eb]">{result.fileName}</h2>
+              <p className="text-xs font-mono text-[#929b93]">
                 Scanned {new Date(result.timestamp).toLocaleTimeString()} • {formatBytes(result.fileSize)}
               </p>
             </div>
@@ -577,7 +585,7 @@ export const DetectPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left: Forensic Inspection Viewfinder (5 Cols) */}
             <div className="lg:col-span-5 space-y-3">
-              <div className="relative rounded-2xl overflow-hidden aspect-square bg-[#080B18] border border-[#8B7CFF]/40 shadow-xl group">
+              <div className="relative rounded-2xl overflow-hidden aspect-square bg-[#070908] border border-[#d5ff54]/40 shadow-xl group">
                 {previewUrl && (
                   <img
                     src={previewUrl}
@@ -593,34 +601,34 @@ export const DetectPage: React.FC = () => {
                 )}
 
                 {/* Viewfinder Overlays */}
-                <div className="absolute inset-0 border-2 border-[#8B7CFF]/30 pointer-events-none" />
-                <div className="absolute top-3 left-3 text-[10px] font-mono bg-[#080B18]/85 px-2 py-0.5 rounded text-[#8B7CFF] border border-[#8B7CFF]/25">
+                <div className="absolute inset-0 border-2 border-[#d5ff54]/30 pointer-events-none" />
+                <div className="absolute top-3 left-3 text-[10px] font-mono bg-[#070908]/85 px-2 py-0.5 rounded text-[#d5ff54] border border-[#d5ff54]/25">
                   ViT VIEWPORT: ACTIVE
                 </div>
-                <div className="absolute bottom-3 right-3 text-[10px] font-mono bg-[#080B18]/85 px-2 py-0.5 rounded text-[#52D6B2] border border-[#52D6B2]/25">
+                <div className="absolute bottom-3 right-3 text-[10px] font-mono bg-[#070908]/85 px-2 py-0.5 rounded text-[#a8db35] border border-[#a8db35]/25">
                   HASH: {result.evidence_hash.substring(0, 8)}...
                 </div>
               </div>
 
               {/* View Toggle */}
-              <div className="flex items-center justify-between text-xs font-mono text-[#A6AEC8] px-1">
+              <div className="flex items-center justify-between text-xs font-mono text-[#929b93] px-1">
                 <span>Display View:</span>
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => setInspectionView('normal')}
-                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${inspectionView === 'normal' ? 'bg-[#8B7CFF]/20 text-[#8B7CFF]' : 'text-[#A6AEC8] hover:text-[#F4F5FF]'}`}
+                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${inspectionView === 'normal' ? 'bg-[#d5ff54]/20 text-[#d5ff54]' : 'text-[#929b93] hover:text-[#f0f2eb]'}`}
                   >
                     Original
                   </button>
                   <button
                     onClick={() => setInspectionView('heatmap')}
-                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${inspectionView === 'heatmap' ? 'bg-[#8B7CFF]/20 text-[#8B7CFF]' : 'text-[#A6AEC8] hover:text-[#F4F5FF]'}`}
+                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${inspectionView === 'heatmap' ? 'bg-[#d5ff54]/20 text-[#d5ff54]' : 'text-[#929b93] hover:text-[#f0f2eb]'}`}
                   >
                     Heatmap
                   </button>
                   <button
                     onClick={() => setInspectionView('edges')}
-                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${inspectionView === 'edges' ? 'bg-[#8B7CFF]/20 text-[#8B7CFF]' : 'text-[#A6AEC8] hover:text-[#F4F5FF]'}`}
+                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${inspectionView === 'edges' ? 'bg-[#d5ff54]/20 text-[#d5ff54]' : 'text-[#929b93] hover:text-[#f0f2eb]'}`}
                   >
                     Edges
                   </button>
@@ -632,62 +640,62 @@ export const DetectPage: React.FC = () => {
             <div className="lg:col-span-7 space-y-6">
               {/* 3 Metric Gauges */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                <div className="p-4 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-2">
+                <div className="p-4 bg-[#0d1110] rounded-xl border border-[rgba(225,239,221,0.15)] space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-[#A6AEC8]">Synthetic Risk:</span>
-                    <span className="font-mono font-bold text-[#8B7CFF]">
+                    <span className="text-[#929b93]">Synthetic Risk:</span>
+                    <span className="font-mono font-bold text-[#d5ff54]">
                       {Math.round(result.deepfake_score * 100)}%
                     </span>
                   </div>
-                  <div className="w-full h-1.5 rounded-full bg-[#080B18] overflow-hidden">
+                  <div className="w-full h-1.5 rounded-full bg-[#070908] overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-[#52D6B2] to-[#8B7CFF]"
+                      className="h-full bg-gradient-to-r from-[#a8db35] to-[#d5ff54]"
                       style={{ width: `${Math.round(result.deepfake_score * 100)}%` }}
                     />
                   </div>
-                  <span className="text-[10px] text-[#727D9C] block">ViT Latent Score</span>
+                  <span className="text-[10px] text-[#929b93] block">ViT Latent Score</span>
                 </div>
 
-                <div className="p-4 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-2">
+                <div className="p-4 bg-[#0d1110] rounded-xl border border-[rgba(225,239,221,0.15)] space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-[#A6AEC8]">Explicit / NSFW:</span>
-                    <span className="font-mono font-bold text-[#FF718A]">
+                    <span className="text-[#929b93]">Explicit / NSFW:</span>
+                    <span className="font-mono font-bold text-[#ff927e]">
                       {Math.round(result.nudity_score * 100)}%
                     </span>
                   </div>
-                  <div className="w-full h-1.5 rounded-full bg-[#080B18] overflow-hidden">
+                  <div className="w-full h-1.5 rounded-full bg-[#070908] overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-[#F0B96B] to-[#FF718A]"
+                      className="h-full bg-gradient-to-r from-[#ff927e] to-[#ff927e]"
                       style={{ width: `${Math.round(result.nudity_score * 100)}%` }}
                     />
                   </div>
-                  <span className="text-[10px] text-[#727D9C] block">Content Safety</span>
+                  <span className="text-[10px] text-[#929b93] block">Content Safety</span>
                 </div>
 
-                <div className="p-4 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-2">
+                <div className="p-4 bg-[#0d1110] rounded-xl border border-[rgba(225,239,221,0.15)] space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-[#A6AEC8]">Pixel Variance:</span>
-                    <span className="font-mono font-bold text-[#55D6E8]">
+                    <span className="text-[#929b93]">Pixel Variance:</span>
+                    <span className="font-mono font-bold text-[#d5ff54]">
                       {result.variance_score} σ²
                     </span>
                   </div>
-                  <div className="w-full h-1.5 rounded-full bg-[#080B18] overflow-hidden">
-                    <div className="h-full bg-[#55D6E8]" style={{ width: '65%' }} />
+                  <div className="w-full h-1.5 rounded-full bg-[#070908] overflow-hidden">
+                    <div className="h-full bg-[#d5ff54]" style={{ width: '65%' }} />
                   </div>
-                  <span className="text-[10px] text-[#727D9C] block">Frequency Domain</span>
+                  <span className="text-[10px] text-[#929b93] block">Frequency Domain</span>
                 </div>
               </div>
 
               {/* Forensic Signals */}
               <div className="space-y-2">
-                <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#8B7CFF] flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 text-[#8B7CFF]" />
+                <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#d5ff54] flex items-center gap-1.5">
+                  <Sliders className="w-3.5 h-3.5 text-[#d5ff54]" />
                   Forensic Signals &amp; Neural Observations:
                 </h3>
-                <div className="p-4 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-2">
+                <div className="p-4 bg-[#0d1110] rounded-xl border border-[rgba(225,239,221,0.15)] space-y-2">
                   {result.signals.map((sig, i) => (
-                    <div key={i} className="flex items-start gap-2 text-xs text-[#F4F5FF]">
-                      <span className="text-[#8B7CFF] font-mono mt-0.5">•</span>
+                    <div key={i} className="flex items-start gap-2 text-xs text-[#f0f2eb]">
+                      <span className="text-[#d5ff54] font-mono mt-0.5">•</span>
                       <span>{sig}</span>
                     </div>
                   ))}
@@ -695,28 +703,28 @@ export const DetectPage: React.FC = () => {
               </div>
 
               {/* Section 65B Digital Certificate */}
-              <div className="p-3.5 bg-[#080B18] rounded-xl border border-[#52D6B2]/30 space-y-1">
+              <div className="p-3.5 bg-[#070908] rounded-xl border border-[#a8db35]/30 space-y-1">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-mono text-[#52D6B2] font-semibold flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-[#52D6B2]" />
+                  <span className="font-mono text-[#a8db35] font-semibold flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-[#a8db35]" />
                     SHA-256 File Integrity Digest (BSA Sec 63 Reference)
                   </span>
-                  <span className="text-[10px] font-mono text-[#A6AEC8]">SHA-256</span>
+                  <span className="text-[10px] font-mono text-[#929b93]">SHA-256</span>
                 </div>
-                <p className="text-[11px] font-mono text-[#55D6E8] break-all select-all">
+                <p className="text-[11px] font-mono text-[#d5ff54] break-all select-all">
                   {result.evidence_hash}
                 </p>
               </div>
 
               {/* AI Disclaimer */}
-              <p className="text-[11px] text-[#727D9C] leading-relaxed">
-                <strong className="text-[#A6AEC8]">Legal Disclaimer:</strong> SafeHER AI detection outputs represent probabilistic statistical estimates of media anomalies and synthetic artifacts. AI findings should be corroborated with contextual communication records.
+              <p className="text-[11px] text-[#929b93] leading-relaxed">
+                <strong className="text-[#929b93]">Legal Disclaimer:</strong> SafeHER AI detection outputs represent probabilistic statistical estimates of media anomalies and synthetic artifacts. AI findings should be corroborated with contextual communication records.
               </p>
             </div>
           </div>
 
           {/* Direct Workflow Actions */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-[#A6AEC8]/15">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-[rgba(225,239,221,0.15)]">
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <Button
                 variant="primary"

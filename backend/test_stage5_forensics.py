@@ -247,8 +247,8 @@ def test_timeline_reconstruction_revisions_and_isolation():
 # C. TAMPERING LOCALIZATION TESTS
 # ==========================================================
 def test_tampering_localization_honesty_and_edge_cases():
-    # Authentic image when no IMDL checkpoint installed -> must be unavailable, NO fake heatmap
-    res_auth = analyze_image_tampering(_make_png_bytes(256, 256), preferred_model="trufor")
+    # When an IMDL model checkpoint (e.g. catnet) is not installed -> must be unavailable, NO fake heatmap
+    res_auth = analyze_image_tampering(_make_png_bytes(256, 256), preferred_model="catnet")
     assert res_auth["analysis_status"] == "unavailable"
     assert res_auth["localization_available"] is False
     assert res_auth["heatmap_png_bytes"] is None
@@ -275,8 +275,13 @@ def test_tampering_localization_honesty_and_edge_cases():
         json={"preferred_model": "trufor", "async_job": False},
     )
     assert api_res.status_code == 201, api_res.text
-    assert api_res.json()["analysis_status"] == "unavailable"
-    assert api_res.json()["localization_available"] is False
+    body = api_res.json()
+    assert body["analysis_status"] == "completed"
+    assert body["localization_available"] is True
+    assert body["heatmap_reference"] is not None
+    hm_resp = client.get(body["heatmap_reference"], headers=_auth_headers(u1["token"]))
+    assert hm_resp.status_code == 200
+    assert hm_resp.headers.get("content-type") == "image/png"
 
     # User 2 cannot analyze user 1's evidence
     iso = client.post(

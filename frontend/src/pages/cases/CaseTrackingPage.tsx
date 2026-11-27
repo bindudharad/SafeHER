@@ -102,26 +102,26 @@ export const CaseTrackingPage: React.FC = () => {
   return (
     <div className="space-y-8 text-left max-w-7xl mx-auto pb-12">
       {/* 1. CASE MANAGEMENT HEADER */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#171D35] via-[#0D1224] to-[#080B18] border border-[#A6AEC8]/18 rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
-        <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 bg-[#8B7CFF]/10 rounded-full blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 bg-[#52D6B2]/10 rounded-full blur-3xl" />
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#111716] via-[#0d1110] to-[#070908] border border-[rgba(225,239,221,0.16)] rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+        <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 bg-[#d5ff54]/10 rounded-full blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 bg-[#a8db35]/10 rounded-full blur-3xl" />
 
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-[#A6AEC8]/15">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-[rgba(225,239,221,0.15)]">
           <div className="space-y-2">
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#8B7CFF] uppercase tracking-wider px-3 py-1 rounded-full bg-[#8B7CFF]/10 border border-[#8B7CFF]/25">
+              <span className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#d5ff54] uppercase tracking-wider px-3 py-1 rounded-full bg-[#d5ff54]/10 border border-[#d5ff54]/25">
                 <CheckSquare className="w-3.5 h-3.5" />
                 User Case Tracking
               </span>
-              <span className="text-xs text-[#52D6B2] font-mono flex items-center gap-1.5 bg-[#52D6B2]/10 px-2.5 py-0.5 rounded-full border border-[#52D6B2]/20">
+              <span className="text-xs text-[#a8db35] font-mono flex items-center gap-1.5 bg-[#a8db35]/10 px-2.5 py-0.5 rounded-full border border-[#a8db35]/20">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 Victim Controlled
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F4F5FF] tracking-tight">
+            <h1 className="font-display text-3xl sm:text-4xl uppercase font-extrabold text-[#f0f2eb] tracking-[0.02em]">
               Grievance &amp; Authority Case Lifecycle
             </h1>
-            <p className="text-xs sm:text-sm text-[#A6AEC8] max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#929b93] max-w-2xl leading-relaxed">
               User-controlled lifecycle tracking for reports submitted to platforms, authorities, or grievance officers.
             </p>
           </div>
@@ -136,54 +136,54 @@ export const CaseTrackingPage: React.FC = () => {
         </div>
 
         {/* SUMMARY METRIC STRIP */}
-        <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-[#A6AEC8]/15 pt-6 text-left">
+        <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-[#929b93]/15 pt-6 text-left">
           <div className="pr-4 pb-4 lg:pb-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Active Cases</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Active Cases</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-extrabold font-mono text-[#F4F5FF]">{cases.length}</span>
-              <span className="text-xs text-[#727D9C]">tracked cases</span>
+              <span className="text-3xl font-extrabold font-mono text-[#f0f2eb]">{cases.length}</span>
+              <span className="text-xs text-[#929b93]">tracked cases</span>
             </div>
           </div>
           <div className="px-0 sm:px-4 pt-4 lg:pt-0 pb-4 lg:pb-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Active Submissions</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Active Submissions</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-extrabold font-mono text-[#8B7CFF]">
+              <span className="text-3xl font-extrabold font-mono text-[#d5ff54]">
                 {cases.filter((c) => c.status === 'submitted_by_user').length}
               </span>
-              <span className="text-xs text-[#8B7CFF]">active</span>
+              <span className="text-xs text-[#d5ff54]">active</span>
             </div>
           </div>
           <div className="pr-4 pt-4 lg:pt-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Awaiting Review</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Awaiting Review</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-extrabold font-mono text-[#F0B96B]">
+              <span className="text-3xl font-extrabold font-mono text-[#ff927e]">
                 {cases.filter((c) => c.status === 'awaiting_response').length}
               </span>
-              <span className="text-xs text-[#F0B96B]">pending</span>
+              <span className="text-xs text-[#ff927e]">pending</span>
             </div>
           </div>
           <div className="px-0 sm:px-4 pt-4 lg:pt-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Resolved &amp; Closed</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Resolved &amp; Closed</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-extrabold font-mono text-[#52D6B2]">
+              <span className="text-3xl font-extrabold font-mono text-[#a8db35]">
                 {cases.filter((c) => c.status === 'resolved').length}
               </span>
-              <span className="text-xs text-[#52D6B2]">completed</span>
+              <span className="text-xs text-[#a8db35]">completed</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* 2. FILTER & SEARCH BAR */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#171D35]/85 p-4 rounded-2xl border border-[#A6AEC8]/15 shadow-md">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#111716]/85 p-4 rounded-2xl border border-[rgba(225,239,221,0.15)] shadow-md">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-[#A6AEC8] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-4 h-4 text-[#929b93] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
             placeholder="Search by case ID, title or reference..."
-            className="w-full bg-[#0D1224] border border-[#A6AEC8]/20 rounded-xl pl-9 pr-4 py-2 text-xs text-[#F4F5FF] placeholder-[#727D9C] focus:outline-none focus:border-[#8B7CFF]/60 font-mono"
+            className="w-full bg-[#0d1110] border border-[rgba(225,239,221,0.20)] rounded-xl pl-9 pr-4 py-2 text-xs text-[#f0f2eb] placeholder-[#929b93] focus:outline-none focus:border-[#d5ff54]/60 font-mono"
           />
         </div>
       </div>
@@ -192,16 +192,16 @@ export const CaseTrackingPage: React.FC = () => {
       {isLoading ? (
         <div className="space-y-4 animate-pulse">
           {[1, 2].map((i) => (
-            <div key={i} className="h-40 bg-[#171D35]/80 border border-[#A6AEC8]/10 rounded-2xl" />
+            <div key={i} className="h-40 bg-[#111716]/80 border border-[rgba(225,239,221,0.10)] rounded-2xl" />
           ))}
         </div>
       ) : filteredCases.length === 0 ? (
-        <div className="p-12 text-center bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#0D1224] border border-[#A6AEC8]/20 flex items-center justify-center mx-auto text-[#8B7CFF]">
+        <div className="p-12 text-center bg-[#111716]/85 border border-[rgba(225,239,221,0.15)] rounded-3xl space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-[#0d1110] border border-[rgba(225,239,221,0.20)] flex items-center justify-center mx-auto text-[#d5ff54]">
             <CheckSquare className="w-6 h-6" />
           </div>
-          <h3 className="text-sm font-semibold text-[#F4F5FF]">No Cases Tracked Yet</h3>
-          <p className="text-xs text-[#A6AEC8] max-w-sm mx-auto">
+          <h3 className="text-sm font-semibold text-[#f0f2eb]">No Cases Tracked Yet</h3>
+          <p className="text-xs text-[#929b93] max-w-sm mx-auto">
             {t.cases.emptyCases}
           </p>
           <div className="pt-2">
@@ -217,20 +217,20 @@ export const CaseTrackingPage: React.FC = () => {
           {filteredCases.map((c) => (
             <div
               key={c.id}
-              className="bg-[#171D35]/85 border border-[#A6AEC8]/15 hover:border-[#8B7CFF]/40 rounded-3xl p-6 transition-all duration-200 shadow-xl space-y-4"
+              className="bg-[#111716]/85 border border-[rgba(225,239,221,0.15)] hover:border-[#d5ff54]/40 rounded-3xl p-6 transition-all duration-200 shadow-xl space-y-4"
             >
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="space-y-2.5 flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2.5">
-                    <span className="font-mono text-xs text-[#8B7CFF] font-semibold bg-[#8B7CFF]/10 px-2.5 py-0.5 rounded-full border border-[#8B7CFF]/25">
+                    <span className="font-mono text-xs text-[#d5ff54] font-semibold bg-[#d5ff54]/10 px-2.5 py-0.5 rounded-full border border-[#d5ff54]/25">
                       {c.id}
                     </span>
-                    <h3 className="text-sm sm:text-base font-bold text-[#F4F5FF] truncate">{c.incident_title}</h3>
+                    <h3 className="text-sm sm:text-base font-bold text-[#f0f2eb] truncate">{c.incident_title}</h3>
                     {getStatusBadge(c.status)}
                   </div>
 
-                  <p className="text-xs text-[#A6AEC8]">
-                    Category: <span className="text-[#F4F5FF] capitalize font-medium">{c.incident_category.replace('_', ' ')}</span> • Created: <span className="font-mono">{formatDate(c.created_at)}</span>
+                  <p className="text-xs text-[#929b93]">
+                    Category: <span className="text-[#f0f2eb] capitalize font-medium">{c.incident_category.replace('_', ' ')}</span> • Created: <span className="font-mono">{formatDate(c.created_at)}</span>
                   </p>
 
                   {/* Lifecycle Stage Progress Bar */}
@@ -257,16 +257,16 @@ export const CaseTrackingPage: React.FC = () => {
                                 className={`h-1.5 rounded-full transition-all ${
                                   idx <= stageIdx
                                     ? idx === stageIdx
-                                      ? 'bg-[#55D6E8]'
-                                      : 'bg-[#52D6B2]'
-                                    : 'bg-[#080B18] border border-[#A6AEC8]/15'
+                                      ? 'bg-[#d5ff54]'
+                                      : 'bg-[#a8db35]'
+                                    : 'bg-[#070908] border border-[rgba(225,239,221,0.15)]'
                                 }`}
                               />
                             ))}
                           </div>
-                          <div className="grid grid-cols-4 text-[10px] font-mono text-[#727D9C]">
+                          <div className="grid grid-cols-4 text-[10px] font-mono text-[#929b93]">
                             {labels.map((lbl, idx) => (
-                              <span key={lbl} className={idx <= stageIdx ? 'text-[#A6AEC8]' : ''}>
+                              <span key={lbl} className={idx <= stageIdx ? 'text-[#929b93]' : ''}>
                                 {lbl}
                               </span>
                             ))}
@@ -279,50 +279,55 @@ export const CaseTrackingPage: React.FC = () => {
                   {/* External Reporting Reference Numbers */}
                   {c.reporting_references.length > 0 ? (
                     <div className="pt-2 space-y-1.5">
-                      <span className="text-[10px] font-semibold text-[#727D9C] uppercase tracking-wider block">
+                      <span className="text-[10px] font-semibold text-[#929b93] uppercase tracking-wider block">
                         Official Submission References:
                       </span>
                       <div className="flex flex-wrap gap-2">
                         {c.reporting_references.map((ref, idx) => (
                           <div
                             key={idx}
-                            className="px-3 py-1.5 rounded-xl bg-[#0D1224] border border-[#A6AEC8]/20 text-xs flex items-center gap-2"
+                            className="px-3 py-1.5 rounded-xl bg-[#0d1110] border border-[rgba(225,239,221,0.20)] text-xs flex items-center gap-2"
                           >
-                            <Share2 className="w-3.5 h-3.5 text-[#648BFF]" />
-                            <span className="text-[#A6AEC8] font-medium">{ref.destination}:</span>
-                            <span className="font-mono text-[#55D6E8] font-semibold">{ref.ref_number}</span>
-                            <span className="text-[10px] text-[#727D9C] font-mono">({ref.date})</span>
+                            <Share2 className="w-3.5 h-3.5 text-[#a8db35]" />
+                            <span className="text-[#929b93] font-medium">{ref.destination}:</span>
+                            <span className="font-mono text-[#d5ff54] font-semibold">{ref.ref_number}</span>
+                            <span className="text-[10px] text-[#929b93] font-mono">({ref.date})</span>
                           </div>
                         ))}
                       </div>
                     </div>
                   ) : (
-                    <p className="text-[11px] text-[#A6AEC8] pt-1">
+                    <p className="text-[11px] text-[#929b93] pt-1">
                       No external filing reference recorded yet. Use the Reporting Assistant to record submission numbers.
                     </p>
                   )}
 
                   {c.notes && (
-                    <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 text-xs text-[#F4F5FF] mt-2 leading-relaxed">
-                      <span className="text-[#A6AEC8] font-semibold">Complainant Tracking Note: </span>
+                    <div className="p-3 bg-[#0d1110] rounded-xl border border-[rgba(225,239,221,0.15)] text-xs text-[#f0f2eb] mt-2 leading-relaxed">
+                      <span className="text-[#929b93] font-semibold">Complainant Tracking Note: </span>
                       {c.notes}
                     </div>
                   )}
 
                   {c.follow_up_date && (
-                    <div className="flex items-center gap-2 text-xs text-[#F0B96B] pt-1 font-mono">
-                      <Clock className="w-3.5 h-3.5 text-[#F0B96B]" />
+                    <div className="flex items-center gap-2 text-xs text-[#ff927e] pt-1 font-mono">
+                      <Clock className="w-3.5 h-3.5 text-[#ff927e]" />
                       <span>Next Follow-up Reminder: {c.follow_up_date}</span>
                     </div>
                   )}
                 </div>
 
-                <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
+                <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-end sm:self-auto">
+                  <Link to={`/cases/${c.id}`}>
+                    <Button variant="primary" size="sm" rightIcon={<ChevronRight className="w-3.5 h-3.5" />}>
+                      Open Workspace
+                    </Button>
+                  </Link>
                   <Button
                     variant="secondary"
                     size="sm"
                     onClick={() => handleOpenStatusModal(c)}
-                    leftIcon={<Edit2 className="w-3.5 h-3.5 text-[#8B7CFF]" />}
+                    leftIcon={<Edit2 className="w-3.5 h-3.5 text-[#d5ff54]" />}
                   >
                     Update Status
                   </Button>
@@ -348,11 +353,11 @@ export const CaseTrackingPage: React.FC = () => {
         {selectedCase && (
           <form onSubmit={handleUpdateStatus} className="space-y-4">
             <div className="space-y-1.5 text-left">
-              <label className="text-xs font-semibold text-[#A6AEC8]">Case Status *</label>
+              <label className="text-xs font-semibold text-[#929b93]">Case Status *</label>
               <select
                 value={newStatus}
                 onChange={(e) => setNewStatus(e.target.value as CaseStatus)}
-                className="w-full px-3.5 py-2.5 bg-[#0D1224] border border-[#A6AEC8]/20 rounded-xl text-xs text-[#F4F5FF] focus:outline-none focus:border-[#8B7CFF]/60 cursor-pointer"
+                className="w-full px-3.5 py-2.5 bg-[#0d1110] border border-[rgba(225,239,221,0.20)] rounded-xl text-xs text-[#f0f2eb] focus:outline-none focus:border-[#d5ff54]/60 cursor-pointer"
               >
                 <option value="draft">Draft (Not yet finalized)</option>
                 <option value="prepared">Prepared (Ready for filing)</option>
@@ -365,7 +370,7 @@ export const CaseTrackingPage: React.FC = () => {
             </div>
 
             <div className="space-y-1.5 text-left">
-              <label className="text-xs font-semibold text-[#A6AEC8]">
+              <label className="text-xs font-semibold text-[#929b93]">
                 Tracking Notes / Log Entry
               </label>
               <textarea
@@ -373,11 +378,11 @@ export const CaseTrackingPage: React.FC = () => {
                 onChange={(e) => setNewNotes(e.target.value)}
                 rows={3}
                 placeholder="e.g., Contacted grievance officer; they requested additional ID copy."
-                className="w-full px-3.5 py-2.5 bg-[#0D1224] border border-[#A6AEC8]/20 rounded-xl text-xs text-[#F4F5FF] placeholder-[#727D9C] focus:outline-none focus:border-[#8B7CFF]/60"
+                className="w-full px-3.5 py-2.5 bg-[#0d1110] border border-[rgba(225,239,221,0.20)] rounded-xl text-xs text-[#f0f2eb] placeholder-[#929b93] focus:outline-none focus:border-[#d5ff54]/60"
               />
             </div>
 
-            <div className="flex justify-end gap-2 pt-4 border-t border-[#A6AEC8]/15">
+            <div className="flex justify-end gap-2 pt-4 border-t border-[rgba(225,239,221,0.15)]">
               <Button type="button" variant="ghost" size="sm" onClick={() => setIsModalOpen(false)}>
                 Cancel
               </Button>

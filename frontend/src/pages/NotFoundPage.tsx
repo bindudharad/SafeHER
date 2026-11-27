@@ -10,8 +10,13 @@ export const NotFoundPage: React.FC = () => {
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-6 space-y-4">
       <SafeHERLogo size="lg" animate />
-      <h2 className="text-xl font-bold text-[#F4F5FF]">{t.notFound.title}</h2>
-      <p className="text-xs text-[#A6AEC8] max-w-sm">
+      <div className="font-mono text-xs uppercase tracking-[0.2em] text-[#d5ff54]">
+        {t.notFound.code} · ROUTE NOT FOUND
+      </div>
+      <h2 className="font-display text-4xl uppercase tracking-[0.02em] font-bold text-[#f0f2eb]">
+        {t.notFound.title}
+      </h2>
+      <p className="text-xs text-[#929b93] max-w-sm">
         {t.notFound.description}
       </p>
       <Link to="/">

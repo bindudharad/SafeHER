@@ -158,7 +158,7 @@ export const ThreeDImageConveyor: React.FC = () => {
                 }}
               >
                 <Link to={card.route} className="block group">
-                  <div className="relative h-[360px] sm:h-[400px] rounded-2xl bg-[#060910] border border-zcyan/25 group-hover:border-zcyan overflow-hidden shadow-[0_20px_45px_rgba(0,0,0,0.85)] group-hover:shadow-[0_0_35px_rgba(0,212,255,0.3)] transition-all">
+                  <div className="relative h-[360px] sm:h-[400px] rounded-2xl bg-[#070908] border border-zcyan/25 group-hover:border-zcyan overflow-hidden shadow-[0_20px_45px_rgba(0,0,0,0.85)] group-hover:shadow-[0_0_35px_rgba(0,212,255,0.3)] transition-all">
                     {/* Background Image with Dark Vignette */}
                     <img
                       src={card.image}
@@ -177,19 +177,19 @@ export const ThreeDImageConveyor: React.FC = () => {
                         <span className="font-mono text-[10px] text-zcyan font-bold tracking-widest uppercase px-2 py-0.5 rounded bg-black/60 border border-zcyan/30">
                           {card.tag}
                         </span>
-                        <div className="w-8 h-8 rounded-lg bg-black/80 border border-zcyan/40 flex items-center justify-center text-zcyan group-hover:border-zcyan group-hover:shadow-[0_0_12px_#8B7CFF] transition-all">
+                        <div className="w-8 h-8 rounded-lg bg-black/80 border border-zcyan/40 flex items-center justify-center text-zcyan group-hover:border-zcyan group-hover:shadow-[0_0_12px_#d5ff54] transition-all">
                           <Icon className="w-4 h-4" />
                         </div>
                       </div>
 
                       <div>
-                        <div className="font-mono text-[11px] text-slate-400 uppercase tracking-wider mb-1">
+                        <div className="font-mono text-[11px] text-[#929b93] uppercase tracking-wider mb-1">
                           {card.metric}
                         </div>
                         <h3 className="font-display text-2xl font-bold uppercase text-white group-hover:text-zcyan transition-colors mb-2 leading-tight">
                           {card.title}
                         </h3>
-                        <p className="text-xs text-slate-300 font-sans leading-relaxed line-clamp-2">
+                        <p className="text-xs text-[#f0f2eb] font-sans leading-relaxed line-clamp-2">
                           {card.desc}
                         </p>
 
@@ -219,7 +219,7 @@ export const ThreeDImageConveyor: React.FC = () => {
                 }}
               >
                 <Link to={card.route} className="block group">
-                  <div className="relative h-[360px] sm:h-[400px] rounded-2xl bg-[#060910] border border-zcyan/25 group-hover:border-zcyan overflow-hidden shadow-[0_20px_45px_rgba(0,0,0,0.85)] group-hover:shadow-[0_0_35px_rgba(0,212,255,0.3)] transition-all">
+                  <div className="relative h-[360px] sm:h-[400px] rounded-2xl bg-[#070908] border border-zcyan/25 group-hover:border-zcyan overflow-hidden shadow-[0_20px_45px_rgba(0,0,0,0.85)] group-hover:shadow-[0_0_35px_rgba(0,212,255,0.3)] transition-all">
                     {/* Background Image with Dark Vignette */}
                     <img
                       src={card.image}
@@ -237,19 +237,19 @@ export const ThreeDImageConveyor: React.FC = () => {
                         <span className="font-mono text-[10px] text-zcyan font-bold tracking-widest uppercase px-2 py-0.5 rounded bg-black/60 border border-zcyan/30">
                           {card.tag}
                         </span>
-                        <div className="w-8 h-8 rounded-lg bg-black/80 border border-zcyan/40 flex items-center justify-center text-zcyan group-hover:border-zcyan group-hover:shadow-[0_0_12px_#8B7CFF] transition-all">
+                        <div className="w-8 h-8 rounded-lg bg-black/80 border border-zcyan/40 flex items-center justify-center text-zcyan group-hover:border-zcyan group-hover:shadow-[0_0_12px_#d5ff54] transition-all">
                           <Icon className="w-4 h-4" />
                         </div>
                       </div>
 
                       <div>
-                        <div className="font-mono text-[11px] text-slate-400 uppercase tracking-wider mb-1">
+                        <div className="font-mono text-[11px] text-[#929b93] uppercase tracking-wider mb-1">
                           {card.metric}
                         </div>
                         <h3 className="font-display text-2xl font-bold uppercase text-white group-hover:text-zcyan transition-colors mb-2 leading-tight">
                           {card.title}
                         </h3>
-                        <p className="text-xs text-slate-300 font-sans leading-relaxed line-clamp-2">
+                        <p className="text-xs text-[#f0f2eb] font-sans leading-relaxed line-clamp-2">
                           {card.desc}
                         </p>
 

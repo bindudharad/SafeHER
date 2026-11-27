@@ -137,8 +137,8 @@ export const TrustShield3D: React.FC<TrustShield3DProps> = ({
     outerGeo.center()
 
     const outerMat = new THREE.MeshPhysicalMaterial({
-      color: 0x120b2e,
-      emissive: 0x52009a,
+      color: 0x0d1110,
+      emissive: 0x364a16,
       emissiveIntensity: 0.24,
       metalness: 0.85,
       roughness: 0.14,
@@ -152,7 +152,7 @@ export const TrustShield3D: React.FC<TrustShield3DProps> = ({
     // Crisp Lavender reflective bevel edge on outer armor
     const outerEdgesGeo = new THREE.EdgesGeometry(outerGeo, 28)
     const outerEdgesMat = new THREE.LineBasicMaterial({
-      color: 0xa99bff,
+      color: 0xe2ff84,
       transparent: true,
       opacity: 0.78,
     })
@@ -172,8 +172,8 @@ export const TrustShield3D: React.FC<TrustShield3DProps> = ({
     frontGeo.center()
 
     const frontMat = new THREE.MeshPhysicalMaterial({
-      color: 0x26165c,
-      emissive: 0x6f5cff,
+      color: 0x111716,
+      emissive: 0xd5ff54,
       emissiveIntensity: 0.26,
       metalness: 0.32,
       roughness: 0.10,
@@ -190,7 +190,7 @@ export const TrustShield3D: React.FC<TrustShield3DProps> = ({
     // Restrained Ice Cyan inner rim highlight
     const innerRimGeo = new THREE.EdgesGeometry(frontGeo, 26)
     const innerRimMat = new THREE.LineBasicMaterial({
-      color: 0x55d6e8,
+      color: 0xd5ff54,
       transparent: true,
       opacity: 0.50,
     })
@@ -211,8 +211,8 @@ export const TrustShield3D: React.FC<TrustShield3DProps> = ({
     crestGeo.center()
 
     const crestMat = new THREE.MeshPhysicalMaterial({
-      color: 0x0d1224,
-      emissive: 0x8b7cff,
+      color: 0x0d1110,
+      emissive: 0xd5ff54,
       emissiveIntensity: 0.22,
       metalness: 0.55,
       roughness: 0.2,
@@ -229,7 +229,7 @@ export const TrustShield3D: React.FC<TrustShield3DProps> = ({
     const emblemGeo = new THREE.CircleGeometry(0.44, 48)
     const emblemMat = new THREE.MeshBasicMaterial({
       map: emblemTex,
-      color: 0xedeaff,
+      color: 0xf0f2eb,
       transparent: true,
       opacity: 0.96,
     })
@@ -239,8 +239,8 @@ export const TrustShield3D: React.FC<TrustShield3DProps> = ({
 
     const emblemBezelGeo = new THREE.TorusGeometry(0.455, 0.032, 16, 64)
     const emblemBezelMat = new THREE.MeshPhysicalMaterial({
-      color: 0x8b7cff,
-      emissive: 0x52009a,
+      color: 0xd5ff54,
+      emissive: 0x364a16,
       emissiveIntensity: 0.35,
       metalness: 0.82,
       roughness: 0.16,
@@ -252,7 +252,7 @@ export const TrustShield3D: React.FC<TrustShield3DProps> = ({
 
     const emblemHaloGeo = new THREE.TorusGeometry(0.505, 0.009, 12, 64)
     const emblemHaloMat = new THREE.MeshBasicMaterial({
-      color: 0x55d6e8,
+      color: 0xd5ff54,
       transparent: true,
       opacity: 0.48,
     })
@@ -298,32 +298,32 @@ export const TrustShield3D: React.FC<TrustShield3DProps> = ({
       {
         radius: 2.22,
         tube: 0.016,
-        color: 0x8b7cff,
+        color: 0xd5ff54,
         opacity: 0.58,
         tilt: new THREE.Euler(1.18, 0.18, 0.22),
         speed: 0.16,
         nodeAngles: [0.4, Math.PI + 0.4],
-        nodeColor: 0x8b7cff,
+        nodeColor: 0xd5ff54,
       },
       {
         radius: 2.52,
         tube: 0.013,
-        color: 0xa99bff,
+        color: 0xe2ff84,
         opacity: 0.40,
         tilt: new THREE.Euler(1.05, -0.34, -0.18),
         speed: -0.12,
         nodeAngles: [Math.PI * 0.65],
-        nodeColor: 0x55d6e8,
+        nodeColor: 0xd5ff54,
       },
       {
         radius: 2.82,
         tube: 0.011,
-        color: 0x55d6e8,
+        color: 0xd5ff54,
         opacity: 0.34,
         tilt: new THREE.Euler(1.36, 0.24, 0.08),
         speed: 0.09,
         nodeAngles: [Math.PI * 1.45],
-        nodeColor: 0x52d6b2,
+        nodeColor: 0xa8db35,
       },
     ]
 
@@ -412,7 +412,7 @@ export const TrustShield3D: React.FC<TrustShield3DProps> = ({
       new THREE.BufferAttribute(particlePositions, 3)
     )
     const particleMat = new THREE.PointsMaterial({
-      color: 0x8b7cff,
+      color: 0xd5ff54,
       size: 0.035,
       transparent: true,
       opacity: 0.38,
@@ -426,18 +426,18 @@ export const TrustShield3D: React.FC<TrustShield3DProps> = ({
     // --------------------------------------------------------
     // 5. STUDIO 3-POINT + RIM LIGHTING
     // --------------------------------------------------------
-    const hemiLight = new THREE.HemisphereLight(0xa99bff, 0x080b18, 1.05)
+    const hemiLight = new THREE.HemisphereLight(0xe2ff84, 0x070908, 1.05)
     scene.add(hemiLight)
 
-    const keyLight = new THREE.DirectionalLight(0xf4f5ff, 2.8)
+    const keyLight = new THREE.DirectionalLight(0xf0f2eb, 2.8)
     keyLight.position.set(3.8, 4.8, 5.5)
     scene.add(keyLight)
 
-    const violetRimLight = new THREE.PointLight(0x8b7cff, 6.2, 16)
+    const violetRimLight = new THREE.PointLight(0xd5ff54, 6.2, 16)
     violetRimLight.position.set(-3.8, 2.2, 3.2)
     scene.add(violetRimLight)
 
-    const cyanAccentLight = new THREE.PointLight(0x55d6e8, 3.6, 14)
+    const cyanAccentLight = new THREE.PointLight(0xd5ff54, 3.6, 14)
     cyanAccentLight.position.set(3.8, -2.5, -1.6)
     scene.add(cyanAccentLight)
 
@@ -550,8 +550,8 @@ export const TrustShield3D: React.FC<TrustShield3DProps> = ({
         aria-label="SafeHER Cryptographic Protection Shield"
       >
         <div className="relative flex items-center justify-center">
-          <div className="pointer-events-none absolute -inset-6 rounded-full border border-[#8B7CFF]/30" />
-          <div className="pointer-events-none absolute -inset-11 rounded-full border border-[#55D6E8]/20" />
+          <div className="pointer-events-none absolute -inset-6 rounded-full border border-[#d5ff54]/30" />
+          <div className="pointer-events-none absolute -inset-11 rounded-full border border-[#d5ff54]/20" />
           <svg
             viewBox="0 0 120 140"
             className="w-40 h-44 drop-shadow-[0_12px_32px_rgba(139,124,255,0.35)]"
@@ -559,22 +559,22 @@ export const TrustShield3D: React.FC<TrustShield3DProps> = ({
           >
             <defs>
               <linearGradient id="shieldFallGrad" x1="0" y1="0" x2="120" y2="140" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#2C1B68" />
-                <stop offset="55%" stopColor="#160D36" />
-                <stop offset="100%" stopColor="#0D1224" />
+                <stop offset="0%" stopColor="#111716" />
+                <stop offset="55%" stopColor="#0d1110" />
+                <stop offset="100%" stopColor="#0d1110" />
               </linearGradient>
             </defs>
             <path
               d="M60 8 L108 26 C109 62 100 98 60 132 C20 98 11 62 12 26 Z"
               fill="url(#shieldFallGrad)"
-              stroke="#A99BFF"
+              stroke="#e2ff84"
               strokeWidth="2.5"
             />
             <path
               d="M60 18 L97 32 C98 62 90 91 60 120 C30 91 22 62 23 32 Z"
-              fill="#8B7CFF"
+              fill="#d5ff54"
               fillOpacity="0.16"
-              stroke="#55D6E8"
+              stroke="#d5ff54"
               strokeWidth="1.2"
               strokeOpacity="0.55"
             />

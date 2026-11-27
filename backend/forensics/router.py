@@ -433,6 +433,41 @@ def run_tampering_localization(
     mask_artifact_id: Optional[str] = None
 
     with get_db() as conn:
+        conn.execute(
+            """
+            INSERT INTO tampering_analyses (
+                id, evidence_id, user_id, model_id, model_version, checkpoint_id,
+                analysis_status, tampering_score, localization_available,
+                heatmap_artifact_id, mask_artifact_id, input_width, input_height,
+                original_width, original_height, coordinate_transform_json,
+                processing_time_ms, device, warnings_json, limitations_json,
+                review_status, created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unreviewed', ?)
+            """,
+            (
+                analysis_id,
+                evidence_id,
+                current_user["id"],
+                res["model_id"],
+                res["model_version"],
+                res.get("checkpoint_id"),
+                res["analysis_status"],
+                res.get("tampering_score"),
+                1 if res["localization_available"] else 0,
+                res.get("input_width"),
+                res.get("input_height"),
+                res.get("original_width"),
+                res.get("original_height"),
+                json.dumps(res.get("coordinate_transform", {})),
+                res.get("processing_time_ms", 0.0),
+                res.get("device", "cpu"),
+                json.dumps(res.get("warnings", [])),
+                json.dumps(res.get("limitations", [])),
+                now,
+            ),
+        )
+
         storage_dir = get_storage_dir()
         for art_type, raw_bytes in [
             ("heatmap", res.get("heatmap_png_bytes")),
@@ -480,42 +515,11 @@ def run_tampering_localization(
                 else:
                     mask_artifact_id = art_id
 
-        conn.execute(
-            """
-            INSERT INTO tampering_analyses (
-                id, evidence_id, user_id, model_id, model_version, checkpoint_id,
-                analysis_status, tampering_score, localization_available,
-                heatmap_artifact_id, mask_artifact_id, input_width, input_height,
-                original_width, original_height, coordinate_transform_json,
-                processing_time_ms, device, warnings_json, limitations_json,
-                review_status, created_at
+        if heatmap_artifact_id or mask_artifact_id:
+            conn.execute(
+                "UPDATE tampering_analyses SET heatmap_artifact_id = ?, mask_artifact_id = ? WHERE id = ?",
+                (heatmap_artifact_id, mask_artifact_id, analysis_id),
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unreviewed', ?)
-            """,
-            (
-                analysis_id,
-                evidence_id,
-                current_user["id"],
-                res["model_id"],
-                res["model_version"],
-                res.get("checkpoint_id"),
-                res["analysis_status"],
-                res.get("tampering_score"),
-                1 if res["localization_available"] else 0,
-                heatmap_artifact_id,
-                mask_artifact_id,
-                res.get("input_width"),
-                res.get("input_height"),
-                res.get("original_width"),
-                res.get("original_height"),
-                json.dumps(res.get("coordinate_transform", {})),
-                res.get("processing_time_ms", 0.0),
-                res.get("device", "cpu"),
-                json.dumps(res.get("warnings", [])),
-                json.dumps(res.get("limitations", [])),
-                now,
-            ),
-        )
 
     return {
         "id": analysis_id,

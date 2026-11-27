@@ -110,7 +110,7 @@ export const HolographicWhitePaperCard: React.FC<HolographicWhitePaperCardProps>
           transition: 'transform 220ms cubic-bezier(0.22, 1, 0.36, 1)',
         } as React.CSSProperties
       }
-      className={`relative w-full h-full rounded-[inherit] overflow-hidden bg-[#0D1224] will-change-transform ${className}`}
+      className={`relative w-full h-full rounded-[inherit] overflow-hidden bg-[#0d1110] will-change-transform ${className}`}
     >
       {/* Official vgpu WebGPU Holographic Card Canvas */}
       {webGpuReady && (
@@ -148,7 +148,7 @@ export const HolographicWhitePaperCard: React.FC<HolographicWhitePaperCardProps>
 
       {/* Subtle Iridescent Border & Silver-Violet Edge Sheen */}
       <div
-        className="pointer-events-none absolute inset-0 rounded-[inherit] border border-[#A99BFF]/35"
+        className="pointer-events-none absolute inset-0 rounded-[inherit] border border-[#e2ff84]/35"
         style={{
           boxShadow:
             'inset 0 1px 0 rgba(244, 245, 255, 0.26), inset 0 0 28px rgba(139, 124, 255, 0.16)',
@@ -159,15 +159,15 @@ export const HolographicWhitePaperCard: React.FC<HolographicWhitePaperCardProps>
       <div className="pointer-events-none relative z-10 w-full h-full p-4 sm:p-8 flex flex-col justify-between text-left">
         <div className="space-y-4 sm:space-y-6">
           <div className="flex items-center justify-between font-mono text-[9px] sm:text-[11px] tracking-[0.18em] uppercase">
-            <span className="text-[#55D6E8] font-semibold whitespace-nowrap">WHITE PAPER</span>
-            <span className="text-[#A6AEC8] whitespace-nowrap">2026 ED.</span>
+            <span className="text-[#d5ff54] font-semibold whitespace-nowrap">WHITE PAPER</span>
+            <span className="text-[#929b93] whitespace-nowrap">2026 ED.</span>
           </div>
 
           <div className="space-y-2 sm:space-y-2.5">
-            <div className="h-[2.5px] w-4/5 rounded-full bg-gradient-to-r from-[#8B7CFF] via-[#55D6E8]/80 to-transparent" />
-            <div className="h-[2.5px] w-3/5 rounded-full bg-gradient-to-r from-[#A99BFF]/80 to-transparent" />
-            <div className="h-[2.5px] w-3/4 rounded-full bg-gradient-to-r from-[#55D6E8]/75 to-transparent" />
-            <div className="h-[2.5px] w-1/2 rounded-full bg-gradient-to-r from-[#8B7CFF]/65 to-transparent" />
+            <div className="h-[2.5px] w-4/5 rounded-full bg-gradient-to-r from-[#d5ff54] via-[#d5ff54]/80 to-transparent" />
+            <div className="h-[2.5px] w-3/5 rounded-full bg-gradient-to-r from-[#e2ff84]/80 to-transparent" />
+            <div className="h-[2.5px] w-3/4 rounded-full bg-gradient-to-r from-[#d5ff54]/75 to-transparent" />
+            <div className="h-[2.5px] w-1/2 rounded-full bg-gradient-to-r from-[#d5ff54]/65 to-transparent" />
           </div>
         </div>
 
@@ -181,29 +181,29 @@ export const HolographicWhitePaperCard: React.FC<HolographicWhitePaperCardProps>
             />
             <path
               d="M40 16L62 24V44C62 56 52 67 40 74C28 67 18 56 18 44V24L40 16Z"
-              stroke="#55D6E8"
+              stroke="#d5ff54"
               strokeWidth="0.9"
               strokeDasharray="3 3"
             />
             <defs>
               <linearGradient id="wp-crest" x1="6" y1="4" x2="74" y2="88" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#A99BFF" />
-                <stop offset="1" stopColor="#55D6E8" />
+                <stop stopColor="#e2ff84" />
+                <stop offset="1" stopColor="#d5ff54" />
               </linearGradient>
             </defs>
           </svg>
         </div>
 
-        <div className="border-t border-[#A6AEC8]/20 pt-3 sm:pt-4 flex items-end justify-between gap-2">
+        <div className="border-t border-[rgba(225,239,221,0.20)] pt-3 sm:pt-4 flex items-end justify-between gap-2">
           <div className="min-w-0">
-            <span className="block font-display text-2xl sm:text-4xl font-bold tracking-tight text-[#F4F5FF] drop-shadow-[0_0_12px_rgba(139,124,255,0.45)]">
+            <span className="block font-display text-2xl sm:text-4xl font-bold tracking-tight text-[#f0f2eb] drop-shadow-[0_0_12px_rgba(139,124,255,0.45)]">
               SH
             </span>
-            <span className="block font-mono text-[8px] sm:text-[10px] text-[#A6AEC8] tracking-[0.14em] uppercase mt-0.5 whitespace-nowrap">
+            <span className="block font-mono text-[8px] sm:text-[10px] text-[#929b93] tracking-[0.14em] uppercase mt-0.5 whitespace-nowrap">
               SAFEHER RESEARCH
             </span>
           </div>
-          <span className="font-mono text-[8px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded bg-[#8B7CFF]/15 border border-[#8B7CFF]/35 text-[#A99BFF] whitespace-nowrap shrink-0">
+          <span className="font-mono text-[8px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded bg-[#d5ff54]/15 border border-[#d5ff54]/35 text-[#e2ff84] whitespace-nowrap shrink-0">
             SEC 65B
           </span>
         </div>

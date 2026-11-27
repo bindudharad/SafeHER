@@ -514,9 +514,42 @@ def init_db() -> None:
                 phone_number TEXT NOT NULL,
                 relationship TEXT NOT NULL DEFAULT 'other',
                 notify_on_escalation INTEGER NOT NULL DEFAULT 1,
+                is_verified INTEGER NOT NULL DEFAULT 0,
+                verified_at TEXT,
+                verification_code_hash TEXT,
+                verification_expires_at TEXT,
                 created_at TEXT NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             );
+
+            CREATE TABLE IF NOT EXISTS sms_notifications (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                contact_id TEXT,
+                journey_id TEXT,
+                correlation_id TEXT NOT NULL,
+                idempotency_key TEXT NOT NULL UNIQUE,
+                event_type TEXT NOT NULL,
+                recipient_masked TEXT NOT NULL,
+                recipient_phone_e164 TEXT NOT NULL,
+                message_body TEXT NOT NULL,
+                reference_code TEXT NOT NULL,
+                provider TEXT NOT NULL,
+                provider_message_sid TEXT,
+                status TEXT NOT NULL DEFAULT 'queued',
+                attempts INTEGER NOT NULL DEFAULT 0,
+                max_attempts INTEGER NOT NULL DEFAULT 3,
+                next_retry_at TEXT,
+                last_error TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                sent_at TEXT,
+                delivered_at TEXT,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_sms_queue ON sms_notifications(status, next_retry_at);
+            CREATE INDEX IF NOT EXISTS idx_sms_user ON sms_notifications(user_id, created_at);
 
             CREATE TABLE IF NOT EXISTS journey_checkins (
                 id TEXT PRIMARY KEY,
@@ -663,6 +696,17 @@ def init_db() -> None:
         ]:
             if col_name not in cust_cols:
                 conn.execute(f"ALTER TABLE custody_records ADD COLUMN {col_name} {col_def};")
+
+        # 7. trusted_contacts Stage 6 verification columns
+        tc_cols = {row["name"] for row in conn.execute("PRAGMA table_info(trusted_contacts);").fetchall()}
+        for col_name, col_def in [
+            ("is_verified", "INTEGER NOT NULL DEFAULT 0"),
+            ("verified_at", "TEXT"),
+            ("verification_code_hash", "TEXT"),
+            ("verification_expires_at", "TEXT"),
+        ]:
+            if col_name not in tc_cols:
+                conn.execute(f"ALTER TABLE trusted_contacts ADD COLUMN {col_name} {col_def};")
 
 
 def create_analysis_job(job_id: str, evidence_id: str, owner_id: str, model_type: str) -> Dict[str, Any]:

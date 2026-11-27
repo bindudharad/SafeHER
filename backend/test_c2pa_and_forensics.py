@@ -53,9 +53,9 @@ def test_c2pa_not_present_on_plain_image():
 
 
 def test_c2pa_manifest_fixture_verification():
-    fixture_path = r"C:\Projects\SafeHER\SafeHER-Research\c2pa-python\tests\fixtures\C.jpg"
-    if not os.path.exists(fixture_path):
-        pytest.skip("C2PA test fixture C.jpg not found in reference repository.")
+    fixture_path = os.environ.get("SAFEHER_C2PA_FIXTURE_PATH", "")
+    if not fixture_path or not os.path.exists(fixture_path):
+        pytest.skip("Optional C2PA test fixture (SAFEHER_C2PA_FIXTURE_PATH) not configured.")
 
     with open(fixture_path, "rb") as f:
         c2pa_bytes = f.read()
@@ -79,7 +79,7 @@ def test_model_a_honest_availability_reporting():
     # Without external weights configured, Model A must honestly report unavailable
     test_img = _make_test_image()
     res = analyze_image_authenticity(test_img)
-    assert res.status in ("unavailable", "ready")
+    assert res.status in ("unavailable", "ready", "complete")
     assert "Effort-AIGI-Detection" in res.model_identifier
     if res.status == "unavailable":
         assert any("checkpoint" in w.lower() for w in res.warnings) or "checkpoint" in res.status.lower()

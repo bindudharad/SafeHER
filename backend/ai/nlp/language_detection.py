@@ -65,9 +65,14 @@ _COMMON_ENGLISH_STOPWORDS: Set[str] = {
     "should", "can", "could", "may", "might", "must", "and", "or", "but",
     "if", "then", "else", "for", "with", "from", "this", "that", "these",
     "those", "you", "your", "yours", "they", "their", "we", "our", "she",
-    "her", "his", "him", "it", "its", "what", "when", "where", "why", "how",
+    "her", "his", "him", "it", "its", "me", "my", "not", "cannot", "no",
+    "what", "when", "where", "why", "how", "every", "all", "right", "now",
     "please", "send", "share", "pay", "money", "photos", "video", "account",
     "meeting", "tomorrow", "today", "night", "waiting", "near", "station",
+    "story", "track", "hide", "via", "morphed", "friends", "police",
+    "complaint", "family", "trouble", "careful", "free", "call", "coffee",
+    "delete", "block", "report", "help", "safe", "home", "office", "phone",
+    "message", "number", "location", "address", "evidence", "legal",
 }
 
 

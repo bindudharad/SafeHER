@@ -33,7 +33,7 @@ interface RenderSize {
 const MAX_DPR = 1.6
 
 /** SafeHER Midnight Aurora star palette: Aurora Violet, Periwinkle, Deep Purple, Ice Cyan, Cloud White */
-const SAFEHER_AURORA_PALETTE = ['#8B7CFF', '#A99BFF', '#6500B8', '#55D6E8', '#F4F5FF'] as const
+const SAFEHER_AURORA_PALETTE = ['#d5ff54', '#e2ff84', '#6500B8', '#d5ff54', '#f0f2eb'] as const
 
 function bestEffort(cleanup: () => void): void {
   try {

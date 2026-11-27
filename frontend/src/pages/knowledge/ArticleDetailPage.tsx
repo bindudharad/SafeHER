@@ -50,9 +50,9 @@ export const ArticleDetailPage: React.FC = () => {
   if (!article) {
     return (
       <div className="p-12 text-center space-y-4">
-        <BookOpen className="w-12 h-12 text-[#FF718A] mx-auto opacity-70" />
-        <h2 className="text-xl font-bold text-[#F4F5FF]">Article Not Found</h2>
-        <p className="text-xs text-[#A6AEC8] max-w-sm mx-auto">
+        <BookOpen className="w-12 h-12 text-[#ff927e] mx-auto opacity-70" />
+        <h2 className="text-xl font-bold text-[#f0f2eb]">Article Not Found</h2>
+        <p className="text-xs text-[#929b93] max-w-sm mx-auto">
           The requested educational guide could not be located in the Knowledge Hub database.
         </p>
         <Button variant="secondary" size="sm" onClick={() => navigate('/knowledge-hub')}>
@@ -79,10 +79,10 @@ export const ArticleDetailPage: React.FC = () => {
   return (
     <div className="space-y-8 text-left pb-16 max-w-5xl mx-auto">
       {/* Reading Progress Indicator */}
-      <div className="sticky top-0 z-30 -mx-2 px-2 py-1 bg-[#080B18]/80 backdrop-blur-md rounded-b-lg">
-        <div className="h-1 w-full bg-[#171D35] rounded-full overflow-hidden">
+      <div className="sticky top-0 z-30 -mx-2 px-2 py-1 bg-[#070908]/80 backdrop-blur-md rounded-b-lg">
+        <div className="h-1 w-full bg-[#111716] rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-[#8B7CFF] to-[#55D6E8] transition-all duration-150"
+            className="h-full bg-gradient-to-r from-[#d5ff54] to-[#d5ff54] transition-all duration-150"
             style={{ width: `${readProgress}%` }}
           />
         </div>
@@ -91,7 +91,7 @@ export const ArticleDetailPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <Link
           to="/knowledge-hub"
-          className="inline-flex items-center gap-1.5 text-xs text-[#A6AEC8] hover:text-[#8B7CFF] transition-colors font-mono"
+          className="inline-flex items-center gap-1.5 text-xs text-[#929b93] hover:text-[#d5ff54] transition-colors font-mono"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to Knowledge Hub</span>
@@ -110,40 +110,40 @@ export const ArticleDetailPage: React.FC = () => {
       </div>
 
       {/* Article Header */}
-      <div className="space-y-4 border-b border-[#A6AEC8]/15 pb-8">
+      <div className="space-y-4 border-b border-[rgba(225,239,221,0.15)] pb-8">
         <div className="flex flex-wrap items-center gap-2.5">
-          <span className="text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full bg-[#8B7CFF]/15 text-[#8B7CFF] border border-[#8B7CFF]/30">
+          <span className="text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full bg-[#d5ff54]/15 text-[#d5ff54] border border-[#d5ff54]/30">
             {article.categoryLabel}
           </span>
-          <span className="text-xs text-[#A6AEC8] flex items-center gap-1 font-mono">
+          <span className="text-xs text-[#929b93] flex items-center gap-1 font-mono">
             <Clock className="w-3.5 h-3.5" />
             {article.readingTime}
           </span>
-          <span className="text-xs text-[#727D9C]">•</span>
-          <span className="text-xs text-[#A6AEC8] font-mono">{article.publishedDate}</span>
+          <span className="text-xs text-[#929b93]">•</span>
+          <span className="text-xs text-[#929b93] font-mono">{article.publishedDate}</span>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#F4F5FF] leading-snug">
+        <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl uppercase font-bold tracking-[0.01em] text-[#f0f2eb] leading-[1.02]">
           {article.title}
         </h1>
 
-        <p className="text-sm sm:text-base text-[#A6AEC8] leading-relaxed max-w-3xl">
+        <p className="text-sm sm:text-base text-[#929b93] leading-relaxed max-w-3xl">
           {article.heroDescription}
         </p>
 
         {/* Author badge */}
         <div className="flex items-center gap-3 pt-2">
-          <div className="w-9 h-9 rounded-full bg-[#8B7CFF]/20 border border-[#8B7CFF]/40 flex items-center justify-center text-xs font-bold text-[#8B7CFF]">
+          <div className="w-9 h-9 rounded-full bg-[#d5ff54]/20 border border-[#d5ff54]/40 flex items-center justify-center text-xs font-bold text-[#d5ff54]">
             {article.author.name.charAt(0)}
           </div>
           <div>
-            <p className="text-xs font-semibold text-[#F4F5FF]">{article.author.name}</p>
-            <p className="text-[11px] text-[#A6AEC8]">{article.author.role}</p>
+            <p className="text-xs font-semibold text-[#f0f2eb]">{article.author.name}</p>
+            <p className="text-[11px] text-[#929b93]">{article.author.role}</p>
           </div>
         </div>
 
         {article.imageUrl && (
-          <div className="rounded-2xl overflow-hidden aspect-[21/9] bg-[#0D1224] border border-[#A6AEC8]/20 mt-4 shadow-xl">
+          <div className="rounded-2xl overflow-hidden aspect-[21/9] bg-[#0d1110] border border-[rgba(225,239,221,0.20)] mt-4 shadow-xl">
             <img
               src={article.imageUrl}
               alt={article.title}
@@ -159,25 +159,25 @@ export const ArticleDetailPage: React.FC = () => {
         <div className="lg:col-span-8 space-y-10">
           {article.sections.map((sec, idx) => (
             <section key={sec.id} id={sec.id} className="space-y-4">
-              <h2 className="text-lg sm:text-xl font-bold text-[#F4F5FF] flex items-baseline gap-2">
+              <h2 className="text-lg sm:text-xl font-bold text-[#f0f2eb] flex items-baseline gap-2">
                 <span>{sec.title}</span>
               </h2>
 
-              <p className="text-xs sm:text-sm text-[#A6AEC8] leading-relaxed whitespace-pre-wrap">
+              <p className="text-xs sm:text-sm text-[#929b93] leading-relaxed whitespace-pre-wrap">
                 {sec.content}
               </p>
 
               {/* Key Takeaways Box if present */}
               {sec.keyTakeaways && sec.keyTakeaways.length > 0 && (
-                <div className="p-4 bg-[#171D35]/85 rounded-2xl border border-[#8B7CFF]/25 space-y-2">
-                  <h3 className="text-xs font-bold text-[#8B7CFF] font-mono uppercase tracking-wider flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-[#8B7CFF]" />
+                <div className="p-4 bg-[#111716]/85 rounded-2xl border border-[#d5ff54]/25 space-y-2">
+                  <h3 className="text-xs font-bold text-[#d5ff54] font-mono uppercase tracking-wider flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-[#d5ff54]" />
                     Key Forensic Takeaways:
                   </h3>
-                  <ul className="space-y-1.5 text-xs text-[#F4F5FF]">
+                  <ul className="space-y-1.5 text-xs text-[#f0f2eb]">
                     {sec.keyTakeaways.map((takeaway, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-[#8B7CFF] font-mono mt-0.5">•</span>
+                        <span className="text-[#d5ff54] font-mono mt-0.5">•</span>
                         <span>{takeaway}</span>
                       </li>
                     ))}
@@ -187,15 +187,15 @@ export const ArticleDetailPage: React.FC = () => {
 
               {/* Warning Signs Box if present */}
               {sec.warningSigns && sec.warningSigns.length > 0 && (
-                <div className="p-4 bg-[#171D35]/85 rounded-2xl border border-[#FF718A]/25 space-y-2">
-                  <h3 className="text-xs font-bold text-[#FF718A] font-mono uppercase tracking-wider flex items-center gap-1.5">
-                    <ShieldAlert className="w-4 h-4 text-[#FF718A]" />
+                <div className="p-4 bg-[#111716]/85 rounded-2xl border border-[#ff927e]/25 space-y-2">
+                  <h3 className="text-xs font-bold text-[#ff927e] font-mono uppercase tracking-wider flex items-center gap-1.5">
+                    <ShieldAlert className="w-4 h-4 text-[#ff927e]" />
                     Critical Warning Signs:
                   </h3>
-                  <ul className="space-y-1.5 text-xs text-[#F4F5FF]">
+                  <ul className="space-y-1.5 text-xs text-[#f0f2eb]">
                     {sec.warningSigns.map((sign, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-[#FF718A] font-mono mt-0.5">⚠</span>
+                        <span className="text-[#ff927e] font-mono mt-0.5">⚠</span>
                         <span>{sign}</span>
                       </li>
                     ))}
@@ -205,15 +205,15 @@ export const ArticleDetailPage: React.FC = () => {
 
               {/* Action Steps Box if present */}
               {sec.actionSteps && sec.actionSteps.length > 0 && (
-                <div className="p-4 bg-[#0D1224] rounded-2xl border border-[#52D6B2]/25 space-y-2">
-                  <h3 className="text-xs font-bold text-[#52D6B2] font-mono uppercase tracking-wider flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-[#52D6B2]" />
+                <div className="p-4 bg-[#0d1110] rounded-2xl border border-[#a8db35]/25 space-y-2">
+                  <h3 className="text-xs font-bold text-[#a8db35] font-mono uppercase tracking-wider flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-[#a8db35]" />
                     Tactical Action Checklist:
                   </h3>
-                  <ul className="space-y-1.5 text-xs text-[#F4F5FF]">
+                  <ul className="space-y-1.5 text-xs text-[#f0f2eb]">
                     {sec.actionSteps.map((step, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-[#52D6B2] font-mono mt-0.5">✓</span>
+                        <span className="text-[#a8db35] font-mono mt-0.5">✓</span>
                         <span>{step}</span>
                       </li>
                     ))}
@@ -225,20 +225,20 @@ export const ArticleDetailPage: React.FC = () => {
 
           {/* Legal Framework Context Box */}
           {article.legalContext && (
-            <Card className="p-5 bg-[#171D35]/90 border border-[#A6AEC8]/20 space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#8B7CFF] uppercase tracking-wider font-mono">
+            <Card className="p-5 bg-[#111716]/90 border border-[rgba(225,239,221,0.20)] space-y-3">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#d5ff54] uppercase tracking-wider font-mono">
                 <FileText className="w-4 h-4" />
                 <span>Statutory Legal Framework (India)</span>
               </div>
-              <h3 className="text-sm font-bold text-[#F4F5FF]">{article.legalContext.act}</h3>
-              <p className="text-xs text-[#A6AEC8] leading-relaxed">
+              <h3 className="text-sm font-bold text-[#f0f2eb]">{article.legalContext.act}</h3>
+              <p className="text-xs text-[#929b93] leading-relaxed">
                 {article.legalContext.description}
               </p>
               <div className="flex flex-wrap gap-2 pt-1">
                 {article.legalContext.sections.map((sec, i) => (
                   <span
                     key={i}
-                    className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-[#080B18] text-[#52D6B2] border border-[#52D6B2]/25 font-semibold"
+                    className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-[#070908] text-[#a8db35] border border-[#a8db35]/25 font-semibold"
                   >
                     {sec}
                   </span>
@@ -248,13 +248,13 @@ export const ArticleDetailPage: React.FC = () => {
           )}
 
           {/* What to do if affected (Direct SafeHER Call to Actions) */}
-          <Card className="p-6 bg-gradient-to-br from-[#171D35] via-[#0D1224] to-[#1D2540] border-[#8B7CFF]/30 space-y-4">
+          <Card className="p-6 bg-gradient-to-br from-[#111716] via-[#0d1110] to-[#111716] border-[#d5ff54]/30 space-y-4">
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-[#F4F5FF] flex items-center gap-2">
-                <Shield className="w-4 h-4 text-[#8B7CFF]" />
+              <h3 className="text-base font-bold text-[#f0f2eb] flex items-center gap-2">
+                <Shield className="w-4 h-4 text-[#d5ff54]" />
                 What to Do If Affected by This Threat
               </h3>
-              <p className="text-xs text-[#A6AEC8]">
+              <p className="text-xs text-[#929b93]">
                 Take immediate structured action using SafeHER’s integrated forensic and legal response tools.
               </p>
             </div>
@@ -272,16 +272,16 @@ export const ArticleDetailPage: React.FC = () => {
 
           {/* Sources and References */}
           {article.sources && article.sources.length > 0 && (
-            <div className="pt-4 border-t border-[#A6AEC8]/15 space-y-2">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#727D9C] block">
+            <div className="pt-4 border-t border-[rgba(225,239,221,0.15)] space-y-2">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-[#929b93] block">
                 Forensic &amp; Legal Citations:
               </span>
-              <ul className="space-y-1 text-xs text-[#A6AEC8]">
+              <ul className="space-y-1 text-xs text-[#929b93]">
                 {article.sources.map((src, i) => (
                   <li key={i} className="flex items-center gap-2">
-                    <span className="font-mono text-[10px] text-[#8B7CFF]">[{i + 1}]</span>
+                    <span className="font-mono text-[10px] text-[#d5ff54]">[{i + 1}]</span>
                     <span>{src.title}</span>
-                    <span className="text-[#727D9C]">({src.organization})</span>
+                    <span className="text-[#929b93]">({src.organization})</span>
                   </li>
                 ))}
               </ul>
@@ -291,8 +291,8 @@ export const ArticleDetailPage: React.FC = () => {
 
         {/* Sticky Table of Contents & Quick Action Sidebar */}
         <div className="lg:col-span-4 sticky top-24 space-y-6">
-          <Card className="p-5 bg-[#171D35]/85 border-[#A6AEC8]/15 space-y-3">
-            <span className="text-xs font-mono uppercase tracking-wider text-[#8B7CFF] font-semibold block">
+          <Card className="p-5 bg-[#111716]/85 border-[rgba(225,239,221,0.15)] space-y-3">
+            <span className="text-xs font-mono uppercase tracking-wider text-[#d5ff54] font-semibold block">
               Table of Contents
             </span>
             <nav className="space-y-1.5 text-xs">
@@ -300,7 +300,7 @@ export const ArticleDetailPage: React.FC = () => {
                 <button
                   key={sec.id}
                   onClick={() => scrollToSection(sec.id)}
-                  className="block text-left text-[#A6AEC8] hover:text-[#8B7CFF] transition-colors py-1 truncate w-full"
+                  className="block text-left text-[#929b93] hover:text-[#d5ff54] transition-colors py-1 truncate w-full"
                 >
                   {sec.title}
                 </button>
@@ -309,8 +309,8 @@ export const ArticleDetailPage: React.FC = () => {
           </Card>
 
           {/* Related Articles Card */}
-          <Card className="p-5 bg-[#171D35]/85 border-[#A6AEC8]/15 space-y-3">
-            <span className="text-xs font-mono uppercase tracking-wider text-[#F4F5FF] font-semibold block">
+          <Card className="p-5 bg-[#111716]/85 border-[rgba(225,239,221,0.15)] space-y-3">
+            <span className="text-xs font-mono uppercase tracking-wider text-[#f0f2eb] font-semibold block">
               Related Research
             </span>
             <div className="space-y-3">
@@ -320,10 +320,10 @@ export const ArticleDetailPage: React.FC = () => {
                   to={`/knowledge-hub/${rel.slug}`}
                   className="block group"
                 >
-                  <p className="text-xs font-semibold text-[#F4F5FF] group-hover:text-[#8B7CFF] transition-colors line-clamp-2">
+                  <p className="text-xs font-semibold text-[#f0f2eb] group-hover:text-[#d5ff54] transition-colors line-clamp-2">
                     {rel.title}
                   </p>
-                  <span className="text-[10px] font-mono text-[#727D9C]">
+                  <span className="text-[10px] font-mono text-[#929b93]">
                     {rel.categoryLabel} • {rel.readingTime}
                   </span>
                 </Link>

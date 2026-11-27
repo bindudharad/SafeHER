@@ -99,7 +99,7 @@ export const RiskCoverageGrid: React.FC = () => {
               className={`${strokeClass} ${isHovered ? 'animate-[dotPop_0.6s_ease-out_forwards]' : ''}`}
               strokeWidth="2"
             />
-            <circle cx="60" cy="60" r="4" fill="#8B7CFF" />
+            <circle cx="60" cy="60" r="4" fill="#d5ff54" />
           </svg>
         )
 
@@ -122,7 +122,7 @@ export const RiskCoverageGrid: React.FC = () => {
             <line x1="20" y1="42" x2="100" y2="88" className={strokeClass} strokeWidth="1.2" strokeDasharray="3 3" />
             <line x1="100" y1="42" x2="20" y2="88" className={strokeClass} strokeWidth="1.2" strokeDasharray="3 3" />
             <circle cx="60" cy="64" r="18" className={strokeClass} strokeWidth="1.8" />
-            <circle cx="60" cy="64" r="5" fill="#8B7CFF" />
+            <circle cx="60" cy="64" r="5" fill="#d5ff54" />
           </svg>
         )
 
@@ -150,7 +150,7 @@ export const RiskCoverageGrid: React.FC = () => {
             <line x1="36" y1="48" x2="84" y2="48" className={strokeClass} strokeWidth="1.4" />
             <line x1="36" y1="62" x2="72" y2="62" className={strokeClass} strokeWidth="1.4" />
             <line x1="36" y1="76" x2="58" y2="76" className={strokeClass} strokeWidth="1.4" />
-            <circle cx="82" cy="76" r="6" stroke="#8B7CFF" strokeWidth="2" fill="#8B7CFF22" />
+            <circle cx="82" cy="76" r="6" stroke="#d5ff54" strokeWidth="2" fill="#d5ff5422" />
           </svg>
         )
 
@@ -190,7 +190,7 @@ export const RiskCoverageGrid: React.FC = () => {
               strokeWidth="1.8"
             />
             <circle cx="60" cy="66" r="16" className={strokeClass} strokeWidth="1.8" />
-            <circle cx="60" cy="66" r="5" fill="#8B7CFF" />
+            <circle cx="60" cy="66" r="5" fill="#d5ff54" />
             <line x1="60" y1="32" x2="60" y2="44" className={strokeClass} strokeWidth="2" />
           </svg>
         )
@@ -224,7 +224,7 @@ export const RiskCoverageGrid: React.FC = () => {
                 onMouseEnter={() => setActiveCard(card.id)}
                 onMouseLeave={() => setActiveCard(null)}
                 onClick={() => setActiveCard(activeCard === card.id ? null : card.id)}
-                className={`relative rounded-2xl bg-[#050505] border transition-all duration-300 p-6 flex flex-col justify-between cursor-pointer group ${
+                className={`relative rounded-2xl bg-[#070908] border transition-all duration-300 p-6 flex flex-col justify-between cursor-pointer group ${
                   isHovered
                     ? 'border-zcyan/80 -translate-y-2 shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_35px_rgba(0,212,255,0.25)]'
                     : 'border-zcyan/20 hover:border-zcyan/40 shadow-[0_15px_35px_rgba(0,0,0,0.7)]'

@@ -101,42 +101,42 @@ export const ReportingAssistantPage: React.FC = () => {
   return (
     <div className="space-y-8 text-left max-w-7xl mx-auto pb-12">
       {/* 1. ASSISTANT COMMAND HEADER */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#171D35] via-[#0D1224] to-[#080B18] border border-[#A6AEC8]/18 rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
-        <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 bg-[#8B7CFF]/10 rounded-full blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 bg-[#52D6B2]/10 rounded-full blur-3xl" />
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#111716] via-[#0d1110] to-[#070908] border border-[rgba(225,239,221,0.16)] rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+        <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 bg-[#d5ff54]/10 rounded-full blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 bg-[#a8db35]/10 rounded-full blur-3xl" />
 
-        <div className="relative z-10 space-y-2 pb-6 border-b border-[#A6AEC8]/15">
+        <div className="relative z-10 space-y-2 pb-6 border-b border-[rgba(225,239,221,0.15)]">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#8B7CFF] uppercase tracking-wider px-3 py-1 rounded-full bg-[#8B7CFF]/10 border border-[#8B7CFF]/25">
+            <span className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#d5ff54] uppercase tracking-wider px-3 py-1 rounded-full bg-[#d5ff54]/10 border border-[#d5ff54]/25">
               <Globe className="w-3.5 h-3.5" />
               {t.reporting.title}
             </span>
-            <span className="text-xs text-[#52D6B2] font-mono flex items-center gap-1.5 bg-[#52D6B2]/10 px-2.5 py-0.5 rounded-full border border-[#52D6B2]/20">
+            <span className="text-xs text-[#a8db35] font-mono flex items-center gap-1.5 bg-[#a8db35]/10 px-2.5 py-0.5 rounded-full border border-[#a8db35]/20">
               <ShieldCheck className="w-3.5 h-3.5" />
               Verified Jurisdictions
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F4F5FF] tracking-tight">
+          <h1 className="font-display text-3xl sm:text-4xl uppercase font-extrabold text-[#f0f2eb] tracking-[0.02em]">
             Official Grievance &amp; Law Enforcement Direct Channels
           </h1>
-          <p className="text-xs sm:text-sm text-[#A6AEC8] max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#929b93] max-w-2xl leading-relaxed">
             {t.reporting.subtitle}
           </p>
         </div>
 
         {/* OFFICIAL PROTOCOL NOTICE */}
-        <div className="relative z-10 pt-6 flex items-start gap-4 text-xs text-[#A6AEC8]">
-          <div className="w-9 h-9 rounded-xl bg-[#8B7CFF]/10 border border-[#8B7CFF]/30 flex items-center justify-center shrink-0 text-[#8B7CFF]">
+        <div className="relative z-10 pt-6 flex items-start gap-4 text-xs text-[#929b93]">
+          <div className="w-9 h-9 rounded-xl bg-[#d5ff54]/10 border border-[#d5ff54]/30 flex items-center justify-center shrink-0 text-[#d5ff54]">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <h3 className="font-bold text-[#F4F5FF]">Official Channel Integrity &amp; Direct Jurisdiction</h3>
-              <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-[#52D6B2]/10 text-[#52D6B2] border border-[#52D6B2]/25">
+              <h3 className="font-bold text-[#f0f2eb]">Official Channel Integrity &amp; Direct Jurisdiction</h3>
+              <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-[#a8db35]/10 text-[#a8db35] border border-[#a8db35]/25">
                 Verified Portals
               </span>
             </div>
-            <p className="text-[#A6AEC8] leading-relaxed text-[11.5px] max-w-3xl">
+            <p className="text-[#929b93] leading-relaxed text-[11.5px] max-w-3xl">
               Every destination listed below has been verified as an official law enforcement portal or legitimate platform grievance mechanism. SafeHER never submits reports automatically on your behalf; you navigate directly to the verified portal and retain full sovereignty over your filings.
             </p>
           </div>
@@ -156,8 +156,8 @@ export const ReportingAssistantPage: React.FC = () => {
             onClick={() => setFilterCategory(f.id)}
             className={`px-4 py-2 rounded-xl font-medium transition-all shrink-0 ${
               filterCategory === f.id
-                ? 'bg-[#8B7CFF]/15 text-[#8B7CFF] border border-[#8B7CFF]/35 font-semibold shadow-md'
-                : 'bg-[#171D35]/85 text-[#A6AEC8] border border-[#A6AEC8]/15 hover:text-[#F4F5FF]'
+                ? 'bg-[#d5ff54]/15 text-[#d5ff54] border border-[#d5ff54]/35 font-semibold shadow-md'
+                : 'bg-[#111716]/85 text-[#929b93] border border-[rgba(225,239,221,0.15)] hover:text-[#f0f2eb]'
             }`}
           >
             {f.label}
@@ -173,27 +173,27 @@ export const ReportingAssistantPage: React.FC = () => {
             className="p-6 sm:p-7 flex flex-col justify-between space-y-6"
           >
             <div className="space-y-4">
-              <div className="flex items-start justify-between gap-3 pb-3 border-b border-[#A6AEC8]/10">
+              <div className="flex items-start justify-between gap-3 pb-3 border-b border-[rgba(225,239,221,0.10)]">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8B7CFF] font-mono">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#d5ff54] font-mono">
                     {dest.category.replace('_', ' ')}
                   </span>
-                  <h3 className="text-base sm:text-lg font-bold text-[#F4F5FF]">{dest.name}</h3>
-                  <p className="text-xs text-[#A6AEC8] font-medium">{dest.platform}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-[#f0f2eb]">{dest.name}</h3>
+                  <p className="text-xs text-[#929b93] font-medium">{dest.platform}</p>
                 </div>
                 <Badge variant="safe" size="sm" dot>
                   VERIFIED
                 </Badge>
               </div>
 
-              <p className="text-xs text-[#A6AEC8] leading-relaxed">{dest.description}</p>
+              <p className="text-xs text-[#929b93] leading-relaxed">{dest.description}</p>
 
               {/* Instructions List */}
-              <div className="space-y-2 bg-[#0D1224] p-4 rounded-2xl border border-[#A6AEC8]/15 text-xs">
-                <span className="font-bold text-[#F4F5FF] block uppercase tracking-wider text-[11px]">
+              <div className="space-y-2 bg-[#0d1110] p-4 rounded-2xl border border-[rgba(225,239,221,0.15)] text-xs">
+                <span className="font-bold text-[#f0f2eb] block uppercase tracking-wider text-[11px]">
                   Official Submission Steps:
                 </span>
-                <ol className="list-decimal pl-4 space-y-1.5 text-xs text-[#A6AEC8]">
+                <ol className="list-decimal pl-4 space-y-1.5 text-xs text-[#929b93]">
                   {dest.instructions.map((inst, i) => (
                     <li key={i} className="leading-relaxed">{inst}</li>
                   ))}
@@ -202,10 +202,10 @@ export const ReportingAssistantPage: React.FC = () => {
 
               {/* Required Materials */}
               <div className="space-y-1.5 pt-1">
-                <span className="text-[11px] font-semibold text-[#727D9C] uppercase tracking-wider block">
+                <span className="text-[11px] font-semibold text-[#929b93] uppercase tracking-wider block">
                   Required Materials to Attach:
                 </span>
-                <ul className="list-disc pl-4 space-y-0.5 text-xs text-[#A6AEC8]">
+                <ul className="list-disc pl-4 space-y-0.5 text-xs text-[#929b93]">
                   {dest.required_materials.map((mat, i) => (
                     <li key={i}>{mat}</li>
                   ))}
@@ -213,12 +213,12 @@ export const ReportingAssistantPage: React.FC = () => {
               </div>
 
               {dest.helpline_number && (
-                <div className="p-3.5 rounded-2xl bg-[#0D1224] border border-[#52D6B2]/25 flex items-center justify-between text-xs text-[#52D6B2]">
+                <div className="p-3.5 rounded-2xl bg-[#0d1110] border border-[#a8db35]/25 flex items-center justify-between text-xs text-[#a8db35]">
                   <div className="flex items-center gap-2">
-                    <PhoneCall className="w-4 h-4 text-[#52D6B2]" />
+                    <PhoneCall className="w-4 h-4 text-[#a8db35]" />
                     <span className="font-medium">Direct Citizen Hotline:</span>
                   </div>
-                  <a href={`tel:${dest.helpline_number}`} className="font-mono text-sm font-bold text-[#F4F5FF] hover:underline">
+                  <a href={`tel:${dest.helpline_number}`} className="font-mono text-sm font-bold text-[#f0f2eb] hover:underline">
                     {dest.helpline_number}
                   </a>
                 </div>
@@ -226,7 +226,7 @@ export const ReportingAssistantPage: React.FC = () => {
             </div>
 
             {/* Action Bar */}
-            <div className="flex items-center gap-3 pt-4 border-t border-[#A6AEC8]/15">
+            <div className="flex items-center gap-3 pt-4 border-t border-[rgba(225,239,221,0.15)]">
               <a
                 href={dest.official_url}
                 target="_blank"
@@ -246,7 +246,7 @@ export const ReportingAssistantPage: React.FC = () => {
                 variant="secondary"
                 size="sm"
                 onClick={() => handleOpenRecordModal(dest)}
-                leftIcon={<PlusCircle className="w-3.5 h-3.5 text-[#8B7CFF]" />}
+                leftIcon={<PlusCircle className="w-3.5 h-3.5 text-[#d5ff54]" />}
               >
                 Record Reference
               </Button>
@@ -265,13 +265,13 @@ export const ReportingAssistantPage: React.FC = () => {
         {selectedDestination && (
           <form onSubmit={handleSaveRecord} className="space-y-4">
             <div className="space-y-1.5 text-left">
-              <label className="text-xs font-semibold text-[#F4F5FF]">
+              <label className="text-xs font-semibold text-[#f0f2eb]">
                 Associated Incident Record *
               </label>
               <select
                 value={recordIncidentId}
                 onChange={(e) => setRecordIncidentId(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[#0D1224] border border-[#A6AEC8]/20 rounded-xl text-xs text-[#F4F5FF] focus:outline-none focus:border-[#8B7CFF]/60 transition-colors"
+                className="w-full px-3.5 py-2.5 bg-[#0d1110] border border-[rgba(225,239,221,0.20)] rounded-xl text-xs text-[#f0f2eb] focus:outline-none focus:border-[#d5ff54]/60 transition-colors"
                 required
               >
                 {incidents.map((i) => (
@@ -308,7 +308,7 @@ export const ReportingAssistantPage: React.FC = () => {
             </div>
 
             <div className="space-y-1.5 text-left">
-              <label className="text-xs font-semibold text-[#F4F5FF]">
+              <label className="text-xs font-semibold text-[#f0f2eb]">
                 Submission Notes / Officer Details
               </label>
               <textarea
@@ -316,11 +316,11 @@ export const ReportingAssistantPage: React.FC = () => {
                 onChange={(e) => setRecordNotes(e.target.value)}
                 rows={2}
                 placeholder="e.g., Filed under Women & Child category; police station assigned is Cyber Crime North."
-                className="w-full px-3.5 py-2.5 bg-[#0D1224] border border-[#A6AEC8]/20 rounded-xl text-xs text-[#F4F5FF] placeholder-[#727D9C] focus:outline-none focus:border-[#8B7CFF]/60 transition-colors"
+                className="w-full px-3.5 py-2.5 bg-[#0d1110] border border-[rgba(225,239,221,0.20)] rounded-xl text-xs text-[#f0f2eb] placeholder-[#929b93] focus:outline-none focus:border-[#d5ff54]/60 transition-colors"
               />
             </div>
 
-            <div className="flex justify-end gap-2 pt-4 border-t border-[#A6AEC8]/15">
+            <div className="flex justify-end gap-2 pt-4 border-t border-[rgba(225,239,221,0.15)]">
               <Button type="button" variant="ghost" size="sm" onClick={() => setIsRecordModalOpen(false)}>
                 Cancel
               </Button>

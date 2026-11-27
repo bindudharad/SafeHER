@@ -6,12 +6,12 @@ export const TechnicalPaperCard: React.FC = () => {
   return (
     <section id="technical-whitepaper" className="py-24 sm:py-32 bg-black text-left">
       <div className="container max-w-[1360px] mx-auto px-4 sm:px-8">
-        <div className="card-zsure p-8 sm:p-12 lg:p-16 border-zcyan/40 bg-gradient-to-br from-[#060910] via-black to-[#050505] shadow-[0_24px_80px_rgba(0,0,0,0.95),0_0_60px_rgba(0,212,255,0.18)]">
+        <div className="card-safeher p-8 sm:p-12 lg:p-16 border-zcyan/40 bg-gradient-to-br from-[#070908] via-black to-[#070908] shadow-[0_24px_80px_rgba(0,0,0,0.95),0_0_60px_rgba(0,212,255,0.18)]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             {/* Left Column: 3D-Angled White Paper Booklet Mockup */}
             <div className="lg:col-span-5 flex justify-center">
               <div
-                className="relative w-full max-w-[340px] aspect-[1/1.35] rounded-2xl bg-[#03060C] border border-zcyan/40 p-8 shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(0,212,255,0.2)] transition-all duration-500 hover:scale-105 hover:border-zcyan hover:shadow-[0_30px_70px_rgba(0,0,0,1),0_0_50px_rgba(0,212,255,0.35)] flex flex-col justify-between group overflow-hidden"
+                className="relative w-full max-w-[340px] aspect-[1/1.35] rounded-2xl bg-[#070908] border border-zcyan/40 p-8 shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(0,212,255,0.2)] transition-all duration-500 hover:scale-105 hover:border-zcyan hover:shadow-[0_30px_70px_rgba(0,0,0,1),0_0_50px_rgba(0,212,255,0.35)] flex flex-col justify-between group overflow-hidden"
                 style={{
                   transform: 'perspective(1000px) rotateY(-8deg) rotateX(4deg)',
                 }}
@@ -20,7 +20,7 @@ export const TechnicalPaperCard: React.FC = () => {
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(0,212,255,0.12),transparent_70%)] pointer-events-none" />
 
                 <div className="relative z-10">
-                  <div className="flex items-center justify-between font-mono text-[11px] text-slate-400 tracking-widest uppercase mb-12">
+                  <div className="flex items-center justify-between font-mono text-[11px] text-[#929b93] tracking-widest uppercase mb-12">
                     <span>WHITE PAPER</span>
                     <span className="text-zcyan">2026 ED.</span>
                   </div>
@@ -36,10 +36,10 @@ export const TechnicalPaperCard: React.FC = () => {
                 {/* Monogram Emblem */}
                 <div className="relative z-10 border-t border-white/10 pt-6 flex items-end justify-between">
                   <div>
-                    <div className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-zcyan group-hover:drop-shadow-[0_0_12px_#8B7CFF] transition-all">
+                    <div className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-zcyan group-hover:drop-shadow-[0_0_12px_#d5ff54] transition-all">
                       SH
                     </div>
-                    <div className="font-mono text-[10px] text-slate-400 uppercase tracking-widest">
+                    <div className="font-mono text-[10px] text-[#929b93] uppercase tracking-widest">
                       SAFEHER DEFENSE
                     </div>
                   </div>
@@ -105,7 +105,7 @@ export const TechnicalPaperCard: React.FC = () => {
                   </button>
                 </Link>
 
-                <span className="font-mono text-xs text-slate-400 pl-2">
+                <span className="font-mono text-xs text-[#929b93] pl-2">
                   PDF • 16 PAGES • HACKATHON EDITION
                 </span>
               </div>

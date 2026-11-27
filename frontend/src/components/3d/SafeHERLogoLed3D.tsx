@@ -99,7 +99,7 @@ export const SafeHERLogoLed3D: React.FC<SafeHERLogoLed3DProps> = ({ className = 
         aria-hidden="true"
       >
         <span
-          className="font-display font-extrabold uppercase tracking-[0.22em] sm:tracking-[0.28em] text-[3.2rem] sm:text-[6.2rem] md:text-[8.2rem] lg:text-[9.8rem] leading-none whitespace-nowrap text-[#8B7CFF]/[0.11] animate-[pulse_7s_ease-in-out_infinite] motion-reduce:animate-none"
+          className="font-display font-extrabold uppercase tracking-[0.22em] sm:tracking-[0.28em] text-[3.2rem] sm:text-[6.2rem] md:text-[8.2rem] lg:text-[9.8rem] leading-none whitespace-nowrap text-[#d5ff54]/[0.11] animate-[pulse_7s_ease-in-out_infinite] motion-reduce:animate-none"
           style={{
             textShadow: '0 0 38px rgba(139, 124, 255, 0.24), 0 0 12px rgba(85, 214, 232, 0.12)',
             WebkitTextStroke: '1px rgba(169, 155, 255, 0.14)',
@@ -142,14 +142,14 @@ export const SafeHERLogoLed3D: React.FC<SafeHERLogoLed3DProps> = ({ className = 
         >
           <defs>
             <linearGradient id="led-violet-trail" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#8B7CFF" stopOpacity="0" />
-              <stop offset="55%" stopColor="#8B7CFF" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#F4F5FF" stopOpacity="1" />
+              <stop offset="0%" stopColor="#d5ff54" stopOpacity="0" />
+              <stop offset="55%" stopColor="#d5ff54" stopOpacity="0.95" />
+              <stop offset="100%" stopColor="#f0f2eb" stopOpacity="1" />
             </linearGradient>
             <linearGradient id="led-cyan-trail" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#55D6E8" stopOpacity="0" />
-              <stop offset="65%" stopColor="#55D6E8" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#52D6B2" stopOpacity="0.95" />
+              <stop offset="0%" stopColor="#d5ff54" stopOpacity="0" />
+              <stop offset="65%" stopColor="#d5ff54" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#a8db35" stopOpacity="0.95" />
             </linearGradient>
           </defs>
 
@@ -159,7 +159,7 @@ export const SafeHERLogoLed3D: React.FC<SafeHERLogoLed3DProps> = ({ className = 
             cy="160"
             r="128"
             fill="none"
-            stroke="#8B7CFF"
+            stroke="#d5ff54"
             strokeOpacity="0.28"
             strokeWidth="1.5"
             strokeDasharray="6 10"
@@ -172,7 +172,7 @@ export const SafeHERLogoLed3D: React.FC<SafeHERLogoLed3DProps> = ({ className = 
             cy="160"
             r="116"
             fill="none"
-            stroke="#8B7CFF"
+            stroke="#d5ff54"
             strokeOpacity="0.24"
             strokeWidth="1.2"
           />
@@ -195,7 +195,7 @@ export const SafeHERLogoLed3D: React.FC<SafeHERLogoLed3DProps> = ({ className = 
             cy="160"
             r="96"
             fill="none"
-            stroke="#8B7CFF"
+            stroke="#d5ff54"
             strokeOpacity="0.38"
             strokeWidth="2.2"
           />
@@ -230,7 +230,7 @@ export const SafeHERLogoLed3D: React.FC<SafeHERLogoLed3DProps> = ({ className = 
             cy="160"
             r="79"
             fill="none"
-            stroke="#55D6E8"
+            stroke="#d5ff54"
             strokeOpacity="0.28"
             strokeWidth="1.5"
           />
@@ -259,7 +259,7 @@ export const SafeHERLogoLed3D: React.FC<SafeHERLogoLed3DProps> = ({ className = 
         }}
       >
         {/* 3D Metallic Medallion Rim */}
-        <div className="relative rounded-full bg-[#0D1224] p-1.5 shadow-[inset_0_2px_6px_rgba(244,245,255,0.28),inset_0_-3px_8px_rgba(8,11,24,0.9)]">
+        <div className="relative rounded-full bg-[#0d1110] p-1.5 shadow-[inset_0_2px_6px_rgba(244,245,255,0.28),inset_0_-3px_8px_rgba(8,11,24,0.9)]">
           <img
             src={SAFEHER_LOGO_SRC}
             alt="SafeHER Official Shield Emblem"

@@ -42,28 +42,27 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const getIcon = (type: ToastType) => {
     switch (type) {
       case 'success':
-        return <CheckCircle2 className="w-5 h-5 text-safe-light shrink-0" />
+        return <CheckCircle2 className="w-4 h-4 text-[#d5ff54] shrink-0 mt-0.5" />
       case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-warning-light shrink-0" />
+        return <AlertTriangle className="w-4 h-4 text-[#ff927e] shrink-0 mt-0.5" />
       case 'error':
-        return <AlertCircle className="w-5 h-5 text-critical-light shrink-0" />
+        return <AlertCircle className="w-4 h-4 text-[#ff927e] shrink-0 mt-0.5" />
       case 'info':
       default:
-        return <Info className="w-5 h-5 text-primary-light shrink-0" />
+        return <Info className="w-4 h-4 text-[#a8db35] shrink-0 mt-0.5" />
     }
   }
 
   const getBorderColor = (type: ToastType) => {
     switch (type) {
       case 'success':
-        return 'border-safe/40 bg-surface-card'
+        return 'border-[#d5ff54]/50 bg-[#0d1110]/95'
       case 'warning':
-        return 'border-warning/40 bg-surface-card'
       case 'error':
-        return 'border-critical/40 bg-surface-card'
+        return 'border-[#ff927e]/55 bg-[#0d1110]/95'
       case 'info':
       default:
-        return 'border-primary/40 bg-surface-card'
+        return 'border-[rgba(225,239,221,0.22)] bg-[#0d1110]/95'
     }
   }
 
@@ -79,7 +78,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           <div
             key={toast.id}
             role="status"
-            className={`pointer-events-auto flex items-start gap-3 p-4 rounded-xl border shadow-glass backdrop-blur-md transition-all duration-300 animate-slide-in text-sm text-slate-100 ${getBorderColor(
+            className={`pointer-events-auto flex items-start gap-3 p-4 rounded-[4px] border shadow-glass backdrop-blur-md transition-all duration-300 text-xs font-sans text-[#f0f2eb] ${getBorderColor(
               toast.type
             )}`}
           >
@@ -87,7 +86,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             <p className="flex-1 font-medium leading-relaxed">{toast.text}</p>
             <button
               onClick={() => removeToast(toast.id)}
-              className="text-slate-400 hover:text-slate-200 transition-colors"
+              className="text-[#929b93] hover:text-[#d5ff54] transition-colors"
               aria-label="Close notification"
             >
               <X className="w-4 h-4" />

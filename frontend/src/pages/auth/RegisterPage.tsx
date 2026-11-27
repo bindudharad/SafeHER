@@ -59,10 +59,10 @@ export const RegisterPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#080B18] flex flex-col justify-between p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-[#070908] safeher-grid-bg text-[#f0f2eb] flex flex-col justify-between p-4 sm:p-6 lg:p-8 selection:bg-[#d5ff54] selection:text-[#080a08]">
       {/* Top Bar with Quick Exit */}
       <div className="w-full max-w-5xl mx-auto flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
+        <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
           <div
             ref={registerLogoTarget}
             data-safeher-logo-target="register"
@@ -71,26 +71,35 @@ export const RegisterPage: React.FC = () => {
           >
             <SafeHERLogo size="sm" />
           </div>
-          <span className="font-bold text-base text-[#F4F5FF]">SafeHER</span>
+          <div>
+            <span className="font-display font-extrabold text-xl tracking-[0.06em] uppercase text-[#f0f2eb] leading-none block">
+              SAFEHER
+            </span>
+            <span className="font-mono text-[8px] uppercase tracking-[0.16em] text-[#929b93] block mt-0.5">
+              PERSONAL SAFETY SYSTEM
+            </span>
+          </div>
         </Link>
         <QuickExitButton />
       </div>
 
       {/* Main Registration Card */}
       <div className="w-full max-w-lg mx-auto my-6">
-        <div className="bg-[#171D35]/85 backdrop-blur-md border border-[#A6AEC8]/15 rounded-3xl p-6 sm:p-8 shadow-glass text-left">
+        <div className="bg-[#0d1110]/95 backdrop-blur-md border border-[rgba(225,239,221,0.15)] rounded-[4px] p-6 sm:p-8 shadow-glass text-left">
           <div className="flex flex-col items-center text-center mb-6">
             <SafeHERLogo size="xl" animate className="mb-4" />
-            <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-[#8B7CFF] bg-[#8B7CFF]/10 border border-[#8B7CFF]/25 px-2.5 py-0.5 rounded-full mb-2">
+            <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.16em] text-[#d5ff54] bg-[rgba(213,255,84,0.08)] border border-[rgba(213,255,84,0.28)] px-2.5 py-0.5 rounded-[3px] mb-3">
               <UserPlus className="w-3 h-3" />
               <span>Protected Account</span>
             </div>
-            <h1 className="text-xl font-bold text-[#F4F5FF]">{t.auth.register}</h1>
-            <p className="text-xs text-[#A6AEC8] mt-1 max-w-sm">{t.auth.subtitle}</p>
+            <h1 className="font-display text-3xl uppercase tracking-[0.02em] font-bold text-[#f0f2eb]">
+              {t.auth.register}
+            </h1>
+            <p className="text-xs text-[#929b93] mt-1 max-w-sm">{t.auth.subtitle}</p>
           </div>
 
           {error && (
-            <div className="mb-5 p-3 rounded-xl bg-[#FF718A]/10 border border-[#FF718A]/30 flex items-start gap-2.5 text-xs text-[#FF718A]">
+            <div className="mb-5 p-3 rounded-[4px] bg-[rgba(255,146,126,0.1)] border border-[rgba(255,146,126,0.35)] flex items-start gap-2.5 text-xs text-[#ff927e]">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -136,12 +145,12 @@ export const RegisterPage: React.FC = () => {
             </div>
 
             {/* Consent and Privacy Explanation Banner */}
-            <div className="p-3.5 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 text-left space-y-2">
-              <div className="flex items-center gap-2 text-[#52D6B2] text-xs font-semibold">
+            <div className="p-3.5 bg-[#111716] rounded-[4px] border border-[rgba(225,239,221,0.15)] text-left space-y-2">
+              <div className="flex items-center gap-2 text-[#a8db35] text-xs font-semibold">
                 <ShieldCheck className="w-4 h-4 shrink-0" />
-                <span>Zero-Knowledge & User-Controlled Privacy</span>
+                <span>Zero-Knowledge &amp; User-Controlled Privacy</span>
               </div>
-              <p className="text-[11px] text-[#A6AEC8] leading-relaxed">
+              <p className="text-[11px] text-[#929b93] leading-relaxed">
                 {t.auth.consentNotice}
               </p>
               <label className="flex items-start gap-2.5 pt-1 cursor-pointer select-none">
@@ -149,10 +158,10 @@ export const RegisterPage: React.FC = () => {
                   type="checkbox"
                   checked={consentAcknowledged}
                   onChange={(e) => setConsentAcknowledged(e.target.checked)}
-                  className="mt-0.5 rounded border-[#A6AEC8]/30 bg-[#080B18] text-[#8B7CFF] focus:ring-[#8B7CFF]/40 focus:ring-offset-background"
+                  className="mt-0.5 rounded-[2px] border-[rgba(225,239,221,0.3)] bg-[#070908] text-[#d5ff54] focus:ring-[#d5ff54]/40 focus:ring-offset-background"
                   required
                 />
-                <span className="text-xs text-[#F4F5FF] font-medium leading-tight">
+                <span className="text-xs text-[#f0f2eb] font-medium leading-tight">
                   {t.auth.consentCheckbox}
                 </span>
               </label>
@@ -173,7 +182,7 @@ export const RegisterPage: React.FC = () => {
           <div className="mt-4 text-center">
             <Link
               to="/login"
-              className="text-xs text-[#8B7CFF] hover:text-[#A99BFF] transition-colors font-medium"
+              className="text-xs text-[#d5ff54] hover:text-[#e2ff84] transition-colors font-medium"
             >
               {t.auth.haveAccount}
             </Link>
@@ -181,9 +190,9 @@ export const RegisterPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="text-center text-[11px] text-[#727D9C] max-w-md mx-auto">
+      <div className="text-center text-[11px] font-mono text-[#929b93] max-w-md mx-auto">
         Your safety is paramount. You can exit anytime by clicking Quick Exit or pressing{' '}
-        <kbd className="px-1.5 py-0.5 rounded bg-[#0D1224] border border-[#A6AEC8]/20 text-[#F4F5FF]">
+        <kbd className="px-1.5 py-0.5 rounded-[3px] bg-[#111716] border border-[rgba(225,239,221,0.2)] text-[#f0f2eb]">
           Alt + Q
         </kbd>
         .

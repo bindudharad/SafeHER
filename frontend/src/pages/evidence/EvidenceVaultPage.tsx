@@ -33,6 +33,7 @@ import { apiClient } from '../../services/api/client'
 import type { Evidence, Incident } from '../../types'
 import { Button } from '../../components/common/Button'
 import { Badge } from '../../components/common/Badge'
+import { Interactive3DSurface } from '../../components/ui/Interactive3DSurface'
 import { Modal } from '../../components/common/Modal'
 import { PageHeader } from '../../components/layout/PageHeader'
 import { EvidenceDropzone } from '../../components/evidence/EvidenceDropzone'
@@ -166,26 +167,30 @@ export const EvidenceVaultPage: React.FC = () => {
   return (
     <div className="space-y-8 text-left max-w-7xl mx-auto pb-12">
       {/* 1. VAULT COCKPIT HEADER WITH INTEGRATED CUSTODY METRICS */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#171D35] via-[#0D1224] to-[#080B18] border border-[#A6AEC8]/18 rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
-        <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 bg-[#8B7CFF]/10 rounded-full blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 bg-[#52D6B2]/10 rounded-full blur-3xl" />
+      <Interactive3DSurface
+        intensity={2.2}
+        elevateZ={4}
+        className="relative bg-gradient-to-br from-[#111716] via-[#0d1110] to-[#070908] border border-[rgba(225,239,221,0.16)] rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
+      >
+        <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 bg-[#d5ff54]/10 rounded-full blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 bg-[#a8db35]/10 rounded-full blur-3xl" />
 
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-[#A6AEC8]/15">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-[rgba(225,239,221,0.15)]">
           <div className="space-y-2">
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#8B7CFF] uppercase tracking-wider px-3 py-1 rounded-full bg-[#8B7CFF]/10 border border-[#8B7CFF]/25">
+              <span className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#d5ff54] uppercase tracking-wider px-3 py-1 rounded-full bg-[#d5ff54]/10 border border-[#d5ff54]/25">
                 <HardDrive className="w-3.5 h-3.5" />
                 Digital Evidence Vault
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-[#52D6B2]/10 text-[#52D6B2] border border-[#52D6B2]/25">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#52D6B2]" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-[#a8db35]/10 text-[#a8db35] border border-[#a8db35]/25">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#a8db35]" />
                 100% Hash Verified
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F4F5FF] tracking-tight">
+            <h1 className="font-display text-3xl sm:text-4xl uppercase font-extrabold text-[#f0f2eb] tracking-[0.02em]">
               Cryptographic Digital Evidence Custody
             </h1>
-            <p className="text-xs sm:text-sm text-[#A6AEC8] max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#929b93] max-w-2xl leading-relaxed">
               Tamper-evident evidence preservation repository. Calculates SHA-256 digital digests client-side before storage to satisfy Indian Evidence Act Section 65B requirements.
             </p>
           </div>
@@ -200,7 +205,7 @@ export const EvidenceVaultPage: React.FC = () => {
               Upload Evidence
             </Button>
             <Link to="/detect">
-              <Button variant="secondary" size="md" leftIcon={<Cpu className="w-4 h-4 text-[#8B7CFF]" />}>
+              <Button variant="secondary" size="md" leftIcon={<Cpu className="w-4 h-4 text-[#d5ff54]" />}>
                 Screen in Detect
               </Button>
             </Link>
@@ -208,59 +213,59 @@ export const EvidenceVaultPage: React.FC = () => {
         </div>
 
         {/* CUSTODY CONSOLE STRIP */}
-        <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-[#A6AEC8]/15 pt-6 text-left">
+        <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-[#929b93]/15 pt-6 text-left">
           <div className="pr-4 pb-4 lg:pb-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Preserved Files</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Preserved Files</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-extrabold font-mono text-[#F4F5FF]">{evidenceList.length}</span>
-              <span className="text-xs text-[#52D6B2]">Active Vault</span>
+              <span className="text-3xl font-extrabold font-mono text-[#f0f2eb]">{evidenceList.length}</span>
+              <span className="text-xs text-[#a8db35]">Active Vault</span>
             </div>
-            <p className="text-[11px] text-[#727D9C] mt-1">Immutably indexed media items</p>
+            <p className="text-[11px] text-[#929b93] mt-1">Immutably indexed media items</p>
           </div>
 
           <div className="px-0 sm:px-4 pt-4 lg:pt-0 pb-4 lg:pb-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Hash Integrity</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Hash Integrity</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-extrabold font-mono text-[#8B7CFF]">SHA-256</span>
-              <span className="text-xs text-[#52D6B2]">Verified</span>
+              <span className="text-3xl font-extrabold font-mono text-[#d5ff54]">SHA-256</span>
+              <span className="text-xs text-[#a8db35]">Verified</span>
             </div>
-            <p className="text-[11px] text-[#727D9C] mt-1">NIST-compliant hashing</p>
+            <p className="text-[11px] text-[#929b93] mt-1">NIST-compliant hashing</p>
           </div>
 
           <div className="pr-4 pt-4 lg:pt-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Legal Admissibility</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Legal Admissibility</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-extrabold font-mono text-[#52D6B2]">Sec 65B</span>
-              <span className="text-xs text-[#A6AEC8]">Ready</span>
+              <span className="text-3xl font-extrabold font-mono text-[#a8db35]">Sec 65B</span>
+              <span className="text-xs text-[#929b93]">Ready</span>
             </div>
-            <p className="text-[11px] text-[#727D9C] mt-1">Certificate auto-generation</p>
+            <p className="text-[11px] text-[#929b93] mt-1">Certificate auto-generation</p>
           </div>
 
           <div className="px-0 sm:px-4 pt-4 lg:pt-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Storage Mode</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Storage Mode</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-extrabold font-mono text-[#648BFF]">Local</span>
-              <span className="text-xs text-[#A6AEC8]">Client Digest</span>
+              <span className="text-3xl font-extrabold font-mono text-[#a8db35]">Local</span>
+              <span className="text-xs text-[#929b93]">Client Digest</span>
             </div>
-            <p className="text-[11px] text-[#727D9C] mt-1">Isolated vault custody</p>
+            <p className="text-[11px] text-[#929b93] mt-1">Isolated vault custody</p>
           </div>
         </div>
-      </div>
+      </Interactive3DSurface>
 
       {/* 2. CRYPTOGRAPHIC INTEGRITY NOTICE */}
-      <div className="p-5 bg-[#171D35]/90 border border-[#8B7CFF]/25 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg shadow-[#080B18]/60">
+      <div className="p-5 bg-[#111716]/90 border border-[#d5ff54]/25 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg shadow-[#070908]/60">
         <div className="flex items-start gap-3.5">
-          <div className="w-9 h-9 rounded-xl bg-[#8B7CFF]/15 border border-[#8B7CFF]/30 flex items-center justify-center text-[#8B7CFF] shrink-0 mt-0.5">
+          <div className="w-9 h-9 rounded-xl bg-[#d5ff54]/15 border border-[#d5ff54]/30 flex items-center justify-center text-[#d5ff54] shrink-0 mt-0.5">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-sm font-bold text-[#F4F5FF]">Cryptographic Integrity Notice</h3>
-              <span className="text-[10px] font-mono font-bold text-[#8B7CFF] px-2.5 py-0.5 rounded-full bg-[#8B7CFF]/10 border border-[#8B7CFF]/25">
+              <h3 className="text-sm font-bold text-[#f0f2eb]">Cryptographic Integrity Notice</h3>
+              <span className="text-[10px] font-mono font-bold text-[#d5ff54] px-2.5 py-0.5 rounded-full bg-[#d5ff54]/10 border border-[#d5ff54]/25">
                 SEC 65B INDIAN EVIDENCE ACT COMPLIANT
               </span>
             </div>
-            <p className="text-xs text-[#A6AEC8] leading-relaxed max-w-3xl">
+            <p className="text-xs text-[#929b93] leading-relaxed max-w-3xl">
               SafeHER generates an irreversible cryptographic digest (SHA-256 fingerprint) in your browser before any file is saved. This cryptographic proof establishes an unalterable chain of custody recognized by law enforcement and Indian judicial bodies.
             </p>
           </div>
@@ -268,7 +273,7 @@ export const EvidenceVaultPage: React.FC = () => {
 
         <Link
           to="/knowledge-hub/understanding-deepfakes-legal-rights"
-          className="shrink-0 text-xs text-[#8B7CFF] hover:underline flex items-center gap-1 font-semibold"
+          className="shrink-0 text-xs text-[#d5ff54] hover:underline flex items-center gap-1 font-semibold"
         >
           <span>Legal Guide</span>
           <ChevronRight className="w-4 h-4" />
@@ -276,25 +281,25 @@ export const EvidenceVaultPage: React.FC = () => {
       </div>
 
       {/* 3. SEARCH, FILTER & VIEW TOGGLE BAR */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#171D35]/85 p-4 rounded-2xl border border-[#A6AEC8]/15 shadow-md">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#111716]/85 p-4 rounded-2xl border border-[rgba(225,239,221,0.15)] shadow-md">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-[#A6AEC8] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-4 h-4 text-[#929b93] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by filename or SHA-256..."
-            className="w-full bg-[#0D1224] border border-[#A6AEC8]/20 rounded-xl pl-9 pr-4 py-2 text-xs text-[#F4F5FF] placeholder-[#727D9C] focus:outline-none focus:border-[#8B7CFF]/60 transition-colors font-mono"
+            className="w-full bg-[#0d1110] border border-[rgba(225,239,221,0.20)] rounded-xl pl-9 pr-4 py-2 text-xs text-[#f0f2eb] placeholder-[#929b93] focus:outline-none focus:border-[#d5ff54]/60 transition-colors font-mono"
           />
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap sm:flex-nowrap">
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <Filter className="w-3.5 h-3.5 text-[#A6AEC8] shrink-0" />
+            <Filter className="w-3.5 h-3.5 text-[#929b93] shrink-0" />
             <select
               value={selectedIncidentId}
               onChange={(e) => setSelectedIncidentId(e.target.value)}
-              className="bg-[#0D1224] border border-[#A6AEC8]/20 text-[#F4F5FF] text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#8B7CFF]/60 cursor-pointer"
+              className="bg-[#0d1110] border border-[rgba(225,239,221,0.20)] text-[#f0f2eb] text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#d5ff54]/60 cursor-pointer"
             >
               <option value="all">All Linked Incidents</option>
               {incidents.map((inc) => (
@@ -307,7 +312,7 @@ export const EvidenceVaultPage: React.FC = () => {
             <select
               value={fileTypeFilter}
               onChange={(e) => setFileTypeFilter(e.target.value)}
-              className="bg-[#0D1224] border border-[#A6AEC8]/20 text-[#F4F5FF] text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#8B7CFF]/60 cursor-pointer"
+              className="bg-[#0d1110] border border-[rgba(225,239,221,0.20)] text-[#f0f2eb] text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#d5ff54]/60 cursor-pointer"
             >
               <option value="all">All Formats</option>
               <option value="image">Images (PNG/JPG)</option>
@@ -316,11 +321,11 @@ export const EvidenceVaultPage: React.FC = () => {
             </select>
           </div>
 
-          <div className="flex items-center bg-[#0D1224] border border-[#A6AEC8]/20 rounded-xl p-1 ml-auto sm:ml-0">
+          <div className="flex items-center bg-[#0d1110] border border-[rgba(225,239,221,0.20)] rounded-xl p-1 ml-auto sm:ml-0">
             <button
               onClick={() => setViewMode('table')}
               className={`p-1.5 rounded-lg transition-colors ${
-                viewMode === 'table' ? 'bg-[#8B7CFF]/20 text-[#8B7CFF]' : 'text-[#A6AEC8] hover:text-[#F4F5FF]'
+                viewMode === 'table' ? 'bg-[#d5ff54]/20 text-[#d5ff54]' : 'text-[#929b93] hover:text-[#f0f2eb]'
               }`}
               title="Table View"
               aria-label="Table View"
@@ -330,7 +335,7 @@ export const EvidenceVaultPage: React.FC = () => {
             <button
               onClick={() => setViewMode('grid')}
               className={`p-1.5 rounded-lg transition-colors ${
-                viewMode === 'grid' ? 'bg-[#8B7CFF]/20 text-[#8B7CFF]' : 'text-[#A6AEC8] hover:text-[#F4F5FF]'
+                viewMode === 'grid' ? 'bg-[#d5ff54]/20 text-[#d5ff54]' : 'text-[#929b93] hover:text-[#f0f2eb]'
               }`}
               title="Grid View"
               aria-label="Grid View"
@@ -346,14 +351,14 @@ export const EvidenceVaultPage: React.FC = () => {
         {/* Left Area (8-cols in table mode, or 12-cols if no inspector) */}
         <div className={`${inspectorItem ? 'lg:col-span-8' : 'lg:col-span-12'} space-y-4`}>
           {isLoading ? (
-            <div className="h-64 bg-[#171D35]/80 rounded-2xl animate-pulse" />
+            <div className="h-64 bg-[#111716]/80 rounded-2xl animate-pulse" />
           ) : filteredEvidence.length === 0 ? (
-            <div className="p-12 text-center bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-[#0D1224] border border-[#A6AEC8]/20 flex items-center justify-center mx-auto text-[#8B7CFF]">
+            <div className="p-12 text-center bg-[#111716]/85 border border-[rgba(225,239,221,0.15)] rounded-3xl space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-[#0d1110] border border-[rgba(225,239,221,0.20)] flex items-center justify-center mx-auto text-[#d5ff54]">
                 <HardDrive className="w-6 h-6" />
               </div>
-              <h3 className="text-sm font-semibold text-[#F4F5FF]">No Evidence Items Found</h3>
-              <p className="text-xs text-[#A6AEC8] max-w-sm mx-auto">
+              <h3 className="text-sm font-semibold text-[#f0f2eb]">No Evidence Items Found</h3>
+              <p className="text-xs text-[#929b93] max-w-sm mx-auto">
                 No files match your current search or format filters. Upload evidence to preserve digital proof.
               </p>
               <Button
@@ -367,10 +372,10 @@ export const EvidenceVaultPage: React.FC = () => {
             </div>
           ) : viewMode === 'table' ? (
             /* High-Density Forensic Table */
-            <div className="overflow-hidden bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl shadow-xl">
+            <div className="overflow-hidden bg-[#111716]/85 border border-[rgba(225,239,221,0.15)] rounded-3xl shadow-xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-[#0D1224] text-[#A6AEC8] border-b border-[#A6AEC8]/15 font-mono uppercase text-[10px]">
+                  <thead className="bg-[#0d1110] text-[#929b93] border-b border-[rgba(225,239,221,0.15)] font-mono uppercase text-[10px]">
                     <tr>
                       <th className="py-3 px-4 font-semibold">Evidence File</th>
                       <th className="py-3 px-4 font-semibold">SHA-256 Fingerprint</th>
@@ -379,7 +384,7 @@ export const EvidenceVaultPage: React.FC = () => {
                       <th className="py-3 px-4 font-semibold text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#A6AEC8]/10 text-[#F4F5FF]">
+                  <tbody className="divide-y divide-[#929b93]/10 text-[#f0f2eb]">
                     {filteredEvidence.map((evi) => {
                       const isSelected = inspectorItem?.id === evi.id
                       return (
@@ -387,23 +392,23 @@ export const EvidenceVaultPage: React.FC = () => {
                           key={evi.id}
                           onClick={() => setInspectorItem(evi)}
                           className={`cursor-pointer transition-colors ${
-                            isSelected ? 'bg-[#8B7CFF]/15 border-l-2 border-[#8B7CFF]' : 'hover:bg-[#1D2540]/50'
+                            isSelected ? 'bg-[#d5ff54]/15 border-l-2 border-[#d5ff54]' : 'hover:bg-[#111716]/50'
                           }`}
                         >
                           <td className="py-3.5 px-4">
                             <div className="flex items-center gap-2.5">
-                              <div className="w-8 h-8 rounded-lg bg-[#0D1224] border border-[#A6AEC8]/20 flex items-center justify-center shrink-0">
+                              <div className="w-8 h-8 rounded-lg bg-[#0d1110] border border-[rgba(225,239,221,0.20)] flex items-center justify-center shrink-0">
                                 {evi.file_type.startsWith('image/') ? (
-                                   <ImageIcon className="w-4 h-4 text-[#8B7CFF]" />
+                                   <ImageIcon className="w-4 h-4 text-[#d5ff54]" />
                                 ) : evi.file_type.startsWith('video/') ? (
-                                  <Video className="w-4 h-4 text-[#648BFF]" />
+                                  <Video className="w-4 h-4 text-[#a8db35]" />
                                 ) : (
-                                  <FileText className="w-4 h-4 text-[#52D6B2]" />
+                                  <FileText className="w-4 h-4 text-[#a8db35]" />
                                 )}
                               </div>
                               <div>
-                                <p className="font-semibold text-[#F4F5FF] truncate max-w-[180px]">{evi.original_filename}</p>
-                                <p className="text-[10px] text-[#A6AEC8] font-mono">
+                                <p className="font-semibold text-[#f0f2eb] truncate max-w-[180px]">{evi.original_filename}</p>
+                                <p className="text-[10px] text-[#929b93] font-mono">
                                   {formatBytes(evi.file_size)} • {formatDate(evi.upload_timestamp)}
                                 </p>
                               </div>
@@ -411,26 +416,26 @@ export const EvidenceVaultPage: React.FC = () => {
                           </td>
                           <td className="py-3.5 px-4 font-mono text-[11px]">
                             <div className="flex items-center gap-2">
-                              <span className="text-[#55D6E8] truncate max-w-[130px]">{evi.sha256_hash.slice(0, 16)}...</span>
+                              <span className="text-[#d5ff54] truncate max-w-[130px]">{evi.sha256_hash.slice(0, 16)}...</span>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   copyToClipboard(evi.sha256_hash)
                                 }}
-                                className="p-1 rounded bg-[#0D1224] text-[#A6AEC8] hover:text-[#8B7CFF] transition-colors"
+                                className="p-1 rounded bg-[#0d1110] text-[#929b93] hover:text-[#d5ff54] transition-colors"
                                 title="Copy Full SHA-256"
                               >
                                 {copiedHash === evi.sha256_hash ? (
-                                  <Check className="w-3 h-3 text-[#52D6B2]" />
+                                  <Check className="w-3 h-3 text-[#a8db35]" />
                                 ) : (
                                   <Copy className="w-3 h-3" />
                                 )}
                               </button>
                             </div>
-                            <span className="text-[9px] text-[#727D9C] block mt-0.5">SHA-256 Fingerprint</span>
+                            <span className="text-[9px] text-[#929b93] block mt-0.5">SHA-256 Fingerprint</span>
                           </td>
                           <td className="py-3.5 px-4">
-                            <span className="text-xs text-[#A6AEC8] truncate max-w-[140px] block">
+                            <span className="text-xs text-[#929b93] truncate max-w-[140px] block">
                               {getIncidentTitle(evi.incident_id)}
                             </span>
                           </td>
@@ -447,7 +452,7 @@ export const EvidenceVaultPage: React.FC = () => {
                               </Button>
                               <button
                                 onClick={() => handleDelete(evi.id)}
-                                className="p-1.5 text-[#727D9C] hover:text-[#FF718A] rounded-lg transition-colors"
+                                className="p-1.5 text-[#929b93] hover:text-[#ff927e] rounded-lg transition-colors"
                                 title="Delete"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -481,26 +486,26 @@ export const EvidenceVaultPage: React.FC = () => {
 
         {/* Right Area (4-cols): Interactive Forensic Inspector Panel */}
         {inspectorItem && (
-          <div className="lg:col-span-4 bg-[#171D35]/90 border border-[#A6AEC8]/15 rounded-3xl p-5 space-y-4 shadow-xl sticky top-20">
-            <div className="flex items-center justify-between pb-3 border-b border-[#A6AEC8]/15">
+          <div className="lg:col-span-4 bg-[#111716]/90 border border-[rgba(225,239,221,0.15)] rounded-3xl p-5 space-y-4 shadow-xl sticky top-20">
+            <div className="flex items-center justify-between pb-3 border-b border-[rgba(225,239,221,0.15)]">
               <div className="flex items-center gap-2">
-                <FileCheck2 className="w-4 h-4 text-[#8B7CFF]" />
-                <h3 className="text-xs font-bold text-[#F4F5FF] uppercase tracking-wider">
+                <FileCheck2 className="w-4 h-4 text-[#d5ff54]" />
+                <h3 className="text-xs font-bold text-[#f0f2eb] uppercase tracking-wider">
                   Custody Inspector
                 </h3>
               </div>
               <button
                 onClick={() => setInspectorItem(null)}
-                className="text-[#A6AEC8] hover:text-[#F4F5FF] p-1 rounded-lg"
+                className="text-[#929b93] hover:text-[#f0f2eb] p-1 rounded-lg"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Target File Overview */}
-            <div className="p-3 bg-[#0D1224] rounded-2xl border border-[#A6AEC8]/15 space-y-2">
+            <div className="p-3 bg-[#0d1110] rounded-2xl border border-[rgba(225,239,221,0.15)] space-y-2">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#080B18] border border-[#A6AEC8]/20 flex items-center justify-center text-[#8B7CFF]">
+                <div className="w-8 h-8 rounded-lg bg-[#070908] border border-[rgba(225,239,221,0.20)] flex items-center justify-center text-[#d5ff54]">
                   {inspectorItem.file_type.startsWith('image/') ? (
                     <ImageIcon className="w-4 h-4" />
                   ) : inspectorItem.file_type.startsWith('video/') ? (
@@ -510,49 +515,49 @@ export const EvidenceVaultPage: React.FC = () => {
                   )}
                 </div>
                 <div className="overflow-hidden">
-                  <p className="text-xs font-bold text-[#F4F5FF] truncate">{inspectorItem.original_filename}</p>
-                  <p className="text-[10px] text-[#A6AEC8] font-mono">{formatBytes(inspectorItem.file_size)}</p>
+                  <p className="text-xs font-bold text-[#f0f2eb] truncate">{inspectorItem.original_filename}</p>
+                  <p className="text-[10px] text-[#929b93] font-mono">{formatBytes(inspectorItem.file_size)}</p>
                 </div>
               </div>
 
               <div className="space-y-1 pt-1 text-[11px]">
-                <div className="flex items-center justify-between text-[#A6AEC8]">
+                <div className="flex items-center justify-between text-[#929b93]">
                   <span>MIME Type:</span>
-                  <span className="font-mono text-[#F4F5FF]">{inspectorItem.file_type}</span>
+                  <span className="font-mono text-[#f0f2eb]">{inspectorItem.file_type}</span>
                 </div>
-                <div className="flex items-center justify-between text-[#A6AEC8]">
+                <div className="flex items-center justify-between text-[#929b93]">
                   <span>Vault Ingestion:</span>
-                  <span className="font-mono text-[#F4F5FF]">{formatDate(inspectorItem.upload_timestamp)}</span>
+                  <span className="font-mono text-[#f0f2eb]">{formatDate(inspectorItem.upload_timestamp)}</span>
                 </div>
-                <div className="flex items-center justify-between text-[#A6AEC8]">
+                <div className="flex items-center justify-between text-[#929b93]">
                   <span>Linked Dossier:</span>
-                  <span className="text-[#8B7CFF] truncate max-w-[120px]">{getIncidentTitle(inspectorItem.incident_id)}</span>
+                  <span className="text-[#d5ff54] truncate max-w-[120px]">{getIncidentTitle(inspectorItem.incident_id)}</span>
                 </div>
               </div>
             </div>
 
             {/* SHA-256 Full Certificate Details */}
-            <div className="p-3 bg-[#080B18] rounded-2xl border border-[#8B7CFF]/30 space-y-1.5">
+            <div className="p-3 bg-[#070908] rounded-2xl border border-[#d5ff54]/30 space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono uppercase font-bold text-[#8B7CFF] flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#52D6B2]" />
+                <span className="text-[10px] font-mono uppercase font-bold text-[#d5ff54] flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#a8db35]" />
                   SHA-256 Fingerprint
                 </span>
                 <button
                   onClick={() => copyToClipboard(inspectorItem.sha256_hash)}
-                  className="text-[10px] text-[#8B7CFF] hover:underline font-mono"
+                  className="text-[10px] text-[#d5ff54] hover:underline font-mono"
                 >
                   {copiedHash === inspectorItem.sha256_hash ? 'Copied' : 'Copy'}
                 </button>
               </div>
-              <p className="text-[10px] font-mono text-[#55D6E8] break-all leading-relaxed select-all">
+              <p className="text-[10px] font-mono text-[#d5ff54] break-all leading-relaxed select-all">
                 {inspectorItem.sha256_hash}
               </p>
             </div>
 
             {/* Custody Legal Badges */}
             <div className="space-y-2 pt-1 text-xs">
-              <div className="flex items-center gap-2 text-[11px] text-[#52D6B2] bg-[#52D6B2]/10 p-2.5 rounded-xl border border-[#52D6B2]/20">
+              <div className="flex items-center gap-2 text-[11px] text-[#a8db35] bg-[#a8db35]/10 p-2.5 rounded-xl border border-[#a8db35]/20">
                 <ShieldCheck className="w-4 h-4 shrink-0" />
                 <span>Section 65B Electronic Record Certificate ready for magistrate court submission.</span>
               </div>
@@ -562,16 +567,16 @@ export const EvidenceVaultPage: React.FC = () => {
             <div className="pt-2 space-y-2">
               <Link
                 to={`/detect`}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#8B7CFF]/15 hover:bg-[#8B7CFF]/25 border border-[#8B7CFF]/30 text-xs font-semibold text-[#8B7CFF] transition-all"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#d5ff54]/15 hover:bg-[#d5ff54]/25 border border-[#d5ff54]/30 text-xs font-semibold text-[#d5ff54] transition-all"
               >
                 <Cpu className="w-3.5 h-3.5" />
                 <span>Screen Media in Detect</span>
               </Link>
               <Link
                 to={`/complaints?evidenceId=${inspectorItem.id}`}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#0D1224] hover:bg-[#1D2540] border border-[#A6AEC8]/20 text-xs font-semibold text-[#F4F5FF] transition-all"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#0d1110] hover:bg-[#111716] border border-[rgba(225,239,221,0.20)] text-xs font-semibold text-[#f0f2eb] transition-all"
               >
-                <FileText className="w-3.5 h-3.5 text-[#52D6B2]" />
+                <FileText className="w-3.5 h-3.5 text-[#a8db35]" />
                 <span>Attach to Formal Complaint</span>
               </Link>
               <Button
@@ -596,32 +601,32 @@ export const EvidenceVaultPage: React.FC = () => {
 
             {/* Expandable Technical Forensic Details (Magic-Byte, EXIF, pHash) */}
             {forensicMetadata && (
-              <div className="p-3 bg-[#080B18] rounded-2xl border border-[#A6AEC8]/20 space-y-2 text-[11px]">
-                <div className="font-mono uppercase font-bold text-[#8B7CFF] text-[10px]">
+              <div className="p-3 bg-[#070908] rounded-2xl border border-[rgba(225,239,221,0.20)] space-y-2 text-[11px]">
+                <div className="font-mono uppercase font-bold text-[#d5ff54] text-[10px]">
                   Technical Forensic Metadata
                 </div>
                 {forensicMetadata.file_type && (
-                  <div className="flex items-center justify-between text-[#A6AEC8]">
+                  <div className="flex items-center justify-between text-[#929b93]">
                     <span>Magic-Byte Format:</span>
-                    <span className="font-mono text-[#F4F5FF]">
+                    <span className="font-mono text-[#f0f2eb]">
                       {forensicMetadata.file_type.detected_mime || 'Unknown'}
                       {forensicMetadata.file_type.extension_mismatch ? ' (Mismatch!)' : ' (Verified)'}
                     </span>
                   </div>
                 )}
                 {forensicMetadata.exif && (
-                  <div className="flex items-center justify-between text-[#A6AEC8]">
+                  <div className="flex items-center justify-between text-[#929b93]">
                     <span>EXIF / GPS:</span>
-                    <span className="font-mono text-[#F4F5FF]">
+                    <span className="font-mono text-[#f0f2eb]">
                       {forensicMetadata.exif.exif_present ? `${forensicMetadata.exif.tag_count} tags` : 'None'}
                       {forensicMetadata.exif.gps_present ? ' · GPS Present' : ''}
                     </span>
                   </div>
                 )}
                 {forensicMetadata.perceptual_hashes?.available && (
-                  <div className="flex items-center justify-between text-[#A6AEC8]">
+                  <div className="flex items-center justify-between text-[#929b93]">
                     <span>Perceptual Hash (pHash):</span>
-                    <span className="font-mono text-[#55D6E8]">{forensicMetadata.perceptual_hashes.phash}</span>
+                    <span className="font-mono text-[#d5ff54]">{forensicMetadata.perceptual_hashes.phash}</span>
                   </div>
                 )}
               </div>
@@ -637,7 +642,7 @@ export const EvidenceVaultPage: React.FC = () => {
         title="Preserve Evidence to Vault"
       >
         <div className="space-y-4">
-          <p className="text-xs text-[#A6AEC8] leading-relaxed">
+          <p className="text-xs text-[#929b93] leading-relaxed">
             Select files to preserve. SafeHER computes an irreversible SHA-256 fingerprint client-side before storage to ensure Section 65B compliance.
           </p>
 

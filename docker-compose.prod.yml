@@ -12,11 +12,14 @@ volumes:
   quarantine_storage:
   sqlite_data:
   clamav_defs:
+  caddy_data:
+  caddy_config:
+  caddy_logs:
 
 services:
-  # 1. ClamAV Antivirus Daemon
+  # 1. ClamAV Antivirus Daemon (with freshclam signature updates)
   clamav:
-    image: clamav/clamav:latest
+    image: clamav/clamav:1.4
     container_name: safeher-clamav
     restart: unless-stopped
     networks:
@@ -30,7 +33,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 45s
+      start_period: 60s
     security_opt:
       - no-new-privileges:true
     deploy:
@@ -39,7 +42,7 @@ services:
           memory: 1536M
           cpus: "1.0"
 
-  # 2. Hardened FastAPI Backend
+  # 2. Hardened FastAPI Backend (with KMS, TruFor IMDL, SMS Queue Worker, ClamAV client)
   backend:
     build:
       context: ./backend
@@ -55,21 +58,39 @@ services:
       - evidence_storage:/app/storage/evidence
       - quarantine_storage:/app/storage/quarantine
       - sqlite_data:/app/data
+      - ./models:/app/models:ro
     environment:
       - SAFEHER_ENV=production
+      - SAFEHER_CORS_ORIGINS=https://${SAFEHER_DOMAIN}
+      - SAFEHER_TRUSTED_PROXIES=127.0.0.1,172.16.0.0/12,10.0.0.0/8
       - SAFEHER_ENABLE_CLAMAV=true
+      - SAFEHER_REQUIRE_CLAMAV=true
       - SAFEHER_CLAMAV_HOST=clamav
       - SAFEHER_CLAMAV_PORT=3310
+      - SAFEHER_KMS_PROVIDER=${SAFEHER_KMS_PROVIDER:-aws}
+      - SAFEHER_KMS_KEY_ARN=${SAFEHER_KMS_KEY_ARN}
+      - AWS_REGION=${AWS_REGION:-ap-south-1}
       - SAFEHER_KEK_B64=${SAFEHER_KEK_B64}
       - SAFEHER_JWT_SECRET_KEY=${SAFEHER_JWT_SECRET_KEY}
+      - SAFEHER_SMS_PROVIDER=${SAFEHER_SMS_PROVIDER:-twilio}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_FROM_NUMBER=${TWILIO_FROM_NUMBER}
+      - SAFEHER_SMS_STATUS_CALLBACK_URL=https://${SAFEHER_DOMAIN}/api/v1/safety/sms/webhook
       - SAFEHER_STORAGE_DIR=/app/storage
       - SAFEHER_DB_PATH=/app/data/safeher.db
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
     security_opt:
       - no-new-privileges:true
     deploy:
       resources:
         limits:
-          memory: 2048M
+          memory: 3072M
           cpus: "2.0"
 
   # 3. Static UI Container (Non-root)
@@ -81,6 +102,11 @@ services:
     restart: unless-stopped
     networks:
       - safeher-internal
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     security_opt:
       - no-new-privileges:true
     deploy:
@@ -89,23 +115,36 @@ services:
           memory: 256M
           cpus: "0.5"
 
-  # 4. Edge Reverse Proxy & TLS Terminator
+  # 4. Edge Reverse Proxy & Automatic Let's Encrypt TLS Terminator (Caddy)
   gateway:
-    image: nginx:alpine
+    image: caddy:2.9-alpine
     container_name: safeher-gateway
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
+      - "443:443/udp"
     networks:
       - safeher-edge
       - safeher-internal
     depends_on:
-      - backend
-      - frontend
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    environment:
+      - SAFEHER_DOMAIN=${SAFEHER_DOMAIN}
+      - SAFEHER_ACME_EMAIL=${SAFEHER_ACME_EMAIL}
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/certs:/etc/nginx/certs:ro
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - caddy_logs:/var/log/caddy
+    healthcheck:
+      test: ["CMD", "caddy", "version"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     security_opt:
       - no-new-privileges:true
     deploy:

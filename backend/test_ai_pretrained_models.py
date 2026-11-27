@@ -111,9 +111,9 @@ def test_retinaface_face_detection_execution(blank_test_image_bytes, synthetic_f
 # -----------------------------------------------------------------------------
 
 def test_c2pa_provenance_verification():
-    """Tests C2PA extraction against fixture image with real manifest."""
-    c2pa_fixture = r"C:\Projects\SafeHER\SafeHER-Research\c2pa-python\tests\fixtures\C.jpg"
-    if os.path.exists(c2pa_fixture):
+    """Tests C2PA extraction against optional external fixture image with real manifest."""
+    c2pa_fixture = os.environ.get("SAFEHER_C2PA_FIXTURE_PATH", "")
+    if c2pa_fixture and os.path.exists(c2pa_fixture):
         res = verify_c2pa_file(c2pa_fixture)
         assert res.c2pa_present is True
         assert res.status == "verified"

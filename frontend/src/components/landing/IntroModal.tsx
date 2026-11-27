@@ -65,7 +65,7 @@ export const IntroModal: React.FC<IntroModalProps> = ({ onExplore }) => {
     >
       {/* Modal Container */}
       <div
-        className={`relative w-full max-w-[460px] bg-[#050505]/95 border border-zcyan/40 rounded-2xl p-7 sm:p-9 text-center shadow-[0_24px_80px_rgba(0,0,0,0.9),0_0_50px_rgba(0,212,255,0.22)] backdrop-blur-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${
+        className={`relative w-full max-w-[460px] bg-[#070908]/95 border border-zcyan/40 rounded-2xl p-7 sm:p-9 text-center shadow-[0_24px_80px_rgba(0,0,0,0.9),0_0_50px_rgba(0,212,255,0.22)] backdrop-blur-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${
           isClosing ? 'scale-95 translate-y-6 opacity-0' : 'scale-100 translate-y-0 opacity-100'
         }`}
       >
@@ -77,7 +77,7 @@ export const IntroModal: React.FC<IntroModalProps> = ({ onExplore }) => {
         <button
           onClick={handleDismiss}
           aria-label={t.landing.introModal.closeAria}
-          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zcyan"
+          className="absolute top-4 right-4 p-2 text-[#929b93] hover:text-white rounded-lg hover:bg-white/5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zcyan"
         >
           <X className="w-5 h-5" />
         </button>
@@ -85,7 +85,7 @@ export const IntroModal: React.FC<IntroModalProps> = ({ onExplore }) => {
         {/* Circular Aurora Logo Element with Pulse */}
         <div className="mx-auto w-14 h-14 rounded-full bg-zcyan/10 border border-zcyan/60 flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(139,124,255,0.35)] relative">
           <span className="w-3 h-3 rounded-full bg-zcyan animate-ping absolute opacity-75" />
-          <span className="w-3.5 h-3.5 rounded-full bg-zcyan shadow-[0_0_12px_#8B7CFF]" />
+          <span className="w-3.5 h-3.5 rounded-full bg-zcyan shadow-[0_0_12px_#d5ff54]" />
         </div>
 
         {/* Eyebrow */}

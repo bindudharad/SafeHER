@@ -186,7 +186,14 @@ async def lifespan(_app: FastAPI):
     validate_jwt_configuration()
     init_db()
     _seed_demo_user()
-    yield
+    from safety.sms_worker import get_sms_worker
+
+    worker = get_sms_worker()
+    worker.start()
+    try:
+        yield
+    finally:
+        worker.stop()
 
 
 app = FastAPI(
@@ -196,16 +203,31 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
+_raw_cors = os.environ.get("SAFEHER_CORS_ORIGINS", "").strip()
+_cors_origins = (
+    [o.strip() for o in _raw_cors.split(",") if o.strip()]
+    if _raw_cors
+    else [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
-    ],
+    ]
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+try:
+    from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
+
+    _trusted_proxies = os.environ.get("SAFEHER_TRUSTED_PROXIES", "127.0.0.1,172.16.0.0/12,10.0.0.0/8")
+    app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=[h.strip() for h in _trusted_proxies.split(",") if h.strip()])
+except Exception:
+    pass
 
 # SlowAPI Rate Limiting configuration
 limiter = Limiter(
@@ -224,8 +246,12 @@ async def add_security_headers(request: Request, call_next):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     response.headers["Content-Security-Policy"] = "default-src 'self'; frame-ancestors 'none';"
+    forwarded_proto = request.headers.get("x-forwarded-proto", "").lower()
+    if forwarded_proto == "https" or os.environ.get("SAFEHER_ENV") == "production":
+        response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains; preload"
+    else:
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     return response
 
 
@@ -2062,6 +2088,102 @@ def get_active_journey_endpoint(
     return get_active_journey_checkin(current_user["id"])
 
 
+@app.post("/api/v1/safety/contacts/{contact_id}/request-verification")
+def request_contact_verification_endpoint(
+    contact_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    from safety.sms_worker import request_contact_verification
+
+    try:
+        return request_contact_verification(contact_id, current_user["id"])
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
+
+
+@app.post("/api/v1/safety/contacts/{contact_id}/verify")
+def verify_contact_endpoint(
+    contact_id: str,
+    payload: Dict[str, Any],
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    from safety.sms_worker import verify_contact_code
+
+    code = str(payload.get("code", "")).strip()
+    if not code:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Verification code is required.")
+    ok = verify_contact_code(contact_id, current_user["id"], code)
+    if not ok:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired verification code.")
+    return {"verified": True, "contact_id": contact_id}
+
+
+@app.post("/api/v1/safety/emergency/notify", status_code=status.HTTP_202_ACCEPTED)
+def trigger_emergency_sms_endpoint(
+    payload: Dict[str, Any],
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    from safety.sms_worker import enqueue_emergency_alerts_for_user
+
+    if not payload.get("confirm_send"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Explicit confirm_send=true is required to trigger emergency SMS alerts.",
+        )
+    idem_key = str(payload.get("idempotency_key") or f"sos:{current_user['id']}:{uuid.uuid4().hex[:10]}")
+    res = enqueue_emergency_alerts_for_user(
+        user_id=current_user["id"],
+        event_type="manual_sos",
+        idempotency_prefix=idem_key,
+        specific_contact_id=payload.get("contact_id"),
+    )
+    if res["queued_count"] == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=res.get("reason", "No verified trusted contacts available."),
+        )
+    return res
+
+
+@app.get("/api/v1/safety/notifications")
+def list_safety_notifications_endpoint(
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> List[Dict[str, Any]]:
+    from safety.sms_worker import list_user_notifications
+
+    return list_user_notifications(current_user["id"])
+
+
+@app.get("/api/v1/safety/sms/health")
+def sms_health_endpoint(
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    from safety.sms_worker import get_sms_operational_health
+
+    return get_sms_operational_health()
+
+
+@app.post("/api/v1/safety/sms/webhook")
+async def twilio_sms_status_webhook(request: Request) -> Dict[str, Any]:
+    from safety.sms_service import TwilioSmsProvider, get_sms_provider
+    from safety.sms_worker import update_notification_status_from_webhook
+
+    form_data = dict(await request.form())
+    provider = get_sms_provider()
+    if isinstance(provider, TwilioSmsProvider) and provider.is_configured():
+        sig = request.headers.get("X-Twilio-Signature", "")
+        if not provider.validate_webhook_signature(str(request.url), form_data, sig):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Twilio webhook signature.")
+
+    sid = str(form_data.get("MessageSid", "")).strip()
+    msg_status = str(form_data.get("MessageStatus", "")).strip()
+    err_msg = form_data.get("ErrorMessage")
+    if not sid or not msg_status:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Missing MessageSid or MessageStatus.")
+    updated = update_notification_status_from_webhook(sid, msg_status, str(err_msg) if err_msg else None)
+    return {"updated": updated, "message_sid": sid, "status": msg_status}
+
+
 # ==========================================================
 # STAGE 7: PRODUCTION MALWARE SCANNING & SECURITY AUDIT
 # ==========================================================
@@ -2071,6 +2193,53 @@ def malware_scanner_health_endpoint(
     current_user: Dict[str, Any] = Depends(get_current_user),
 ) -> Dict[str, Any]:
     return get_malware_scanner_health()
+
+
+@app.get("/api/v1/security/kms/health")
+def kms_health_endpoint(
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    from security.key_provider import get_key_provider
+
+    health_info = get_key_provider().health_check()
+    # Redact sensitive ARN/infrastructure details for non-admin users
+    if current_user.get("role") not in ("admin", "analyst"):
+        return {
+            "provider": health_info.get("provider"),
+            "status": health_info.get("status"),
+            "hardware_backed": health_info.get("hardware_backed", False),
+        }
+    return health_info
+
+
+@app.get("/api/v1/security/operational/health")
+def operational_health_endpoint(
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    from ai.tampering_localization import get_tampering_health
+    from safety.sms_worker import get_sms_operational_health
+    from security.key_provider import get_key_provider
+
+    is_privileged = current_user.get("role") in ("admin", "analyst")
+    kms_h = get_key_provider().health_check()
+    malware_h = get_malware_scanner_health()
+    sms_h = get_sms_operational_health()
+    tamp_h = get_tampering_health()
+
+    if not is_privileged:
+        return {
+            "kms": {"provider": kms_h.get("provider"), "status": kms_h.get("status")},
+            "malware": {"status": malware_h.get("status"), "clamav_online": malware_h.get("clamav_online")},
+            "sms": {"configured": sms_h["provider"].get("configured"), "status": sms_h["provider"].get("status")},
+            "tampering_localization": {"status": tamp_h.get("status"), "model_id": tamp_h.get("model_id")},
+        }
+
+    return {
+        "kms": kms_h,
+        "malware": malware_h,
+        "sms": sms_h,
+        "tampering_localization": tamp_h,
+    }
 
 
 @app.get("/api/v1/evidence/{evidence_id}/malware-scan")

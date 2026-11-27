@@ -39,7 +39,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
     { to: '/detect', label: t.sidebar.detect, icon: Scan },
     { to: '/dashboard', label: t.sidebar.dashboard, icon: LayoutDashboard },
     { to: '/evidence', label: t.sidebar.evidenceVault, icon: HardDrive },
-    { to: '/incidents/new', label: t.sidebar.reportIncident, icon: PlusCircle, badge: t.sidebar.quickBadge },
+    {
+      to: '/incidents/new',
+      label: t.sidebar.reportIncident,
+      icon: PlusCircle,
+      badge: t.sidebar.quickBadge,
+    },
   ]
 
   const secondaryNav = [
@@ -54,33 +59,37 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
     { to: '/settings', label: t.sidebar.privacySettings, icon: Settings },
   ]
 
+  const linkClasses = ({ isActive }: { isActive: boolean }) =>
+    cn(
+      'flex items-center justify-between px-3 py-2.5 rounded-[3px] text-xs font-sans transition-all duration-150 border',
+      isActive
+        ? 'bg-[#111716] text-[#d5ff54] border-[#d5ff54]/40 font-semibold'
+        : 'text-[#929b93] hover:text-[#f0f2eb] hover:bg-[#111716]/70 border-transparent'
+    )
+
   const navContent = (
     <div className="flex flex-col h-full justify-between p-4 space-y-6">
       <div className="space-y-5">
         {onCloseMobile ? (
-          <div className="flex items-center justify-between px-2 pt-1 pb-3 md:hidden border-b border-[#A6AEC8]/15">
+          <div className="flex items-center justify-between px-2 pt-1 pb-3 md:hidden border-b border-[rgba(225,239,221,0.15)]">
             <SafeHERBrandLockup logoSize="sm" compact showSubtitle={false} />
             <button
               onClick={onCloseMobile}
-              className="p-1 text-[#A6AEC8] hover:text-[#F4F5FF] transition-colors shrink-0"
+              className="p-1 text-[#929b93] hover:text-[#d5ff54] transition-colors shrink-0"
               aria-label={t.sidebar.closeNavigation}
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         ) : (
-          <div className="hidden md:flex items-center px-3 pt-1 pb-3 border-b border-[#A6AEC8]/12">
-            <SafeHERBrandLockup
-              logoSize="md"
-              compact
-              subtitleText={t.sidebar.digitalTrust}
-            />
+          <div className="hidden md:flex items-center px-2 pt-1 pb-3 border-b border-[rgba(225,239,221,0.12)]">
+            <SafeHERBrandLockup logoSize="md" compact subtitleText={t.sidebar.digitalTrust} />
           </div>
         )}
 
-        {/* Core Main Navigation (1-7) */}
+        {/* Primary Navigation */}
         <div className="space-y-1">
-          <div className="px-3 py-1 text-[10px] font-mono uppercase tracking-widest text-[#727D9C] font-semibold">
+          <div className="px-2 py-1 text-[9px] font-mono uppercase tracking-[0.18em] text-[#929b93]">
             {t.sidebar.mainWorkspace}
           </div>
 
@@ -90,21 +99,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
               to={item.to}
               end={item.to === '/' || item.to === '/incidents'}
               onClick={onCloseMobile}
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all duration-150',
-                  isActive
-                    ? 'bg-[#1D2540] text-[#8B7CFF] border border-[#8B7CFF]/30 shadow-[0_0_15px_rgba(139,124,255,0.15)]'
-                    : 'text-[#A6AEC8] hover:text-[#F4F5FF] hover:bg-[#171D35] border border-transparent'
-                )
-              }
+              className={linkClasses}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 min-w-0">
                 <item.icon className="w-4 h-4 shrink-0" />
-                <span>{item.label}</span>
+                <span className="truncate">{item.label}</span>
               </div>
               {item.badge && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#8B7CFF]/15 text-[#8B7CFF] border border-[#8B7CFF]/25 font-mono">
+                <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#d5ff54]/12 text-[#d5ff54] border border-[#d5ff54]/30 font-mono uppercase tracking-[0.1em]">
                   {item.badge}
                 </span>
               )}
@@ -112,9 +114,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
           ))}
         </div>
 
-        {/* Manage & Support */}
-        <div className="space-y-1 pt-2 border-t border-[#A6AEC8]/15">
-          <div className="px-3 py-1 text-[10px] font-mono uppercase tracking-widest text-[#727D9C] font-semibold">
+        {/* Management & Safety */}
+        <div className="space-y-1 pt-3 border-t border-[rgba(225,239,221,0.15)]">
+          <div className="px-2 py-1 text-[9px] font-mono uppercase tracking-[0.18em] text-[#929b93]">
             MANAGEMENT &amp; SAFETY
           </div>
 
@@ -124,29 +126,24 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
               to={item.to}
               end={item.to === '/incidents'}
               onClick={onCloseMobile}
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium transition-all duration-150',
-                  isActive
-                    ? 'bg-[#1D2540] text-[#8B7CFF] border border-[#8B7CFF]/30 shadow-[0_0_15px_rgba(139,124,255,0.15)]'
-                    : 'text-[#A6AEC8] hover:text-[#F4F5FF] hover:bg-[#171D35] border border-transparent'
-                )
-              }
+              className={linkClasses}
             >
-              <item.icon className="w-4 h-4 shrink-0" />
-              <span>{item.label}</span>
+              <div className="flex items-center gap-3 min-w-0">
+                <item.icon className="w-4 h-4 shrink-0" />
+                <span className="truncate">{item.label}</span>
+              </div>
             </NavLink>
           ))}
         </div>
       </div>
 
-      {/* Privacy by Default Security Badge in Sidebar Footer */}
-      <div className="p-3.5 bg-[#171D35] rounded-2xl border border-[#A6AEC8]/15 text-left relative overflow-hidden shadow-sm">
-        <div className="flex items-center gap-2 text-[#52D6B2] text-xs font-semibold">
+      {/* Privacy Integrity Card */}
+      <div className="p-3.5 bg-[#111716] rounded-[4px] border border-[rgba(225,239,221,0.15)] text-left space-y-1.5">
+        <div className="flex items-center gap-2 text-[#a8db35] font-mono text-[10px] uppercase tracking-[0.12em]">
           <Lock className="w-3.5 h-3.5" />
           <span>{t.landing.whatWeDo.point1Title}</span>
         </div>
-        <p className="text-[10px] text-[#A6AEC8] mt-1 leading-relaxed">
+        <p className="text-[11px] text-[#929b93] leading-relaxed font-sans">
           {t.evidence.integrityExplanation}
         </p>
       </div>
@@ -155,15 +152,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
 
   return (
     <>
-      {/* Desktop Persistent Sidebar */}
-      <aside className="hidden md:block w-64 shrink-0 bg-[#0D1224]/95 border-r border-[#A6AEC8]/15 min-h-[calc(100vh-61px)]">
+      <aside className="hidden md:block w-64 shrink-0 bg-[#0d1110]/95 border-r border-[rgba(225,239,221,0.15)] min-h-[calc(100vh-61px)]">
         {navContent}
       </aside>
 
-      {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-50 md:hidden bg-[#080B18]/85 backdrop-blur-md animate-fade-in flex">
-          <div className="w-72 bg-[#0D1224] border-r border-[#A6AEC8]/15 h-full shadow-2xl">
+        <div className="fixed inset-0 z-[60] md:hidden bg-black/80 backdrop-blur-md flex">
+          <div className="w-72 bg-[#0d1110] border-r border-[rgba(225,239,221,0.15)] h-full shadow-2xl overflow-y-auto pb-24">
             {navContent}
           </div>
           <div className="flex-1" onClick={onCloseMobile} />

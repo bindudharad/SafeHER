@@ -2,15 +2,11 @@ import React, { useEffect, useRef } from 'react'
 import { gsap } from '../../animations/gsap'
 import { useSplash } from '../../contexts/SplashContext'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
-import { SAFEHER_LOGO_SRC } from './SafeHERLogo'
+import { SafeHERLogo } from './SafeHERLogo'
 
 /**
  * SafeHERSplash:
- * Cinematic Midnight Aurora splash-to-header logo transition.
- * Stage 1: Center emblem entrance + orbital ring + ambient violet glow.
- * Stage 2: Smooth loading indicator while Auth & Assets initialize.
- * Stage 3: GSAP FLIP-style travel to the measured top-left header logo position.
- * Stage 4: Seamless handoff to the permanent header logo.
+ * Unified #070908 + #d5ff54 splash entrance transitioning smoothly to the header brand mark.
  */
 export const SafeHERSplash: React.FC = () => {
   const {
@@ -30,7 +26,6 @@ export const SafeHERSplash: React.FC = () => {
   const textBlockRef = useRef<HTMLDivElement>(null)
   const hasTravelledRef = useRef(false)
 
-  // Stage 1: Initial center entrance animation
   useEffect(() => {
     if (!isSplashActive || splashPhase === 'error') return
     if (reducedMotion) return
@@ -63,24 +58,19 @@ export const SafeHERSplash: React.FC = () => {
     return () => ctx.revert()
   }, [isSplashActive, splashPhase, reducedMotion])
 
-  // Stage 3: FLIP-style travel from center to measured header destination
   useEffect(() => {
     if (splashPhase !== 'travelling' || hasTravelledRef.current) return
     hasTravelledRef.current = true
 
-    // Reduced motion: brief fade out without travel animation
     if (reducedMotion) {
       const tl = gsap.timeline({
         onComplete: () => markTravelComplete(),
       })
-      tl.to(
-        [backdropRef.current, logoWrapRef.current, textBlockRef.current],
-        {
-          opacity: 0,
-          duration: 0.28,
-          ease: 'power2.out',
-        }
-      )
+      tl.to([backdropRef.current, logoWrapRef.current, textBlockRef.current], {
+        opacity: 0,
+        duration: 0.28,
+        ease: 'power2.out',
+      })
       return () => {
         tl.kill()
       }
@@ -90,7 +80,6 @@ export const SafeHERSplash: React.FC = () => {
     const targetRect = getLogoTargetRect()
 
     if (!logoEl || !targetRect) {
-      // Fallback smooth fade if header target is not mounted on current view
       const tl = gsap.timeline({
         onComplete: () => markTravelComplete(),
       })
@@ -127,7 +116,6 @@ export const SafeHERSplash: React.FC = () => {
       },
     })
 
-    // 1. Fade out orbital ring & loading text
     tl.to(
       [textBlockRef.current, orbitalRef.current],
       {
@@ -138,43 +126,37 @@ export const SafeHERSplash: React.FC = () => {
       },
       0
     )
-
-    // 2. Soften ambient glow behind logo
-    tl.to(
-      glowRef.current,
-      {
-        opacity: 0,
-        scale: 0.6,
-        duration: 0.45,
-        ease: 'power2.out',
-      },
-      0.05
-    )
-
-    // 3. Reveal website underneath by fading Midnight Aurora backdrop
-    tl.to(
-      backdropRef.current,
-      {
-        opacity: 0,
-        duration: 0.62,
-        ease: 'power2.inOut',
-      },
-      0.14
-    )
-
-    // 4. Smoothly fly the single official SafeHER logo to exact top-left header coordinates
-    tl.to(
-      logoEl,
-      {
-        x: deltaX,
-        y: deltaY,
-        scale: targetScale,
-        duration: 0.78,
-        ease: 'power3.inOut',
-        force3D: true,
-      },
-      0.08
-    )
+      .to(
+        glowRef.current,
+        {
+          opacity: 0,
+          scale: 0.6,
+          duration: 0.45,
+          ease: 'power2.out',
+        },
+        0.05
+      )
+      .to(
+        backdropRef.current,
+        {
+          opacity: 0,
+          duration: 0.62,
+          ease: 'power2.inOut',
+        },
+        0.14
+      )
+      .to(
+        logoEl,
+        {
+          x: deltaX,
+          y: deltaY,
+          scale: targetScale,
+          duration: 0.78,
+          ease: 'power3.inOut',
+          force3D: true,
+        },
+        0.08
+      )
 
     return () => {
       tl.kill()
@@ -190,83 +172,69 @@ export const SafeHERSplash: React.FC = () => {
       aria-live="polite"
       aria-label="SafeHER application loading"
     >
-      {/* Full-screen Midnight Aurora backdrop */}
       <div
         ref={backdropRef}
-        className="absolute inset-0 bg-[#080B18]"
+        className="absolute inset-0 bg-[#070908]"
         style={{
           backgroundImage:
-            'radial-gradient(ellipse 65% 55% at 50% 45%, rgba(101, 0, 184, 0.22) 0%, rgba(139, 124, 255, 0.08) 45%, rgba(8, 11, 24, 1) 80%)',
+            'radial-gradient(ellipse 65% 55% at 50% 45%, rgba(213, 255, 84, 0.10) 0%, rgba(168, 219, 53, 0.04) 45%, rgba(7, 9, 8, 1) 80%)',
         }}
       />
 
-      {/* Centered Logo + Orbital Ring + Loading Indicator */}
       <div className="relative z-10 flex flex-col items-center justify-center px-6 text-center">
         <div className="relative flex items-center justify-center w-36 h-36 sm:w-44 sm:h-44">
-          {/* Gentle Violet Ambient Glow */}
           <div
             ref={glowRef}
-            className="pointer-events-none absolute inset-0 rounded-full bg-[#8B7CFF]/25 blur-2xl"
+            className="pointer-events-none absolute inset-0 rounded-full bg-[#d5ff54]/15 blur-2xl"
           />
 
-          {/* Subtle Animated Circular Orbital Ring */}
           <div
             ref={orbitalRef}
-            className="pointer-events-none absolute -inset-3 rounded-full border border-[#8B7CFF]/35"
+            className="pointer-events-none absolute -inset-3 rounded-full border border-[#d5ff54]/30"
             style={{
               background:
-                'conic-gradient(from 0deg, rgba(139,124,255,0.65) 0deg, rgba(85,214,232,0.45) 75deg, transparent 140deg, transparent 360deg)',
+                'conic-gradient(from 0deg, rgba(213,255,84,0.72) 0deg, rgba(168,219,53,0.35) 75deg, transparent 140deg, transparent 360deg)',
               WebkitMask:
                 'radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 1px))',
               mask: 'radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 1px))',
             }}
           />
 
-          {/* Single Official SafeHER Logo Element (Travels to Header) */}
           <div
             ref={logoWrapRef}
-            className="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center drop-shadow-[0_0_24px_rgba(139,124,255,0.35)]"
+            className="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center drop-shadow-[0_0_24px_rgba(213,255,84,0.22)]"
             style={{ transformOrigin: 'center center' }}
           >
-            <img
-              src={SAFEHER_LOGO_SRC}
-              alt="SafeHER Official Shield Emblem"
-              className="w-full h-full object-contain rounded-full block"
-              draggable={false}
-            />
+            <SafeHERLogo size="xl" glow={false} className="w-full h-full" />
           </div>
         </div>
 
-        {/* Title, Status Message & Loading Bar (or Error Retry) */}
         <div ref={textBlockRef} className="mt-6 space-y-3 max-w-xs">
-          <h2 className="font-['thunderLC',sans-serif] text-2xl sm:text-3xl font-bold tracking-[0.22em] text-[#F4F5FF]">
+          <h2 className="font-display text-3xl sm:text-4xl font-extrabold uppercase tracking-[0.14em] text-[#f0f2eb]">
             SAFEHER
           </h2>
 
           {splashPhase === 'error' ? (
             <div className="space-y-3">
-              <p className="text-xs text-[#FF718A] font-mono">
+              <p className="text-xs text-[#ff927e] font-mono">
                 {initError || 'Initialization encountered an issue.'}
               </p>
               <button
                 type="button"
                 onClick={retryInit}
-                className="px-4 py-2 rounded-xl bg-[#8B7CFF] hover:bg-[#A99BFF] text-[#080B18] text-xs font-bold uppercase tracking-wider transition-colors"
+                className="px-4 py-2 rounded-[3px] bg-[#d5ff54] hover:bg-[#e2ff84] text-[#080a08] text-xs font-mono font-semibold uppercase tracking-[0.12em] transition-colors"
               >
                 Retry Initialization
               </button>
             </div>
           ) : (
             <>
-              <p className="text-xs font-mono text-[#A6AEC8] tracking-wide">
+              <p className="text-[11px] font-mono text-[#929b93] tracking-[0.12em] uppercase">
                 Preparing your digital safety experience...
               </p>
 
-              {/* Refined Violet & Ice-Cyan Loading Indicator */}
-              <div className="w-44 h-1 mx-auto rounded-full bg-[#0D1224] border border-[#A6AEC8]/15 overflow-hidden">
-                <div
-                  className="h-full w-1/2 rounded-full bg-gradient-to-r from-[#6500B8] via-[#8B7CFF] to-[#55D6E8] animate-[splashSlide_1.2s_ease-in-out_infinite]"
-                />
+              <div className="w-44 h-1 mx-auto rounded-full bg-[#0d1110] border border-[rgba(225,239,221,0.15)] overflow-hidden">
+                <div className="h-full w-1/2 rounded-full bg-gradient-to-r from-[#a8db35] via-[#d5ff54] to-[#f0f2eb] animate-[splashSlide_1.2s_ease-in-out_infinite]" />
               </div>
             </>
           )}

@@ -144,25 +144,25 @@ export const ComplaintWizardPage: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-8 text-left pb-16">
       {/* 1. DOCUMENT PREPARATION HEADER */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#171D35] via-[#0D1224] to-[#080B18] border border-[#A6AEC8]/18 rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
-        <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 bg-[#8B7CFF]/10 rounded-full blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 bg-[#55D6E8]/10 rounded-full blur-3xl" />
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#111716] via-[#0d1110] to-[#070908] border border-[rgba(225,239,221,0.16)] rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+        <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 bg-[#d5ff54]/10 rounded-full blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 bg-[#d5ff54]/10 rounded-full blur-3xl" />
 
-        <div className="relative z-10 space-y-2 pb-6 border-b border-[#A6AEC8]/15">
+        <div className="relative z-10 space-y-2 pb-6 border-b border-[rgba(225,239,221,0.15)]">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#8B7CFF] uppercase tracking-wider px-3 py-1 rounded-full bg-[#8B7CFF]/10 border border-[#8B7CFF]/25">
+            <span className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#d5ff54] uppercase tracking-wider px-3 py-1 rounded-full bg-[#d5ff54]/10 border border-[#d5ff54]/25">
               <Scale className="w-3.5 h-3.5" />
               AI-Assisted Complaint Preparation Wizard
             </span>
-            <span className="text-xs text-[#52D6B2] font-mono flex items-center gap-1 bg-[#52D6B2]/10 px-2.5 py-0.5 rounded-full border border-[#52D6B2]/20">
+            <span className="text-xs text-[#a8db35] font-mono flex items-center gap-1 bg-[#a8db35]/10 px-2.5 py-0.5 rounded-full border border-[#a8db35]/20">
               <ShieldCheck className="w-3.5 h-3.5" />
               Section 65B Compliant
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F4F5FF] tracking-tight">
+          <h1 className="font-display text-3xl sm:text-4xl uppercase font-extrabold text-[#f0f2eb] tracking-[0.02em]">
             Formal Legal Complaint Preparation
           </h1>
-          <p className="text-xs sm:text-sm text-[#A6AEC8] max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#929b93] max-w-2xl leading-relaxed">
             Prepare a structured, evidence-linked complaint letter in simple steps. Review every line before taking action.
           </p>
         </div>
@@ -181,19 +181,19 @@ export const ComplaintWizardPage: React.FC = () => {
                 key={s.num}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all ${
                   isActive
-                    ? 'bg-[#8B7CFF]/15 text-[#8B7CFF] border border-[#8B7CFF]/30 font-semibold'
+                    ? 'bg-[#d5ff54]/15 text-[#d5ff54] border border-[#d5ff54]/30 font-semibold'
                     : isDone
-                    ? 'text-[#52D6B2] bg-[#52D6B2]/10'
-                    : 'text-[#727D9C]'
+                    ? 'text-[#a8db35] bg-[#a8db35]/10'
+                    : 'text-[#929b93]'
                 }`}
               >
                 <div
                   className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${
                     isActive
-                      ? 'bg-[#8B7CFF] text-[#080B18]'
+                      ? 'bg-[#d5ff54] text-[#070908]'
                       : isDone
-                      ? 'bg-[#52D6B2] text-[#080B18]'
-                      : 'bg-[#0D1224] text-[#727D9C]'
+                      ? 'bg-[#a8db35] text-[#070908]'
+                      : 'bg-[#0d1110] text-[#929b93]'
                   }`}
                 >
                   {isDone ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : s.num}
@@ -203,27 +203,27 @@ export const ComplaintWizardPage: React.FC = () => {
             )
           })}
         </div>
-        <div className="relative z-10 mt-4 h-1 w-full bg-[#080B18] rounded-full overflow-hidden">
+        <div className="relative z-10 mt-4 h-1 w-full bg-[#070908] rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-[#8B7CFF] to-[#52D6B2] transition-all duration-500 ease-out"
+            className="h-full bg-gradient-to-r from-[#d5ff54] to-[#a8db35] transition-all duration-500 ease-out"
             style={{ width: `${((step - 1) / 2) * 100}%` }}
           />
         </div>
       </div>
 
       {/* 2. COMPLAINANT VERIFICATION PRINCIPLE NOTICE */}
-      <div className="p-5 bg-[#171D35]/90 border border-[#8B7CFF]/25 rounded-3xl flex items-start gap-4 text-xs text-[#A6AEC8] shadow-lg shadow-[#080B18]/60">
-        <div className="w-9 h-9 rounded-xl bg-[#8B7CFF]/15 border border-[#8B7CFF]/30 flex items-center justify-center shrink-0 mt-0.5 text-[#8B7CFF]">
+      <div className="p-5 bg-[#111716]/90 border border-[#d5ff54]/25 rounded-3xl flex items-start gap-4 text-xs text-[#929b93] shadow-lg shadow-[#070908]/60">
+        <div className="w-9 h-9 rounded-xl bg-[#d5ff54]/15 border border-[#d5ff54]/30 flex items-center justify-center shrink-0 mt-0.5 text-[#d5ff54]">
           <Info className="w-4 h-4" />
         </div>
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h3 className="font-bold text-[#F4F5FF]">Complainant Verification Principle</h3>
-            <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-[#8B7CFF]/10 text-[#8B7CFF] border border-[#8B7CFF]/25">
+            <h3 className="font-bold text-[#f0f2eb]">Complainant Verification Principle</h3>
+            <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-[#d5ff54]/10 text-[#d5ff54] border border-[#d5ff54]/25">
               User Reviewed
             </span>
           </div>
-          <p className="text-[#A6AEC8] leading-relaxed text-[11.5px]">
+          <p className="text-[#929b93] leading-relaxed text-[11.5px]">
             SafeHER never submits complaints automatically to any platform or authority. You have complete control to review, edit, copy, and file the draft yourself.
           </p>
         </div>
@@ -231,12 +231,12 @@ export const ComplaintWizardPage: React.FC = () => {
 
       {/* ================= STEP 1: CHOOSE ABUSE INCIDENT TO REPORT ================= */}
       {step === 1 && (
-        <div className="bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
-          <div className="space-y-1 pb-4 border-b border-[#A6AEC8]/15">
-            <h2 className="text-base font-bold text-[#F4F5FF]">
+        <div className="bg-[#111716]/85 border border-[rgba(225,239,221,0.15)] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+          <div className="space-y-1 pb-4 border-b border-[rgba(225,239,221,0.15)]">
+            <h2 className="text-base font-bold text-[#f0f2eb]">
               Step 1: Choose Abuse Incident to Report
             </h2>
-            <p className="text-xs text-[#A6AEC8]">
+            <p className="text-xs text-[#929b93]">
               Select which incident from your vault you want to prepare a complaint for.
             </p>
           </div>
@@ -248,8 +248,8 @@ export const ComplaintWizardPage: React.FC = () => {
                 key={inc.id}
                 className={`p-4 rounded-2xl border flex items-start gap-3.5 cursor-pointer transition-all ${
                   selectedIncidentId === inc.id
-                    ? 'border-[#8B7CFF] bg-[#8B7CFF]/10 shadow-[0_0_15px_rgba(139,124,255,0.15)]'
-                    : 'border-[#A6AEC8]/15 bg-[#0D1224] hover:border-[#A6AEC8]/30'
+                    ? 'border-[#d5ff54] bg-[#d5ff54]/10 shadow-[0_0_15px_rgba(139,124,255,0.15)]'
+                    : 'border-[rgba(225,239,221,0.15)] bg-[#0d1110] hover:border-[rgba(225,239,221,0.28)]'
                 }`}
               >
                 <input
@@ -257,18 +257,18 @@ export const ComplaintWizardPage: React.FC = () => {
                   name="incidentSelection"
                   checked={selectedIncidentId === inc.id}
                   onChange={() => handleSelectIncident(inc.id)}
-                  className="mt-1 text-[#8B7CFF] focus:ring-[#8B7CFF]"
+                  className="mt-1 text-[#d5ff54] focus:ring-[#d5ff54]"
                 />
                 <div className="space-y-1.5 w-full">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-[#F4F5FF]">{inc.title}</h3>
+                    <h3 className="text-sm font-bold text-[#f0f2eb]">{inc.title}</h3>
                     <Badge variant="neutral" size="sm">{inc.platform}</Badge>
                   </div>
-                  <p className="text-xs text-[#A6AEC8] line-clamp-2 leading-relaxed">{inc.description}</p>
-                  <div className="flex items-center gap-3 text-[11px] text-[#727D9C] pt-1 font-mono">
+                  <p className="text-xs text-[#929b93] line-clamp-2 leading-relaxed">{inc.description}</p>
+                  <div className="flex items-center gap-3 text-[11px] text-[#929b93] pt-1 font-mono">
                     <span>Logged: {formatDate(inc.created_at)}</span>
                     <span>•</span>
-                    <span className="text-[#55D6E8]">{inc.evidence_count} Preserved Files</span>
+                    <span className="text-[#d5ff54]">{inc.evidence_count} Preserved Files</span>
                   </div>
                 </div>
               </label>
@@ -277,15 +277,15 @@ export const ComplaintWizardPage: React.FC = () => {
 
           {/* Incident Facts Preview */}
           {currentIncident && (
-            <div className="p-4 bg-[#0D1224] rounded-2xl border border-[#A6AEC8]/15 space-y-3 text-xs">
-              <span className="font-semibold text-[#F4F5FF] block">
+            <div className="p-4 bg-[#0d1110] rounded-2xl border border-[rgba(225,239,221,0.15)] space-y-3 text-xs">
+              <span className="font-semibold text-[#f0f2eb] block">
                 Incident Summary to be Included:
               </span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[#A6AEC8]">
-                <div>Category: <span className="text-[#F4F5FF] capitalize font-medium">{currentIncident.category.replace('_', ' ')}</span></div>
-                <div>Platform: <span className="text-[#F4F5FF] font-medium">{currentIncident.platform}</span></div>
-                <div>Date Occurred: <span className="text-[#F4F5FF] font-mono">{currentIncident.incident_date ? formatDate(currentIncident.incident_date) : 'Unrecorded'}</span></div>
-                <div>Source URLs: <span className="text-[#F4F5FF] font-mono">{currentIncident.relevant_urls?.join(', ') || 'None provided'}</span></div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[#929b93]">
+                <div>Category: <span className="text-[#f0f2eb] capitalize font-medium">{currentIncident.category.replace('_', ' ')}</span></div>
+                <div>Platform: <span className="text-[#f0f2eb] font-medium">{currentIncident.platform}</span></div>
+                <div>Date Occurred: <span className="text-[#f0f2eb] font-mono">{currentIncident.incident_date ? formatDate(currentIncident.incident_date) : 'Unrecorded'}</span></div>
+                <div>Source URLs: <span className="text-[#f0f2eb] font-mono">{currentIncident.relevant_urls?.join(', ') || 'None provided'}</span></div>
               </div>
             </div>
           )}
@@ -293,7 +293,7 @@ export const ComplaintWizardPage: React.FC = () => {
           {/* Evidence Inventory Checkboxes */}
           {incidentEvidence.length > 0 && (
             <div className="space-y-2.5">
-              <span className="text-xs font-semibold text-[#F4F5FF] uppercase tracking-wider block">
+              <span className="text-xs font-semibold text-[#f0f2eb] uppercase tracking-wider block">
                 Select Evidence to Cite in Legal Filing ({incidentEvidence.length} available):
               </span>
               <div className="space-y-2">
@@ -302,7 +302,7 @@ export const ComplaintWizardPage: React.FC = () => {
                   return (
                     <label
                       key={evi.id}
-                      className="p-3.5 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 flex items-center justify-between text-xs cursor-pointer hover:border-[#8B7CFF]/30 transition-colors"
+                      className="p-3.5 bg-[#0d1110] rounded-xl border border-[rgba(225,239,221,0.15)] flex items-center justify-between text-xs cursor-pointer hover:border-[#d5ff54]/30 transition-colors"
                     >
                       <div className="flex items-center gap-2.5 truncate">
                         <input
@@ -315,11 +315,11 @@ export const ComplaintWizardPage: React.FC = () => {
                               setSelectedEvidenceIds((prev) => prev.filter((id) => id !== evi.id))
                             }
                           }}
-                          className="rounded text-[#8B7CFF] focus:ring-[#8B7CFF]"
+                          className="rounded text-[#d5ff54] focus:ring-[#d5ff54]"
                         />
-                        <span className="text-[#F4F5FF] font-medium truncate">{evi.original_filename}</span>
+                        <span className="text-[#f0f2eb] font-medium truncate">{evi.original_filename}</span>
                       </div>
-                      <span className="text-[10px] font-mono text-[#52D6B2] hidden sm:inline">
+                      <span className="text-[10px] font-mono text-[#a8db35] hidden sm:inline">
                         SHA-256: {evi.sha256_hash.substring(0, 16)}...
                       </span>
                     </label>
@@ -329,7 +329,7 @@ export const ComplaintWizardPage: React.FC = () => {
             </div>
           )}
 
-          <div className="flex justify-end pt-4 border-t border-[#A6AEC8]/15">
+          <div className="flex justify-end pt-4 border-t border-[rgba(225,239,221,0.15)]">
             <Button
               type="button"
               variant="primary"
@@ -347,13 +347,13 @@ export const ComplaintWizardPage: React.FC = () => {
 
       {/* ================= STEP 2: REVIEW & EDIT COMPLAINT DRAFT ================= */}
       {step === 2 && (
-        <div className="bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#A6AEC8]/15">
+        <div className="bg-[#111716]/85 border border-[rgba(225,239,221,0.15)] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[rgba(225,239,221,0.15)]">
             <div className="space-y-1">
-              <h2 className="text-base font-bold text-[#F4F5FF]">
+              <h2 className="text-base font-bold text-[#f0f2eb]">
                 Step 2: Review &amp; Edit Complaint Draft
               </h2>
-              <p className="text-xs text-[#A6AEC8]">
+              <p className="text-xs text-[#929b93]">
                 Read through the draft. You can directly edit any text below before downloading.
               </p>
             </div>
@@ -369,26 +369,26 @@ export const ComplaintWizardPage: React.FC = () => {
           </div>
 
           {/* Plain-Language Legal Guidance Box */}
-          <div className="p-4 bg-[#0D1224] rounded-2xl border border-[#A6AEC8]/15 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#8B7CFF]">
+          <div className="p-4 bg-[#0d1110] rounded-2xl border border-[rgba(225,239,221,0.15)] space-y-2">
+            <div className="flex items-center gap-2 text-xs font-bold text-[#d5ff54]">
               <HelpCircle className="w-4 h-4" />
               <span>Legal Terms Explained in Simple Language:</span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-[#A6AEC8] pt-1">
-              <div className="p-3 bg-[#080B18] rounded-xl border border-[#A6AEC8]/10 space-y-1">
-                <strong className="text-[#F4F5FF] block">Section 66E (IT Act):</strong>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-[#929b93] pt-1">
+              <div className="p-3 bg-[#070908] rounded-xl border border-[rgba(225,239,221,0.10)] space-y-1">
+                <strong className="text-[#f0f2eb] block">Section 66E (IT Act):</strong>
                 <p className="text-[11px] leading-relaxed">Violation of privacy by capturing or publishing private photos without consent.</p>
               </div>
-              <div className="p-3 bg-[#080B18] rounded-xl border border-[#A6AEC8]/10 space-y-1">
-                <strong className="text-[#F4F5FF] block">Section 354D (IPC / BNS):</strong>
+              <div className="p-3 bg-[#070908] rounded-xl border border-[rgba(225,239,221,0.10)] space-y-1">
+                <strong className="text-[#f0f2eb] block">Section 354D (IPC / BNS):</strong>
                 <p className="text-[11px] leading-relaxed">Online stalking, tracking, or persistently contacting someone despite disinterest.</p>
               </div>
-              <div className="p-3 bg-[#080B18] rounded-xl border border-[#A6AEC8]/10 space-y-1">
-                <strong className="text-[#F4F5FF] block">Section 506 (IPC / BNS):</strong>
+              <div className="p-3 bg-[#070908] rounded-xl border border-[rgba(225,239,221,0.10)] space-y-1">
+                <strong className="text-[#f0f2eb] block">Section 506 (IPC / BNS):</strong>
                 <p className="text-[11px] leading-relaxed">Criminal intimidation (threatening physical harm, reputation damage, or extortion).</p>
               </div>
-              <div className="p-3 bg-[#080B18] rounded-xl border border-[#A6AEC8]/10 space-y-1">
-                <strong className="text-[#F4F5FF] block">Section 65B Certificate:</strong>
+              <div className="p-3 bg-[#070908] rounded-xl border border-[rgba(225,239,221,0.10)] space-y-1">
+                <strong className="text-[#f0f2eb] block">Section 65B Certificate:</strong>
                 <p className="text-[11px] leading-relaxed">Legal document proving digital evidence wasn&apos;t tampered with after preservation.</p>
               </div>
             </div>
@@ -396,33 +396,33 @@ export const ComplaintWizardPage: React.FC = () => {
 
           {/* Editable Draft Text Area */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-[#F4F5FF] uppercase tracking-wider block">
+            <label className="text-xs font-semibold text-[#f0f2eb] uppercase tracking-wider block">
               Editable Complaint Text:
             </label>
             <textarea
               value={editableText}
               onChange={(e) => setEditableText(e.target.value)}
               rows={14}
-              className="w-full font-mono text-xs p-4 bg-[#0D1224] border border-[#A6AEC8]/20 rounded-2xl text-[#F4F5FF] leading-relaxed focus:outline-none focus:border-[#8B7CFF]/60 transition-colors"
+              className="w-full font-mono text-xs p-4 bg-[#0d1110] border border-[rgba(225,239,221,0.20)] rounded-2xl text-[#f0f2eb] leading-relaxed focus:outline-none focus:border-[#d5ff54]/60 transition-colors"
             />
           </div>
 
           {/* User Confirmation Checkbox */}
-          <div className="p-4 bg-[#0D1224] rounded-2xl border border-[#A6AEC8]/15">
+          <div className="p-4 bg-[#0d1110] rounded-2xl border border-[rgba(225,239,221,0.15)]">
             <label className="flex items-start gap-3 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={userConfirmed}
                 onChange={(e) => setUserConfirmed(e.target.checked)}
-                className="mt-0.5 rounded text-[#8B7CFF] focus:ring-[#8B7CFF]"
+                className="mt-0.5 rounded text-[#d5ff54] focus:ring-[#d5ff54]"
               />
-              <span className="text-xs text-[#F4F5FF] font-medium leading-relaxed">
+              <span className="text-xs text-[#f0f2eb] font-medium leading-relaxed">
                 I have reviewed this draft and confirm that all factual statements represent my true experience.
               </span>
             </label>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-[#A6AEC8]/15">
+          <div className="flex items-center justify-between pt-4 border-t border-[rgba(225,239,221,0.15)]">
             <Button
               type="button"
               variant="secondary"
@@ -448,16 +448,16 @@ export const ComplaintWizardPage: React.FC = () => {
 
       {/* ================= STEP 3: EXPORT & SUBMIT GUIDANCE ================= */}
       {step === 3 && (
-        <div className="bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl p-6 sm:p-10 space-y-8 shadow-xl text-center">
-          <div className="w-16 h-16 rounded-3xl bg-[#52D6B2]/15 border border-[#52D6B2]/40 flex items-center justify-center mx-auto text-[#52D6B2]">
+        <div className="bg-[#111716]/85 border border-[rgba(225,239,221,0.15)] rounded-3xl p-6 sm:p-10 space-y-8 shadow-xl text-center">
+          <div className="w-16 h-16 rounded-3xl bg-[#a8db35]/15 border border-[#a8db35]/40 flex items-center justify-center mx-auto text-[#a8db35]">
             <CheckCircle2 className="w-8 h-8" />
           </div>
 
           <div className="space-y-1.5">
-            <h2 className="text-xl font-bold text-[#F4F5FF]">
+            <h2 className="text-xl font-bold text-[#f0f2eb]">
               Your Complaint Letter is Ready
             </h2>
-            <p className="text-xs text-[#A6AEC8] max-w-md mx-auto leading-relaxed">
+            <p className="text-xs text-[#929b93] max-w-md mx-auto leading-relaxed">
               You can now download your complaint as an official PDF document or copy the text directly.
             </p>
           </div>
@@ -493,36 +493,36 @@ export const ComplaintWizardPage: React.FC = () => {
           </div>
 
           {/* Submission Destinations Directory */}
-          <div className="pt-8 border-t border-[#A6AEC8]/15 text-left space-y-4">
-            <h3 className="text-xs font-bold text-[#F4F5FF] uppercase tracking-wider">
+          <div className="pt-8 border-t border-[rgba(225,239,221,0.15)] text-left space-y-4">
+            <h3 className="text-xs font-bold text-[#f0f2eb] uppercase tracking-wider">
               Where to Submit This Complaint:
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-              <div className="p-5 bg-[#0D1224] rounded-2xl border border-[#A6AEC8]/15 space-y-2">
-                <span className="font-bold text-[#8B7CFF] block">1. Government Cyber Portal</span>
-                <p className="text-[#A6AEC8] leading-relaxed text-[11px]">
+              <div className="p-5 bg-[#0d1110] rounded-2xl border border-[rgba(225,239,221,0.15)] space-y-2">
+                <span className="font-bold text-[#d5ff54] block">1. Government Cyber Portal</span>
+                <p className="text-[#929b93] leading-relaxed text-[11px]">
                   Submit at <strong>cybercrime.gov.in</strong> under &quot;Report Crime Against Women/Children&quot; or call <strong>1930</strong>.
                 </p>
               </div>
 
-              <div className="p-5 bg-[#0D1224] rounded-2xl border border-[#A6AEC8]/15 space-y-2">
-                <span className="font-bold text-[#648BFF] block">2. Platform Grievance Officer</span>
-                <p className="text-[#A6AEC8] leading-relaxed text-[11px]">
+              <div className="p-5 bg-[#0d1110] rounded-2xl border border-[rgba(225,239,221,0.15)] space-y-2">
+                <span className="font-bold text-[#a8db35] block">2. Platform Grievance Officer</span>
+                <p className="text-[#929b93] leading-relaxed text-[11px]">
                   Send this draft to Instagram, WhatsApp, or Google&apos;s designated Grievance Officer in India for content takedown within 24 hours.
                 </p>
               </div>
 
-              <div className="p-5 bg-[#0D1224] rounded-2xl border border-[#A6AEC8]/15 space-y-2">
-                <span className="font-bold text-[#52D6B2] block">3. Local Police Cyber Cell</span>
-                <p className="text-[#A6AEC8] leading-relaxed text-[11px]">
+              <div className="p-5 bg-[#0d1110] rounded-2xl border border-[rgba(225,239,221,0.15)] space-y-2">
+                <span className="font-bold text-[#a8db35] block">3. Local Police Cyber Cell</span>
+                <p className="text-[#929b93] leading-relaxed text-[11px]">
                   Print the PDF document, sign it, and hand it to your city&apos;s Cyber Crime Police Station along with preserved evidence files.
                 </p>
               </div>
             </div>
 
             <div className="pt-4 flex justify-between items-center text-xs">
-              <Link to="/reporting" className="text-[#8B7CFF] hover:underline flex items-center gap-1 font-medium">
+              <Link to="/reporting" className="text-[#d5ff54] hover:underline flex items-center gap-1 font-medium">
                 <span>View platform grievance officer directory</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </Link>

@@ -104,16 +104,16 @@ describe('Quick Exit, Multilingual (EN/KN/HI) & Hero CTA Corrections', () => {
       fireEvent.change(select, { target: { value: 'kn' } })
       expect(document.documentElement.lang).toBe('kn')
       expect(localStorage.getItem('safeher_preferred_language')).toBe('kn')
-      expect(screen.getAllByText(/ನಿಮ್ಮ ಡಿಜಿಟಲ್/i).length).toBeGreaterThan(0)
-      expect(screen.getAllByText(/ಪ್ರಾರಂಭಿಸಿ/i).length).toBeGreaterThan(0)
+      expect(screen.getAllByText(/ಮುಂದೆ ಸಾಗಿ/i).length).toBeGreaterThan(0)
+      expect(screen.getAllByText(/SafeHER ಅನ್ವೇಷಿಸಿ/i).length).toBeGreaterThan(0)
       expect(screen.getAllByText(/ತ್ವರಿತ ನಿರ್ಗಮನ/i).length).toBeGreaterThan(0)
 
       // Switch to Hindi (hi)
       fireEvent.change(select, { target: { value: 'hi' } })
       expect(document.documentElement.lang).toBe('hi')
       expect(localStorage.getItem('safeher_preferred_language')).toBe('hi')
-      expect(screen.getAllByText(/आपकी डिजिटल/i).length).toBeGreaterThan(0)
-      expect(screen.getAllByText(/शुरू करें/i).length).toBeGreaterThan(0)
+      expect(screen.getAllByText(/आगे बढ़ें/i).length).toBeGreaterThan(0)
+      expect(screen.getAllByText(/SafeHER देखें/i).length).toBeGreaterThan(0)
       expect(screen.getAllByText(/त्वरित निकास/i).length).toBeGreaterThan(0)
 
       unmount()
@@ -143,7 +143,7 @@ describe('Quick Exit, Multilingual (EN/KN/HI) & Hero CTA Corrections', () => {
   })
 
   describe('Part 3 — Non-Redundant Hero CTAs', () => {
-    it('keeps Get Started, Watch Intro, and Explore SafeHER and removes redundant TRY NOW', () => {
+    it('keeps Explore SafeHER, Verify Media AI, Experience the demo, and Open SafeHER nav CTA cleanly distinct', () => {
       render(
         <MemoryRouter>
           <I18nProvider>
@@ -154,14 +154,17 @@ describe('Quick Exit, Multilingual (EN/KN/HI) & Hero CTA Corrections', () => {
         </MemoryRouter>
       )
 
-      const getStartedLink = screen.getByRole('link', { name: /Get Started/i })
-      expect(getStartedLink).toHaveAttribute('href', '/dashboard')
+      const exploreLink = screen.getByRole('link', { name: /Explore SafeHER/i })
+      expect(exploreLink).toHaveAttribute('href', '#experience')
 
-      const watchIntroBtn = screen.getByRole('button', { name: /Watch Intro/i })
-      expect(watchIntroBtn).toBeInTheDocument()
+      const verifyLink = screen.getByRole('link', { name: /Verify Media AI/i })
+      expect(verifyLink).toHaveAttribute('href', '/detect')
 
-      const exploreBtn = screen.getByRole('button', { name: /Explore SafeHER/i })
-      expect(exploreBtn).toBeInTheDocument()
+      const demoLink = screen.getByRole('link', { name: /Experience the demo/i })
+      expect(demoLink).toHaveAttribute('href', '#live-demo')
+
+      const openSafeHER = screen.getByRole('link', { name: /Open SafeHER/i })
+      expect(openSafeHER).toHaveAttribute('href', '/login')
 
       expect(screen.queryByText(/^TRY NOW$/i)).not.toBeInTheDocument()
     })

@@ -27,30 +27,31 @@ from forensics.metadata_service import (
     extract_exif_metadata,
 )
 
-PUBLIC_TESTFILES_SAMPLE = (
-    r"C:\Projects\SafeHER\SafeHER-Research\additional-repositories\public-testfiles"
-    r"\legacy\1.4\image\jpeg\adobe-20220124-C.jpg"
-)
+PUBLIC_TESTFILES_SAMPLE = os.environ.get("SAFEHER_C2PA_PUBLIC_TESTFILE", "")
+
+
+def _make_test_scene(color=(120, 45, 200), size=(128, 128)) -> Image.Image:
+    from PIL import ImageDraw
+
+    img = Image.new("RGB", size, color=color)
+    draw = ImageDraw.Draw(img)
+    w, h = size
+    draw.rectangle([w // 8, h // 8, w * 7 // 8, h * 7 // 8], fill=(220, 180, 90))
+    draw.ellipse([w // 4, h // 4, w * 3 // 4, h * 3 // 4], fill=(40, 90, 170))
+    draw.polygon([(0, h), (w // 2, h // 3), (w, h)], fill=(180, 50, 70))
+    draw.line([(0, 0), (w, h)], fill=(255, 255, 255), width=6)
+    return img
 
 
 def _make_png_bytes(color=(120, 45, 200), size=(128, 128)) -> bytes:
-    img = Image.new("RGB", size, color=color)
-    # Smooth gradient + block structure so perceptual hashes survive JPEG recompression
-    for x in range(size[0]):
-        for y in range(size[1]):
-            img.putpixel((x, y), ((x * 2) % 255, (y * 2) % 255, ((x + y) // 2) % 255))
     buf = io.BytesIO()
-    img.save(buf, format="PNG")
+    _make_test_scene(color=color, size=size).save(buf, format="PNG")
     return buf.getvalue()
 
 
 def _make_jpeg_bytes(color=(120, 45, 200), size=(128, 128), quality=90) -> bytes:
-    img = Image.new("RGB", size, color=color)
-    for x in range(size[0]):
-        for y in range(size[1]):
-            img.putpixel((x, y), ((x * 2) % 255, (y * 2) % 255, ((x + y) // 2) % 255))
     buf = io.BytesIO()
-    img.save(buf, format="JPEG", quality=quality)
+    _make_test_scene(color=color, size=size).save(buf, format="JPEG", quality=quality)
     return buf.getvalue()
 
 
@@ -79,9 +80,9 @@ def test_exif_metadata_extraction():
 
 
 def test_perceptual_hashing_near_duplicate_and_distinct():
-    # Use a real photographic image if available, else a smooth non-wrapping gradient + blocks
-    photo_path = r"C:\Projects\SafeHER\SafeHER-Research\retinaface\tests\dataset\couple.jpg"
-    if os.path.exists(photo_path):
+    # Use a real photographic image if configured, else a smooth non-wrapping gradient + blocks
+    photo_path = os.environ.get("SAFEHER_SAMPLE_PHOTO_PATH", "")
+    if photo_path and os.path.exists(photo_path):
         with Image.open(photo_path) as im:
             rgb = im.convert("RGB")
             buf1 = io.BytesIO()

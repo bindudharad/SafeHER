@@ -113,9 +113,12 @@ def analyze_facial_deepfakes(
 
     # 2. Step 2: Check for configured DeepfakeBench / FaceForensics++ Checkpoint
     checkpoint_path = os.environ.get("SAFEHER_DEEPFAKE_CHECKPOINT", "")
-    known_research_path = r"C:\Projects\SafeHER\SafeHER-Research\DeepfakeBench\training\weights\ff_xception.pth"
-    if not checkpoint_path and os.path.exists(known_research_path):
-        checkpoint_path = known_research_path
+    if not checkpoint_path:
+        default_ckpt = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "models", "xception_best.pth")
+        )
+        if os.path.exists(default_ckpt):
+            checkpoint_path = default_ckpt
 
     if not checkpoint_path or not os.path.exists(checkpoint_path):
         elapsed = (time.time() - start_time) * 1000

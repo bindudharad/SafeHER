@@ -39,7 +39,14 @@ from security.crypto import (
     GCM_NONCE_BYTES,
 )
 from security.key_manager import get_key_manager
-from security.key_provider import get_key_provider, BaseKeyProvider
+from security.key_provider import (
+    get_key_provider,
+    BaseKeyProvider,
+    LocalEnvKEKProvider,
+    KMSAccessError,
+    KMSUnavailableError,
+    is_local_key_id,
+)
 
 STORAGE_VERSION = "v2"
 ENCRYPTION_ALGO = "AES-256-GCM"
@@ -258,20 +265,41 @@ def retrieve_and_decrypt_evidence(
     # Unwrap session key
     session_key: Optional[bytes] = None
     kp = key_provider or get_key_provider()
+    record_uses_local_kek = is_local_key_id(key_id)
 
     # Try KEK provider unwrapping if wrapping nonce is available
     if wrapping_nonce_hex:
-        try:
-            wrapping_nonce_bytes = bytes.fromhex(wrapping_nonce_hex)
-            session_key = kp.unwrap_key(
-                wrapped_key_bytes,
-                wrapping_nonce_bytes,
-                key_id=key_id or kp.get_key_id(),
-                key_version=key_version or kp.get_key_version(),
-                aad=aad,
-            )
-        except Exception:
-            session_key = None
+        wrapping_nonce_bytes = bytes.fromhex(wrapping_nonce_hex)
+        # If the active provider is Cloud KMS but this legacy record was wrapped with LocalEnvKEKProvider,
+        # explicitly use LocalEnvKEKProvider for backward-compatible decryption (never silent downgrade for KMS records).
+        if record_uses_local_kek and getattr(kp, "provider_name", "local_env") != "local_env":
+            try:
+                legacy_kp = LocalEnvKEKProvider(allow_generate=False)
+                session_key = legacy_kp.unwrap_key(
+                    wrapped_key_bytes,
+                    wrapping_nonce_bytes,
+                    key_id=key_id or legacy_kp.get_key_id(),
+                    key_version=key_version or legacy_kp.get_key_version(),
+                    aad=aad,
+                )
+            except Exception:
+                session_key = None
+        else:
+            try:
+                session_key = kp.unwrap_key(
+                    wrapped_key_bytes,
+                    wrapping_nonce_bytes,
+                    key_id=key_id or kp.get_key_id(),
+                    key_version=key_version or kp.get_key_version(),
+                    aad=aad,
+                )
+            except (KMSUnavailableError, KMSAccessError):
+                # Never silently fall back to a weaker provider when Cloud KMS is unavailable or denies access
+                raise
+            except Exception:
+                if getattr(kp, "provider_name", "local_env") != "local_env" and not record_uses_local_kek:
+                    raise
+                session_key = None
 
     # Fallback to RSA-OAEP unwrapping for v1 envelope format
     if session_key is None:

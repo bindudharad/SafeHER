@@ -43,7 +43,7 @@ export const SpiralGalaxyHeroBackground: React.FC<SpiralGalaxyHeroBackgroundProp
       aria-hidden="true"
     >
       {/* Layer 0: Deep Obsidian Midnight Aurora Base */}
-      <div className="absolute inset-0 bg-[#080B18]" />
+      <div className="absolute inset-0 bg-[#070908]" />
 
       {webGpuSupported ? (
         /* Layer 1: Live Interactive vgpu WebGPU Spiral Galaxy */
@@ -66,7 +66,7 @@ export const SpiralGalaxyHeroBackground: React.FC<SpiralGalaxyHeroBackgroundProp
             className="absolute inset-0 opacity-45"
             style={{
               backgroundImage:
-                'radial-gradient(1.5px 1.5px at 18% 28%, #F4F5FF, transparent), radial-gradient(1.5px 1.5px at 78% 22%, #55D6E8, transparent), radial-gradient(1px 1px at 34% 68%, #A99BFF, transparent), radial-gradient(1.5px 1.5px at 66% 74%, #8B7CFF, transparent), radial-gradient(1px 1px at 88% 58%, #F4F5FF, transparent), radial-gradient(1px 1px at 12% 78%, #55D6E8, transparent)',
+                'radial-gradient(1.5px 1.5px at 18% 28%, #f0f2eb, transparent), radial-gradient(1.5px 1.5px at 78% 22%, #d5ff54, transparent), radial-gradient(1px 1px at 34% 68%, #e2ff84, transparent), radial-gradient(1.5px 1.5px at 66% 74%, #d5ff54, transparent), radial-gradient(1px 1px at 88% 58%, #f0f2eb, transparent), radial-gradient(1px 1px at 12% 78%, #d5ff54, transparent)',
             }}
           />
         </div>

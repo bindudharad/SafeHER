@@ -89,7 +89,7 @@ export const CircularRevealManifesto: React.FC = () => {
         {/* Center Text Composition Area */}
         <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden">
           {/* Layer 1: Dark Base Layer (Muted Slate / Charcoal on Black) */}
-          <div className="w-full text-slate-700 select-none">
+          <div className="w-full text-[#1c241d] select-none">
             {manifestoText}
           </div>
 

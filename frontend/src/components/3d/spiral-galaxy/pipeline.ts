@@ -95,7 +95,7 @@ export const DEFAULT_LOOK: Look = {
     secondary: 0.48,
   },
   // Calibrated for SafeHER Midnight Aurora contrast behind hero typography.
-  ambient: { color: '#1E1148', opacity: 0.44, start: 0.22 },
+  ambient: { color: '#0d1110', opacity: 0.44, start: 0.22 },
   dirtyGlass: { enabled: true, distortion: 0.68, grain: 0.031, procedural: 0.35, texture: 0, drift: 0.28 },
 };
 

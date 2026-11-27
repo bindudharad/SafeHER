@@ -15,11 +15,8 @@ interface SafeHERBrandLockupProps {
 }
 
 /**
- * Unified Internal Application Brand Lockup.
- * Hierarchy:
- * 1. Official circular SafeHER logo (with subtle Aurora Violet illumination)
- * 2. Readable geometric SAFEHER wordmark (non-condensed)
- * 3. Subtle descriptive subtitle
+ * Unified SafeHER Brand Lockup matching the master Scroll Story navigation mark:
+ * Rotated lime diamond emblem + Barlow Condensed SAFEHER wordmark + DM Mono subtitle.
  */
 export const SafeHERBrandLockup: React.FC<SafeHERBrandLockupProps> = ({
   logoSize = 'sm',
@@ -35,23 +32,31 @@ export const SafeHERBrandLockup: React.FC<SafeHERBrandLockupProps> = ({
   const resolvedSubtitle = subtitleText ?? t.navbar.subtitle
 
   return (
-    <div className={cn('flex items-center gap-2 sm:gap-3 min-w-0 shrink-0 select-none', className)}>
+    <div className={cn('flex items-center gap-2.5 sm:gap-3 min-w-0 shrink-0 select-none', className)}>
       <div
         ref={logoTargetRef}
         data-safeher-logo-target={logoTargetId}
         style={{ opacity: logoHidden ? 0 : 1 }}
-        className="shrink-0 transition-opacity duration-150"
+        className="shrink-0 transition-opacity duration-150 relative flex items-center justify-center"
       >
-        <SafeHERLogo size={logoSize} glow />
+        <span
+          className={cn(
+            'grid place-items-center border border-[#d5ff54] text-[#d5ff54] rotate-45 bg-[#070908]',
+            compact ? 'w-6 h-6' : 'w-[26px] h-[26px]'
+          )}
+        >
+          <span className="-rotate-45 font-display font-bold text-sm leading-none">S</span>
+        </span>
+        <SafeHERLogo size={logoSize} glow={false} className="sr-only" />
       </div>
 
       <div className="min-w-0 shrink-0 text-left">
         <span
           className={cn(
-            'block font-sans font-bold uppercase text-[#F4F5FF] leading-none whitespace-nowrap',
+            'block font-display font-extrabold uppercase text-[#f0f2eb] leading-none whitespace-nowrap',
             compact
-              ? 'text-sm tracking-[0.12em]'
-              : 'text-sm sm:text-[18px] tracking-[0.11em] sm:tracking-[0.16em]'
+              ? 'text-base tracking-[0.06em]'
+              : 'text-base sm:text-[19px] tracking-[0.05em]'
           )}
         >
           SAFEHER
@@ -60,10 +65,10 @@ export const SafeHERBrandLockup: React.FC<SafeHERBrandLockupProps> = ({
         {showSubtitle && (
           <p
             className={cn(
-              'text-[#A6AEC8] font-mono uppercase leading-none truncate',
+              'text-[#929b93] font-mono uppercase leading-none truncate',
               compact
-                ? 'text-[9px] tracking-[0.1em] mt-1'
-                : 'hidden sm:block text-[10px] tracking-[0.12em] mt-1.5'
+                ? 'text-[8px] tracking-[0.16em] mt-1'
+                : 'hidden sm:block text-[8px] tracking-[0.18em] mt-1'
             )}
           >
             {resolvedSubtitle}

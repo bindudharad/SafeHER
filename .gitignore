@@ -7,6 +7,8 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .hypothesis/
 backend/safeher.db
 backend/safeher.db-wal
@@ -19,16 +21,23 @@ frontend/node_modules/
 frontend/dist/
 node_modules/
 dist/
+.vite/
 *.tsbuildinfo
 
-# Logs & OS
+# Logs, Archives & Generated Artifacts
 *.log
+*.zip
+*.tar.gz
+sbom.json
 .DS_Store
 Thumbs.db
 
 # Large AI Model Checkpoints (exceeds GitHub 100MB limit; keep models/README.md)
 models/*.pth
+models/*.pth.tar
 *.pth
+*.pth.tar
 *.pt
 *.onnx
 *.safetensors
+*.bak

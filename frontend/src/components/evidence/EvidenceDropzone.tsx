@@ -151,10 +151,10 @@ export const EvidenceDropzone: React.FC<EvidenceDropzoneProps> = ({
   }
 
   const getFileIcon = (mime: string) => {
-    if (mime.startsWith('image/')) return <ImageIcon className="w-5 h-5 text-[#8B7CFF]" />
-    if (mime.startsWith('video/')) return <Video className="w-5 h-5 text-[#648BFF]" />
-    if (mime.includes('pdf')) return <FileText className="w-5 h-5 text-[#52D6B2]" />
-    return <HardDrive className="w-5 h-5 text-[#A6AEC8]" />
+    if (mime.startsWith('image/')) return <ImageIcon className="w-5 h-5 text-[#d5ff54]" />
+    if (mime.startsWith('video/')) return <Video className="w-5 h-5 text-[#a8db35]" />
+    if (mime.includes('pdf')) return <FileText className="w-5 h-5 text-[#a8db35]" />
+    return <HardDrive className="w-5 h-5 text-[#929b93]" />
   }
 
   const getUploadProgressPercent = () => {
@@ -194,20 +194,20 @@ export const EvidenceDropzone: React.FC<EvidenceDropzoneProps> = ({
           onClick={() => fileInputRef.current?.click()}
           className={`border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer transition-all duration-200 ${
             dragActive
-              ? 'border-[#8B7CFF] bg-[#8B7CFF]/10'
-              : 'border-[#A6AEC8]/20 hover:border-[#8B7CFF]/50 bg-[#0D1224]/80 hover:bg-[#171D35]'
+              ? 'border-[#d5ff54] bg-[#d5ff54]/10'
+              : 'border-[rgba(225,239,221,0.20)] hover:border-[#d5ff54]/50 bg-[#0d1110]/80 hover:bg-[#111716]'
           }`}
         >
-          <div className="w-14 h-14 rounded-2xl bg-[#8B7CFF]/15 border border-[#8B7CFF]/30 flex items-center justify-center mx-auto mb-3 text-[#8B7CFF] shadow-[0_0_15px_rgba(139,124,255,0.2)]">
+          <div className="w-14 h-14 rounded-2xl bg-[#d5ff54]/15 border border-[#d5ff54]/30 flex items-center justify-center mx-auto mb-3 text-[#d5ff54] shadow-[0_0_15px_rgba(139,124,255,0.2)]">
             <Upload className="w-6 h-6" />
           </div>
-          <h4 className="text-sm font-semibold text-[#F4F5FF]">
+          <h4 className="text-sm font-semibold text-[#f0f2eb]">
             Drag &amp; drop evidence files here, or click to browse
           </h4>
-          <p className="text-xs text-[#A6AEC8] mt-1">
+          <p className="text-xs text-[#929b93] mt-1">
             Supported formats: PNG, JPG, JPEG, MP4, PDF, TXT (up to 50 MB)
           </p>
-          <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] text-[#8B7CFF] font-medium px-3 py-1 rounded-full bg-[#8B7CFF]/10 border border-[#8B7CFF]/25">
+          <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] text-[#d5ff54] font-medium px-3 py-1 rounded-full bg-[#d5ff54]/10 border border-[#d5ff54]/25">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Files are SHA-256 fingerprinted and stored encrypted</span>
           </div>
@@ -216,21 +216,21 @@ export const EvidenceDropzone: React.FC<EvidenceDropzoneProps> = ({
 
       {/* Selected File Review & Hashing Stage */}
       {selectedFile && (
-        <div className="bg-[#171D35]/90 border border-[#A6AEC8]/20 rounded-2xl p-5 space-y-4">
+        <div className="bg-[#111716]/90 border border-[rgba(225,239,221,0.20)] rounded-2xl p-5 space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               {filePreview ? (
-                <div className="w-14 h-14 rounded-xl overflow-hidden border border-[#8B7CFF]/30 shrink-0 bg-[#080B18]">
+                <div className="w-14 h-14 rounded-xl overflow-hidden border border-[#d5ff54]/30 shrink-0 bg-[#070908]">
                   <img src={filePreview} alt="Preview" className="w-full h-full object-cover" />
                 </div>
               ) : (
-                <div className="w-12 h-12 rounded-xl bg-[#0D1224] border border-[#A6AEC8]/20 flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-[#0d1110] border border-[rgba(225,239,221,0.20)] flex items-center justify-center shrink-0">
                   {getFileIcon(selectedFile.type)}
                 </div>
               )}
               <div>
-                <h4 className="text-xs font-semibold text-[#F4F5FF]">{selectedFile.name}</h4>
-                <p className="text-[11px] text-[#A6AEC8]">
+                <h4 className="text-xs font-semibold text-[#f0f2eb]">{selectedFile.name}</h4>
+                <p className="text-[11px] text-[#929b93]">
                   {formatBytes(selectedFile.size)} • {selectedFile.type || 'Binary file'}
                 </p>
               </div>
@@ -242,7 +242,7 @@ export const EvidenceDropzone: React.FC<EvidenceDropzoneProps> = ({
                 setFilePreview(null)
                 if (fileInputRef.current) fileInputRef.current.value = ''
               }}
-              className="text-xs text-[#A6AEC8] hover:text-[#F4F5FF] transition-colors"
+              className="text-xs text-[#929b93] hover:text-[#f0f2eb] transition-colors"
             >
               Change file
             </button>
@@ -250,15 +250,15 @@ export const EvidenceDropzone: React.FC<EvidenceDropzoneProps> = ({
 
           {/* Cryptographic SHA-256 Display */}
           {fileHash && (
-            <div className="p-3 bg-[#080B18] rounded-xl border border-[#52D6B2]/30 space-y-1">
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#52D6B2]">
+            <div className="p-3 bg-[#070908] rounded-xl border border-[#a8db35]/30 space-y-1">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#a8db35]">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>SHA-256 Fingerprint Computed Locally:</span>
               </div>
-              <p className="text-[10px] font-mono text-[#55D6E8] break-all select-all">
+              <p className="text-[10px] font-mono text-[#d5ff54] break-all select-all">
                 {fileHash}
               </p>
-              <p className="text-[10px] text-[#727D9C] pt-0.5">
+              <p className="text-[10px] text-[#929b93] pt-0.5">
                 Note: SHA-256 detects later tampering or alteration. It preserves legal chain of custody under Section 65B.
               </p>
             </div>
@@ -266,7 +266,7 @@ export const EvidenceDropzone: React.FC<EvidenceDropzoneProps> = ({
 
           {/* Optional Complainant Note */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#F4F5FF]">
+            <label className="text-xs font-semibold text-[#f0f2eb]">
               Evidence Context / Relevance Note (Optional)
             </label>
             <input
@@ -274,24 +274,24 @@ export const EvidenceDropzone: React.FC<EvidenceDropzoneProps> = ({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="e.g., Screenshot of defamatory story before deletion"
-              className="w-full px-3 py-2 bg-[#0D1224] border border-[#A6AEC8]/20 rounded-xl text-xs text-[#F4F5FF] placeholder-[#727D9C] focus:outline-none focus:border-[#8B7CFF]/60 transition-colors"
+              className="w-full px-3 py-2 bg-[#0d1110] border border-[rgba(225,239,221,0.20)] rounded-xl text-xs text-[#f0f2eb] placeholder-[#929b93] focus:outline-none focus:border-[#d5ff54]/60 transition-colors"
             />
           </div>
 
           {/* Upload Progress & Pipeline States */}
           {uploadStep !== 'idle' && (
-            <div className="space-y-2 p-3 bg-[#8B7CFF]/10 border border-[#8B7CFF]/25 rounded-xl">
-              <div className="flex items-center justify-between text-xs text-[#8B7CFF]">
+            <div className="space-y-2 p-3 bg-[#d5ff54]/10 border border-[#d5ff54]/25 rounded-xl">
+              <div className="flex items-center justify-between text-xs text-[#d5ff54]">
                 <div className="flex items-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin shrink-0 text-[#8B7CFF]" />
+                  <Loader2 className="w-4 h-4 animate-spin shrink-0 text-[#d5ff54]" />
                   <span>{stepMessage}</span>
                 </div>
                 <span className="font-mono font-semibold">{getUploadProgressPercent()}%</span>
               </div>
               {/* Animated Progress Bar */}
-              <div className="w-full bg-[#0D1224] h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-[#0d1110] h-1.5 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[#8B7CFF] to-[#52D6B2] transition-all duration-300 rounded-full"
+                  className="h-full bg-gradient-to-r from-[#d5ff54] to-[#a8db35] transition-all duration-300 rounded-full"
                   style={{ width: `${getUploadProgressPercent()}%` }}
                 />
               </div>
@@ -299,7 +299,7 @@ export const EvidenceDropzone: React.FC<EvidenceDropzoneProps> = ({
           )}
 
           {errorMsg && (
-            <div className="p-3 bg-[#FF718A]/10 border border-[#FF718A]/30 rounded-xl flex items-start gap-2.5 text-xs text-[#FF718A]">
+            <div className="p-3 bg-[#ff927e]/10 border border-[#ff927e]/30 rounded-xl flex items-start gap-2.5 text-xs text-[#ff927e]">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>
@@ -322,7 +322,7 @@ export const EvidenceDropzone: React.FC<EvidenceDropzoneProps> = ({
       )}
 
       {errorMsg && !selectedFile && (
-        <div className="p-3 bg-[#FF718A]/10 border border-[#FF718A]/30 rounded-xl flex items-start gap-2.5 text-xs text-[#FF718A]">
+        <div className="p-3 bg-[#ff927e]/10 border border-[#ff927e]/30 rounded-xl flex items-start gap-2.5 text-xs text-[#ff927e]">
           <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
           <span>{errorMsg}</span>
         </div>

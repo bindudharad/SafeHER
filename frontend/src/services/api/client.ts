@@ -28,6 +28,8 @@ import type {
   JourneyCheckin,
   MalwareScanLog,
   MalwareScannerHealth,
+  SmsNotification,
+  SmsHealthStatus,
 } from '../../types'
 
 import {
@@ -1357,6 +1359,88 @@ Complainant Signature: _______________________
   async getEvidenceMalwareScan(evidenceId: string): Promise<MalwareScanLog> {
     const token = this.getToken()
     const res = await apiFetch(`/api/v1/evidence/${evidenceId}/malware-scan`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async requestContactVerification(contactId: string): Promise<{
+    contact_id: string
+    recipient_masked: string
+    provider_configured: boolean
+    status: string
+    message?: string
+  }> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/safety/contacts/${contactId}/request-verification`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async verifyContactCode(contactId: string, code: string): Promise<{ verified: boolean; contact_id: string }> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/safety/contacts/${contactId}/verify`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ code }),
+    })
+    return await res.json()
+  },
+
+  async triggerEmergencySms(confirmSend: boolean, contactId?: string): Promise<{
+    queued_count: number
+    notifications: SmsNotification[]
+    provider_configured?: boolean
+  }> {
+    const token = this.getToken()
+    const res = await apiFetch('/api/v1/safety/emergency/notify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ confirm_send: confirmSend, contact_id: contactId }),
+    })
+    return await res.json()
+  },
+
+  async listSafetyNotifications(): Promise<SmsNotification[]> {
+    const token = this.getToken()
+    const res = await apiFetch('/api/v1/safety/notifications', {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async getSmsHealth(): Promise<SmsHealthStatus> {
+    const token = this.getToken()
+    const res = await apiFetch('/api/v1/safety/sms/health', {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async getKmsHealth(): Promise<Record<string, unknown>> {
+    const token = this.getToken()
+    const res = await apiFetch('/api/v1/security/kms/health', {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async getOperationalHealth(): Promise<{
+    kms: { provider?: string; status?: string; hardware_backed?: boolean }
+    malware: { status?: string; clamav_online?: boolean; clamav_version?: string | null }
+    sms: { configured?: boolean; status?: string; provider?: { provider?: string; configured?: boolean; status?: string } }
+    tampering_localization: { status?: string; model_id?: string; checkpoint_verified?: boolean }
+  }> {
+    const token = this.getToken()
+    const res = await apiFetch('/api/v1/security/operational/health', {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
     return await res.json()

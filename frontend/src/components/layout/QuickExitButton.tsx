@@ -19,13 +19,11 @@ export function resetQuickExitLock(): void {
 export function performQuickExit(): void {
   if (globalExitInProgress) return
   globalExitInProgress = true
-  // Safety reset in case navigation is mocked/blocked in unit tests
   globalExitTimer = setTimeout(() => {
     globalExitInProgress = false
     globalExitTimer = null
   }, 1500)
 
-  // Clear in-memory & local session credentials to protect survivor privacy
   try {
     sessionStorage.clear()
     localStorage.removeItem('token')
@@ -35,7 +33,6 @@ export function performQuickExit(): void {
     // ignore in sandboxed environments
   }
 
-  // Same-tab navigation only (never window.open); replaces current history entry
   window.location.replace(NEUTRAL_REDIRECT_URL)
 }
 
@@ -52,7 +49,6 @@ export const QuickExitButton: React.FC = () => {
     }, 1500)
   }, [])
 
-  // Synchronized global Alt + Q listener (works across all SafeHER routes)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.repeat) return
@@ -79,7 +75,7 @@ export const QuickExitButton: React.FC = () => {
         type="button"
         onClick={handleQuickExit}
         data-testid="quick-exit-button"
-        className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-rose-600/90 hover:bg-rose-600 text-white font-medium text-xs rounded-xl shadow-critical-glow hover:shadow-lg transition-all duration-200 active:scale-95 focus-visible:ring-2 focus-visible:ring-rose-400 whitespace-nowrap shrink-0"
+        className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 min-h-[34px] bg-[#ff927e]/15 hover:bg-[#ff927e] text-[#ff927e] hover:text-[#170907] border border-[#ff927e]/45 font-mono uppercase tracking-[0.08em] font-semibold text-[10px] rounded-[3px] transition-all duration-200 active:scale-95 focus-visible:ring-2 focus-visible:ring-[#ff927e] whitespace-nowrap shrink-0"
         aria-label={t.quickExitAria || t.quickExitTooltip}
       >
         <LogOut className="w-3.5 h-3.5 shrink-0" />

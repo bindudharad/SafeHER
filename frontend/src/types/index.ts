@@ -4,12 +4,15 @@
 // ==========================================
 
 export type IncidentCategory =
+  | 'harassment'
   | 'online_harassment'
   | 'cyberbullying'
+  | 'cyberstalking'
   | 'threatening_messages'
   | 'blackmail_extortion'
   | 'impersonation'
   | 'deepfake_media'
+  | 'non_consensual_imagery'
   | 'non_consensual_content'
   | 'doxxing'
   | 'other'
@@ -598,7 +601,41 @@ export interface TrustedContact {
   phone_number: string
   relationship: string
   notify_on_escalation: number | boolean
+  is_verified?: number | boolean
+  verified_at?: string | null
   created_at: string
+}
+
+export interface SmsNotification {
+  id: string
+  contact_id?: string | null
+  journey_id?: string | null
+  correlation_id: string
+  event_type: string
+  recipient_masked: string
+  reference_code: string
+  provider: string
+  provider_message_sid?: string | null
+  status: 'queued' | 'processing' | 'sent' | 'delivered' | 'failed' | 'dead_letter'
+  attempts: number
+  max_attempts: number
+  last_error?: string | null
+  created_at: string
+  sent_at?: string | null
+  delivered_at?: string | null
+}
+
+export interface SmsHealthStatus {
+  service: string
+  provider: {
+    provider: string
+    configured: boolean
+    status: string
+    sandbox_mode?: boolean
+    message?: string
+  }
+  worker_running: boolean
+  queue_counts: Record<string, number>
 }
 
 export interface JourneyCheckin {

@@ -97,3 +97,18 @@ export const useAuth = (): AuthContextType => {
   }
   return context
 }
+
+export const useOptionalAuth = (): AuthContextType => {
+  const context = useContext(AuthContext)
+  return (
+    context ?? {
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      isLoading: false,
+      login: async () => undefined,
+      register: async () => undefined,
+      logout: () => undefined,
+    }
+  )
+}

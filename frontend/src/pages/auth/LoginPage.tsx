@@ -49,10 +49,10 @@ export const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#080B18] flex flex-col justify-between p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-[#070908] safeher-grid-bg text-[#f0f2eb] flex flex-col justify-between p-4 sm:p-6 lg:p-8 selection:bg-[#d5ff54] selection:text-[#080a08]">
       {/* Top Bar with Quick Exit */}
       <div className="w-full max-w-5xl mx-auto flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
+        <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
           <div
             ref={registerLogoTarget}
             data-safeher-logo-target="login"
@@ -61,26 +61,35 @@ export const LoginPage: React.FC = () => {
           >
             <SafeHERLogo size="sm" />
           </div>
-          <span className="font-bold text-base text-[#F4F5FF]">SafeHER</span>
+          <div>
+            <span className="font-display font-extrabold text-xl tracking-[0.06em] uppercase text-[#f0f2eb] leading-none block">
+              SAFEHER
+            </span>
+            <span className="font-mono text-[8px] uppercase tracking-[0.16em] text-[#929b93] block mt-0.5">
+              PERSONAL SAFETY SYSTEM
+            </span>
+          </div>
         </Link>
         <QuickExitButton />
       </div>
 
       {/* Main Authentication Card */}
       <div className="w-full max-w-md mx-auto my-8">
-        <div className="bg-[#171D35]/85 backdrop-blur-md border border-[#A6AEC8]/15 rounded-3xl p-6 sm:p-8 shadow-glass text-left">
+        <div className="bg-[#0d1110]/95 backdrop-blur-md border border-[rgba(225,239,221,0.15)] rounded-[4px] p-6 sm:p-8 shadow-glass text-left">
           <div className="flex flex-col items-center text-center mb-6">
             <SafeHERLogo size="xl" animate className="mb-4" />
-            <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-[#8B7CFF] bg-[#8B7CFF]/10 border border-[#8B7CFF]/25 px-2.5 py-0.5 rounded-full mb-2">
+            <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.16em] text-[#d5ff54] bg-[rgba(213,255,84,0.08)] border border-[rgba(213,255,84,0.28)] px-2.5 py-0.5 rounded-[3px] mb-3">
               <Lock className="w-3 h-3" />
               <span>Encrypted Access</span>
             </div>
-            <h1 className="text-xl font-bold text-[#F4F5FF]">{t.auth.welcome}</h1>
-            <p className="text-xs text-[#A6AEC8] mt-1 max-w-xs">{t.auth.subtitle}</p>
+            <h1 className="font-display text-3xl uppercase tracking-[0.02em] font-bold text-[#f0f2eb]">
+              {t.auth.welcome}
+            </h1>
+            <p className="text-xs text-[#929b93] mt-1 max-w-xs">{t.auth.subtitle}</p>
           </div>
 
           {error && (
-            <div className="mb-5 p-3 rounded-xl bg-[#FF718A]/10 border border-[#FF718A]/30 flex items-start gap-2.5 text-xs text-[#FF718A]">
+            <div className="mb-5 p-3 rounded-[4px] bg-[rgba(255,146,126,0.1)] border border-[rgba(255,146,126,0.35)] flex items-start gap-2.5 text-xs text-[#ff927e]">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -120,16 +129,16 @@ export const LoginPage: React.FC = () => {
           </form>
 
           {/* Demonstration Notice */}
-          <div className="mt-5 pt-4 border-t border-[#A6AEC8]/15 text-center">
-            <p className="text-[11px] text-[#A6AEC8]">
-              <span className="text-[#8B7CFF] font-medium">Hackathon Demo Mode:</span> Pre-filled with verified victim response profile.
+          <div className="mt-5 pt-4 border-t border-[rgba(225,239,221,0.15)] text-center">
+            <p className="text-[11px] font-mono text-[#929b93]">
+              <span className="text-[#d5ff54] font-medium">Demo Mode:</span> Pre-filled with sample survivor response profile.
             </p>
           </div>
 
           <div className="mt-4 text-center">
             <Link
               to="/register"
-              className="text-xs text-[#8B7CFF] hover:text-[#A99BFF] transition-colors font-medium"
+              className="text-xs text-[#d5ff54] hover:text-[#e2ff84] transition-colors font-medium"
             >
               {t.auth.noAccount}
             </Link>
@@ -138,9 +147,9 @@ export const LoginPage: React.FC = () => {
       </div>
 
       {/* Footer Safety Disclaimer */}
-      <div className="text-center text-[11px] text-[#727D9C] max-w-md mx-auto">
+      <div className="text-center text-[11px] font-mono text-[#929b93] max-w-md mx-auto">
         SafeHER operates with end-to-end privacy controls. If you feel monitored, press{' '}
-        <kbd className="px-1.5 py-0.5 rounded bg-[#0D1224] border border-[#A6AEC8]/20 text-[#F4F5FF]">
+        <kbd className="px-1.5 py-0.5 rounded-[3px] bg-[#111716] border border-[rgba(225,239,221,0.2)] text-[#f0f2eb]">
           Alt + Q
         </kbd>{' '}
         at any moment to exit immediately.

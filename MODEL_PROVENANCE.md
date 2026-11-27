@@ -10,7 +10,7 @@ This document maintains the cryptographically verified provenance of all pretrai
 
 ### 1.1 RetinaFace ResNet-50 Pretrained Weights
 - **Model Identifier**: `retinaface_resnet50`
-- **File System Location**: `C:\Users\Bindudhara D\.deepface\weights\retinaface.pth`
+- **File System Location**: `~/.deepface/weights/retinaface.pth` (auto-downloaded by `retina-face`)
 - **File Size**: 118,142,391 bytes (112.66 MB)
 - **SHA-256 Checksum**: `89a3b1eb5366829ea72e8cd4a935b7131920c65787cef68f19466c2a853ddbf7`
 - **Upstream Repository**: https://github.com/serengil/retinaface

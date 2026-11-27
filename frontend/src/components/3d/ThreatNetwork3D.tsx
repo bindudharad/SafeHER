@@ -72,8 +72,8 @@ export const ThreatNetwork3D: React.FC<ThreatNetwork3DProps> = ({
     // Central SafeHER Trust Core
     const coreGeo = new THREE.OctahedronGeometry(0.58, 1)
     const coreMat = new THREE.MeshPhysicalMaterial({
-      color: 0x171d35,
-      emissive: 0x8b7cff,
+      color: 0x111716,
+      emissive: 0xd5ff54,
       emissiveIntensity: 0.45,
       metalness: 0.7,
       roughness: 0.18,
@@ -84,7 +84,7 @@ export const ThreatNetwork3D: React.FC<ThreatNetwork3DProps> = ({
 
     const coreWireGeo = new THREE.EdgesGeometry(coreGeo)
     const coreWireMat = new THREE.LineBasicMaterial({
-      color: 0x55d6e8,
+      color: 0xd5ff54,
       transparent: true,
       opacity: 0.65,
     })
@@ -107,8 +107,8 @@ export const ThreatNetwork3D: React.FC<ThreatNetwork3DProps> = ({
     nodes.forEach((node, idx) => {
       const geo = new THREE.SphereGeometry(0.22, 24, 24)
       const mat = new THREE.MeshPhysicalMaterial({
-        color: 0x26165c,
-        emissive: 0x8b7cff,
+        color: 0x111716,
+        emissive: 0xd5ff54,
         emissiveIntensity: 0.4,
         metalness: 0.5,
         roughness: 0.2,
@@ -131,7 +131,7 @@ export const ThreatNetwork3D: React.FC<ThreatNetwork3DProps> = ({
     })
     const lineGeo = new THREE.BufferGeometry().setFromPoints(linePoints)
     const lineMat = new THREE.LineBasicMaterial({
-      color: 0x8b7cff,
+      color: 0xd5ff54,
       transparent: true,
       opacity: 0.35,
     })
@@ -141,15 +141,21 @@ export const ThreatNetwork3D: React.FC<ThreatNetwork3DProps> = ({
     disposableMats.push(lineMat)
 
     // Lighting
-    const hemi = new THREE.HemisphereLight(0xa99bff, 0x080b18, 1.1)
+    const hemi = new THREE.HemisphereLight(0xe2ff84, 0x070908, 1.1)
     scene.add(hemi)
-    const key = new THREE.DirectionalLight(0xf4f5ff, 2.2)
+    const key = new THREE.DirectionalLight(0xf0f2eb, 2.2)
     key.position.set(4, 5, 5)
     scene.add(key)
 
-    // Raycasting for hover & click
+    // Raycasting for hover & click + interactive 3D drag orbit
     const raycaster = new THREE.Raycaster()
     const pointer = new THREE.Vector2()
+    let isDragging = false
+    let draggedDistance = 0
+    let prevX = 0
+    let prevY = 0
+    let dragYaw = 0
+    let dragPitch = 0
 
     const updatePointer = (e: MouseEvent) => {
       const rect = renderer.domElement.getBoundingClientRect()
@@ -157,7 +163,28 @@ export const ThreatNetwork3D: React.FC<ThreatNetwork3DProps> = ({
       pointer.y = -((e.clientY - rect.top) / Math.max(rect.height, 1)) * 2 + 1
     }
 
+    const handlePointerDown = (e: MouseEvent) => {
+      isDragging = true
+      draggedDistance = 0
+      prevX = e.clientX
+      prevY = e.clientY
+    }
+
+    const handlePointerUp = () => {
+      isDragging = false
+    }
+
     const handlePointerMove = (e: MouseEvent) => {
+      if (isDragging) {
+        const dx = e.clientX - prevX
+        const dy = e.clientY - prevY
+        draggedDistance += Math.abs(dx) + Math.abs(dy)
+        dragYaw += dx * 0.01
+        dragPitch = Math.max(-0.5, Math.min(0.5, dragPitch + dy * 0.008))
+        prevX = e.clientX
+        prevY = e.clientY
+        return
+      }
       updatePointer(e)
       raycaster.setFromCamera(pointer, camera)
       const hits = raycaster.intersectObjects(nodeMeshes.map((n) => n.mesh))
@@ -172,6 +199,7 @@ export const ThreatNetwork3D: React.FC<ThreatNetwork3DProps> = ({
     }
 
     const handleClick = (e: MouseEvent) => {
+      if (draggedDistance > 6) return
       updatePointer(e)
       raycaster.setFromCamera(pointer, camera)
       const hits = raycaster.intersectObjects(nodeMeshes.map((n) => n.mesh))
@@ -181,6 +209,8 @@ export const ThreatNetwork3D: React.FC<ThreatNetwork3DProps> = ({
       }
     }
 
+    renderer.domElement.addEventListener('mousedown', handlePointerDown)
+    window.addEventListener('mouseup', handlePointerUp)
     renderer.domElement.addEventListener('mousemove', handlePointerMove)
     renderer.domElement.addEventListener('click', handleClick)
 
@@ -204,11 +234,11 @@ export const ThreatNetwork3D: React.FC<ThreatNetwork3DProps> = ({
         const mat = mesh.material as THREE.MeshPhysicalMaterial
         const isSelected = id === selectedIdRef.current
         if (isSelected) {
-          mat.emissive.setHex(0x55d6e8)
+          mat.emissive.setHex(0xd5ff54)
           mat.emissiveIntensity = 0.95
           mesh.scale.setScalar(1.38)
         } else {
-          mat.emissive.setHex(0x8b7cff)
+          mat.emissive.setHex(0xd5ff54)
           mat.emissiveIntensity = 0.38
           mesh.scale.setScalar(1.0)
         }
@@ -228,7 +258,14 @@ export const ThreatNetwork3D: React.FC<ThreatNetwork3DProps> = ({
         const delta = clock.getDelta()
         const t = clock.getElapsedTime()
 
-        networkGroup.rotation.y += delta * 0.16
+        if (!isDragging) {
+          networkGroup.rotation.y += delta * 0.16
+          dragYaw *= 0.94
+          dragPitch *= 0.94
+        }
+        networkGroup.rotation.y += dragYaw * 0.15
+        dragYaw *= 0.85
+        networkGroup.rotation.x += (dragPitch - networkGroup.rotation.x) * 0.08
         coreMesh.rotation.y -= delta * 0.25
         coreWire.rotation.y -= delta * 0.25
         updateVisualStates(t)
@@ -240,6 +277,8 @@ export const ThreatNetwork3D: React.FC<ThreatNetwork3DProps> = ({
 
     return () => {
       if (rafId) cancelAnimationFrame(rafId)
+      renderer.domElement.removeEventListener('mousedown', handlePointerDown)
+      window.removeEventListener('mouseup', handlePointerUp)
       renderer.domElement.removeEventListener('mousemove', handlePointerMove)
       renderer.domElement.removeEventListener('click', handleClick)
       resizeObserver.disconnect()
@@ -255,7 +294,7 @@ export const ThreatNetwork3D: React.FC<ThreatNetwork3DProps> = ({
   if (!hasWebGL) {
     return (
       <div className={`flex items-center justify-center w-full h-full ${className}`}>
-        <div className="text-xs font-mono text-[#A6AEC8]">Interactive Threat Constellation</div>
+        <div className="text-xs font-mono text-[#929b93]">Interactive Threat Constellation</div>
       </div>
     )
   }
@@ -270,7 +309,7 @@ export const ThreatNetwork3D: React.FC<ThreatNetwork3DProps> = ({
         aria-label="Interactive 3D Threat Intelligence Network"
       />
       {hoveredNode && (
-        <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#080B18]/90 border border-[#55D6E8]/40 text-[11px] font-mono text-[#F4F5FF] whitespace-nowrap shadow-lg">
+        <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#070908]/90 border border-[#d5ff54]/40 text-[11px] font-mono text-[#f0f2eb] whitespace-nowrap shadow-lg">
           {hoveredNode.label} — Click to inspect
         </div>
       )}

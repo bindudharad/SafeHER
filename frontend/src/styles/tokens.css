@@ -1,0 +1,78 @@
+/* =================================================== */
+/* SafeHER Global Design Token System                  */
+/* Single Source of Truth across all routes            */
+/* =================================================== */
+:root {
+  /* Core Surfaces */
+  --bg: #070908;
+  --panel: #0d1110;
+  --panel-secondary: #111716;
+  --panel-glass: rgba(13, 17, 16, 0.82);
+
+  /* Typography Ink */
+  --ink: #f0f2eb;
+  --muted: #929b93;
+  --ink-dim: #707970;
+
+  /* Accents */
+  --accent: #d5ff54;
+  --accent-hover: #e2ff84;
+  --accent-secondary: #a8db35;
+  --coral: #ff927e;
+
+  /* Derived Alpha Surfaces & Borders */
+  --line: rgba(225, 239, 221, 0.15);
+  --line-strong: rgba(225, 239, 221, 0.28);
+  --line-accent: rgba(213, 255, 84, 0.38);
+  --accent-soft: rgba(213, 255, 84, 0.09);
+  --accent-glow: rgba(213, 255, 84, 0.22);
+  --secondary-soft: rgba(168, 219, 53, 0.12);
+  --coral-soft: rgba(255, 146, 126, 0.12);
+  --coral-border: rgba(255, 146, 126, 0.42);
+
+  /* Typography Families */
+  --font-display: "Barlow Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+  --font-body: "DM Sans", "Noto Sans Devanagari", "Noto Sans Kannada", system-ui, -apple-system, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-accent: "Italianno", Georgia, cursive;
+
+  /* Layout Tokens */
+  --nav-height: 74px;
+  --content-max: 1440px;
+
+  /* Radius System */
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Reference HTML compatibility aliases */
+  --panel2: var(--panel-secondary);
+  --lime: var(--accent);
+  --lime2: var(--accent-secondary);
+  --mono: var(--font-mono);
+  --sans: var(--font-body);
+  --display: var(--font-display);
+  --serif: var(--font-accent);
+  --nav-h: var(--nav-height);
+  --max: var(--content-max);
+
+  /* Semantic aliases for shared modules */
+  --background: var(--bg);
+  --background-secondary: var(--panel);
+  --surface: var(--panel);
+  --surface-raised: var(--panel-secondary);
+  --primary: var(--accent);
+  --primary-hover: var(--accent-hover);
+  --primary-soft: var(--accent-soft);
+  --primary-glow: var(--accent-glow);
+  --verified: var(--accent-secondary);
+  --verified-soft: var(--secondary-soft);
+  --warning: var(--coral);
+  --danger: var(--coral);
+  --success: var(--accent-secondary);
+  --border: var(--line);
+  --text-primary: var(--ink);
+  --text-secondary: var(--muted);
+  --text-muted: var(--ink-dim);
+}

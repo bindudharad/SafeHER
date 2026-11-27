@@ -110,8 +110,20 @@ The above copyright notice and this permission notice shall be included in all c
 
 ---
 
-## 13. C2PA Public Test Files (`c2pa-org/public-testfiles`) — Test Fixtures Only
+## 13. C2PA Public Test Files (`c2pa-org/public-testfiles`) — Optional External Fixtures
 - **Project**: Coalition for Content Provenance and Authenticity Public Test Files
 - **License**: Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 - **URL**: https://github.com/c2pa-org/public-testfiles
-- **Usage**: External test-only fixtures in `SafeHER-Research/additional-repositories/public-testfiles` used to verify `c2pa_service.py` against real-world valid and tampered C2PA manifests; not bundled into SafeHER runtime artifacts.
+- **Usage**: Optional external test fixtures (configured via `SAFEHER_C2PA_PUBLIC_TESTFILE`) for verifying `c2pa_service.py` against real-world valid and tampered C2PA manifests; not bundled into the SafeHER repository.
+
+---
+
+## 14. Effort-AIGI-Detection & DeepfakeBench Xception (Stage 3 Research Checkpoints)
+- **Effort-AIGI-Detection** (`CLIP ViT-L/14 + Orthogonal SVD`): CC BY-NC 4.0 — https://github.com/Daisy-ycguo/Effort-AIGI-Detection
+- **DeepfakeBench Xception** (`FaceForensics++` benchmark): CC BY-NC 4.0 — https://github.com/SCLBD/DeepfakeBench
+- **Note**: Both checkpoints are non-commercial (`CC BY-NC 4.0`) and are excluded from Git tracking. Commercial deployments must set `SAFEHER_ENABLE_NONCOMMERCIAL_RESEARCH_MODELS=false`.
+
+---
+
+## 15. Frontend Open Source Libraries
+- **React / React DOM** (MIT), **React Router** (MIT), **Vite** (MIT), **Tailwind CSS** (MIT), **Three.js** (MIT), **Recharts** (MIT), **jsPDF** (MIT), **Lenis** (MIT), **Lucide React** (ISC), **clsx** (MIT), **tailwind-merge** (MIT), **vgpu** (MIT), **GSAP** (Standard "No Charge" GSAP License — https://gsap.com/licensing/).

@@ -84,11 +84,11 @@ export const NormalizedTimelinePage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#F4F5FF] flex items-center gap-2.5">
-            <Clock className="w-6 h-6 text-[#8B7CFF]" />
+          <h1 className="font-display text-3xl uppercase tracking-[0.02em] font-bold text-[#f0f2eb] flex items-center gap-2.5">
+            <Clock className="w-6 h-6 text-[#d5ff54]" />
             Forensic Incident Timeline
           </h1>
-          <p className="text-sm text-[#A6AEC8] mt-1">
+          <p className="text-sm text-[#929b93] mt-1">
             Normalized chronological reconstruction preserving original timestamps, timezone uncertainty, and source provenance.
           </p>
         </div>
@@ -97,7 +97,7 @@ export const NormalizedTimelinePage: React.FC = () => {
           <select
             value={selectedIncidentId}
             onChange={(e) => setSelectedIncidentId(e.target.value)}
-            className="bg-[#12172B] border border-[#A6AEC8]/20 rounded-xl px-3 py-2 text-xs text-[#F4F5FF]"
+            className="bg-[#0d1110] border border-[rgba(225,239,221,0.20)] rounded-xl px-3 py-2 text-xs text-[#f0f2eb]"
           >
             {incidents.map((inc) => (
               <option key={inc.id} value={inc.id}>{inc.title}</option>
@@ -106,7 +106,7 @@ export const NormalizedTimelinePage: React.FC = () => {
           <button
             onClick={handleReconstruct}
             disabled={loading || !selectedIncidentId}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#8B7CFF] hover:bg-[#7A69FF] text-white text-xs font-semibold disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#d5ff54] hover:bg-[#e2ff84] text-[#080a08] text-xs font-semibold disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             Reconstruct Timeline
@@ -115,20 +115,20 @@ export const NormalizedTimelinePage: React.FC = () => {
       </div>
 
       {error && (
-        <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs">
+        <div className="p-3 rounded-xl bg-[rgba(255,146,126,0.10)] border border-[rgba(255,146,126,0.32)] text-[#ff927e] text-xs">
           {error}
         </div>
       )}
 
       {/* Search & Filters */}
-      <div className="flex flex-wrap items-center gap-3 bg-[#12172B] border border-[#A6AEC8]/15 rounded-2xl p-3">
-        <div className="flex items-center gap-1.5 text-xs text-[#A6AEC8]">
+      <div className="flex flex-wrap items-center gap-3 bg-[#0d1110] border border-[rgba(225,239,221,0.15)] rounded-2xl p-3">
+        <div className="flex items-center gap-1.5 text-xs text-[#929b93]">
           <Filter className="w-3.5 h-3.5" /> Time Source:
         </div>
         <select
           value={timeSourceFilter}
           onChange={(e) => setTimeSourceFilter(e.target.value)}
-          className="bg-[#0B0F1E] border border-[#A6AEC8]/20 rounded-lg px-2.5 py-1.5 text-xs text-[#F4F5FF]"
+          className="bg-[#070908] border border-[rgba(225,239,221,0.20)] rounded-lg px-2.5 py-1.5 text-xs text-[#f0f2eb]"
         >
           <option value="">All Time Sources</option>
           <option value="alleged_occurrence">Alleged Occurrence</option>
@@ -144,11 +144,11 @@ export const NormalizedTimelinePage: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search timeline descriptions..."
-            className="w-full bg-[#0B0F1E] border border-[#A6AEC8]/20 rounded-lg px-3 py-1.5 text-xs text-[#F4F5FF]"
+            className="w-full bg-[#070908] border border-[rgba(225,239,221,0.20)] rounded-lg px-3 py-1.5 text-xs text-[#f0f2eb]"
           />
           <button
             onClick={loadTimeline}
-            className="px-3 py-1.5 rounded-lg bg-[#1D2540] text-xs text-[#F4F5FF] flex items-center gap-1"
+            className="px-3 py-1.5 rounded-lg bg-[#111716] text-xs text-[#f0f2eb] flex items-center gap-1"
           >
             <Search className="w-3.5 h-3.5" /> Search
           </button>
@@ -156,13 +156,13 @@ export const NormalizedTimelinePage: React.FC = () => {
       </div>
 
       {/* Add Manual Event */}
-      <form onSubmit={handleAddEvent} className="bg-[#12172B] border border-[#A6AEC8]/15 rounded-2xl p-4 grid grid-cols-1 md:grid-cols-5 gap-3">
+      <form onSubmit={handleAddEvent} className="bg-[#0d1110] border border-[rgba(225,239,221,0.15)] rounded-2xl p-4 grid grid-cols-1 md:grid-cols-5 gap-3">
         <input
           type="text"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           placeholder="Event title"
-          className="bg-[#0B0F1E] border border-[#A6AEC8]/20 rounded-xl px-3 py-2 text-xs text-[#F4F5FF]"
+          className="bg-[#070908] border border-[rgba(225,239,221,0.20)] rounded-xl px-3 py-2 text-xs text-[#f0f2eb]"
           required
         />
         <input
@@ -170,7 +170,7 @@ export const NormalizedTimelinePage: React.FC = () => {
           value={newDesc}
           onChange={(e) => setNewDesc(e.target.value)}
           placeholder="Description"
-          className="bg-[#0B0F1E] border border-[#A6AEC8]/20 rounded-xl px-3 py-2 text-xs text-[#F4F5FF]"
+          className="bg-[#070908] border border-[rgba(225,239,221,0.20)] rounded-xl px-3 py-2 text-xs text-[#f0f2eb]"
           required
         />
         <input
@@ -178,7 +178,7 @@ export const NormalizedTimelinePage: React.FC = () => {
           value={newTime}
           onChange={(e) => setNewTime(e.target.value)}
           placeholder="Original time (e.g. 2026-11-26T14:30:00)"
-          className="bg-[#0B0F1E] border border-[#A6AEC8]/20 rounded-xl px-3 py-2 text-xs text-[#F4F5FF]"
+          className="bg-[#070908] border border-[rgba(225,239,221,0.20)] rounded-xl px-3 py-2 text-xs text-[#f0f2eb]"
         />
         <div className="flex gap-2">
           <input
@@ -186,12 +186,12 @@ export const NormalizedTimelinePage: React.FC = () => {
             value={newTz}
             onChange={(e) => setNewTz(e.target.value)}
             placeholder="Timezone"
-            className="w-1/2 bg-[#0B0F1E] border border-[#A6AEC8]/20 rounded-xl px-2 py-2 text-xs text-[#F4F5FF]"
+            className="w-1/2 bg-[#070908] border border-[rgba(225,239,221,0.20)] rounded-xl px-2 py-2 text-xs text-[#f0f2eb]"
           />
           <select
             value={newTimeSource}
             onChange={(e) => setNewTimeSource(e.target.value as 'alleged_occurrence' | 'manual_entry')}
-            className="w-1/2 bg-[#0B0F1E] border border-[#A6AEC8]/20 rounded-xl px-2 py-2 text-xs text-[#F4F5FF]"
+            className="w-1/2 bg-[#070908] border border-[rgba(225,239,221,0.20)] rounded-xl px-2 py-2 text-xs text-[#f0f2eb]"
           >
             <option value="alleged_occurrence">Alleged Time</option>
             <option value="manual_entry">Manual Entry</option>
@@ -199,7 +199,7 @@ export const NormalizedTimelinePage: React.FC = () => {
         </div>
         <button
           type="submit"
-          className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#8B7CFF] hover:bg-[#7A69FF] text-white text-xs font-semibold"
+          className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#d5ff54] hover:bg-[#e2ff84] text-[#080a08] text-xs font-semibold"
         >
           <Plus className="w-3.5 h-3.5" /> Add Event
         </button>
@@ -208,34 +208,34 @@ export const NormalizedTimelinePage: React.FC = () => {
       {/* Event Stream */}
       <div className="space-y-3">
         {events.map((ev) => (
-          <div key={ev.id} className="bg-[#12172B] border border-[#A6AEC8]/15 rounded-2xl p-4 space-y-2">
+          <div key={ev.id} className="bg-[#0d1110] border border-[rgba(225,239,221,0.15)] rounded-2xl p-4 space-y-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded bg-[#1D2540] text-[#8B7CFF] font-mono text-[10px]">
+                <span className="px-2 py-0.5 rounded bg-[#111716] text-[#d5ff54] font-mono text-[10px]">
                   {ev.time_source}
                 </span>
-                <span className="text-sm font-semibold text-[#F4F5FF]">{ev.title}</span>
+                <span className="text-sm font-semibold text-[#f0f2eb]">{ev.title}</span>
               </div>
-              <div className="flex items-center gap-2 text-[11px] font-mono text-[#A6AEC8]">
-                <span className="px-2 py-0.5 rounded bg-[#0B0F1E] border border-[#A6AEC8]/15">
+              <div className="flex items-center gap-2 text-[11px] font-mono text-[#929b93]">
+                <span className="px-2 py-0.5 rounded bg-[#070908] border border-[rgba(225,239,221,0.15)]">
                   {ev.time_precision}
                 </span>
-                <span className="px-2 py-0.5 rounded bg-[#0B0F1E] border border-[#A6AEC8]/15">
+                <span className="px-2 py-0.5 rounded bg-[#070908] border border-[rgba(225,239,221,0.15)]">
                   {ev.verification_status}
                 </span>
               </div>
             </div>
-            <p className="text-xs text-[#A6AEC8]">{ev.description}</p>
-            <div className="flex flex-wrap gap-4 text-[11px] font-mono text-[#727D9C]">
-              <span>Original: <strong className="text-[#CBD5E1]">{ev.event_time_original}</strong> ({ev.timezone_original})</span>
-              <span>UTC: <strong className="text-[#CBD5E1]">{ev.event_time_utc || 'Not converted (unknown tz)'}</strong></span>
+            <p className="text-xs text-[#929b93]">{ev.description}</p>
+            <div className="flex flex-wrap gap-4 text-[11px] font-mono text-[#929b93]">
+              <span>Original: <strong className="text-[#f0f2eb]">{ev.event_time_original}</strong> ({ev.timezone_original})</span>
+              <span>UTC: <strong className="text-[#f0f2eb]">{ev.event_time_utc || 'Not converted (unknown tz)'}</strong></span>
               <span>Extraction: {ev.extraction_method}</span>
               {ev.related_evidence_id && <span>Evidence: {ev.related_evidence_id}</span>}
             </div>
           </div>
         ))}
         {events.length === 0 && (
-          <div className="p-6 text-center text-xs text-[#727D9C] bg-[#12172B] rounded-2xl border border-[#A6AEC8]/15">
+          <div className="p-6 text-center text-xs text-[#929b93] bg-[#0d1110] rounded-2xl border border-[rgba(225,239,221,0.15)]">
             No timeline events found. Click "Reconstruct Timeline" to extract events from incident evidence and analyses.
           </div>
         )}

@@ -100,7 +100,7 @@ export const ConnectedSvgCurve: React.FC = () => {
             <path
               ref={pathRef}
               d="M 280 120 C 650 120, 850 250, 720 400 C 600 550, 250 560, 280 690"
-              stroke="#8B7CFF"
+              stroke="#d5ff54"
               strokeWidth="2.5"
               strokeLinecap="round"
               className="filter drop-shadow-[0_0_10px_rgba(139,124,255,0.7)]"
@@ -112,24 +112,24 @@ export const ConnectedSvgCurve: React.FC = () => {
               cx="280"
               cy="120"
               r="7"
-              fill="#8B7CFF"
-              className="filter drop-shadow-[0_0_12px_#8B7CFF]"
+              fill="#d5ff54"
+              className="filter drop-shadow-[0_0_12px_#d5ff54]"
             />
             <circle
               ref={node2Ref}
               cx="720"
               cy="400"
               r="7"
-              fill="#8B7CFF"
-              className="filter drop-shadow-[0_0_12px_#8B7CFF]"
+              fill="#d5ff54"
+              className="filter drop-shadow-[0_0_12px_#d5ff54]"
             />
             <circle
               ref={node3Ref}
               cx="280"
               cy="690"
               r="7"
-              fill="#8B7CFF"
-              className="filter drop-shadow-[0_0_12px_#8B7CFF]"
+              fill="#d5ff54"
+              className="filter drop-shadow-[0_0_12px_#d5ff54]"
             />
           </svg>
 
@@ -140,7 +140,7 @@ export const ConnectedSvgCurve: React.FC = () => {
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-zcharcoal border-2 border-zcyan/50 flex items-center justify-center text-zcyan font-display text-3xl sm:text-4xl font-bold shadow-[0_0_25px_rgba(139,124,255,0.3)] shrink-0">
                 01
               </div>
-              <div className="card-zsure p-6 sm:p-8 max-w-xl w-full text-left group hover:border-zcyan transition-all">
+              <div className="card-safeher p-6 sm:p-8 max-w-xl w-full text-left group hover:border-zcyan transition-all">
                 <div className="flex items-center gap-2 font-mono text-xs text-zcyan uppercase tracking-wider mb-2">
                   <Fingerprint className="w-4 h-4" />
                   <span>always-on defense</span>
@@ -166,7 +166,7 @@ export const ConnectedSvgCurve: React.FC = () => {
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-zcharcoal border-2 border-zcyan/50 flex items-center justify-center text-zcyan font-display text-3xl sm:text-4xl font-bold shadow-[0_0_25px_rgba(0,212,255,0.3)] shrink-0">
                 02
               </div>
-              <div className="card-zsure p-6 sm:p-8 max-w-xl w-full text-left group hover:border-zcyan transition-all">
+              <div className="card-safeher p-6 sm:p-8 max-w-xl w-full text-left group hover:border-zcyan transition-all">
                 <div className="flex items-center gap-2 font-mono text-xs text-zcyan uppercase tracking-wider mb-2">
                   <Cpu className="w-4 h-4" />
                   <span>real-time insights</span>
@@ -192,7 +192,7 @@ export const ConnectedSvgCurve: React.FC = () => {
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-zcharcoal border-2 border-zcyan/50 flex items-center justify-center text-zcyan font-display text-3xl sm:text-4xl font-bold shadow-[0_0_25px_rgba(0,212,255,0.3)] shrink-0">
                 03
               </div>
-              <div className="card-zsure p-6 sm:p-8 max-w-xl w-full text-left group hover:border-zcyan transition-all">
+              <div className="card-safeher p-6 sm:p-8 max-w-xl w-full text-left group hover:border-zcyan transition-all">
                 <div className="flex items-center gap-2 font-mono text-xs text-zcyan uppercase tracking-wider mb-2">
                   <FileCheck className="w-4 h-4" />
                   <span>stay ahead</span>

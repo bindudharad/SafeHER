@@ -39,8 +39,15 @@ export const PrivacySettingsPage: React.FC = () => {
   const [fakeCaller, setFakeCaller] = useState('Mom')
   const [emergencyNum, setEmergencyNum] = useState('112')
   const [isSavingSettings, setIsSavingSettings] = useState(false)
+  const [opHealth, setOpHealth] = useState<{
+    kms?: { provider?: string; status?: string }
+    malware?: { status?: string; clamav_online?: boolean }
+    sms?: { configured?: boolean; status?: string; provider?: { provider?: string; configured?: boolean; status?: string } }
+    tampering_localization?: { status?: string; model_id?: string }
+  } | null>(null)
 
   useEffect(() => {
+    apiClient.getOperationalHealth().then(setOpHealth).catch(() => {})
     apiClient.getSafetySettings().then((res) => {
       if (res) {
         setSafetySettings(res)
@@ -106,26 +113,26 @@ export const PrivacySettingsPage: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-8 text-left pb-16">
       {/* 1. SETTINGS COCKPIT HEADER */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#171D35] via-[#0D1224] to-[#080B18] border border-[#A6AEC8]/18 rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
-        <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 bg-[#8B7CFF]/10 rounded-full blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 bg-[#648BFF]/10 rounded-full blur-3xl" />
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#111716] via-[#0d1110] to-[#070908] border border-[rgba(225,239,221,0.16)] rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+        <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 bg-[#d5ff54]/10 rounded-full blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 bg-[#a8db35]/10 rounded-full blur-3xl" />
 
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-[#A6AEC8]/15">
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-[rgba(225,239,221,0.15)]">
           <div className="space-y-2">
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#8B7CFF] uppercase tracking-wider px-3 py-1 rounded-full bg-[#8B7CFF]/10 border border-[#8B7CFF]/25">
+              <span className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#d5ff54] uppercase tracking-wider px-3 py-1 rounded-full bg-[#d5ff54]/10 border border-[#d5ff54]/25">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 {t.settings.title}
               </span>
-              <span className="text-xs text-[#52D6B2] font-mono flex items-center gap-1.5 bg-[#52D6B2]/10 px-2.5 py-0.5 rounded-full border border-[#52D6B2]/20">
+              <span className="text-xs text-[#a8db35] font-mono flex items-center gap-1.5 bg-[#a8db35]/10 px-2.5 py-0.5 rounded-full border border-[#a8db35]/20">
                 <Lock className="w-3.5 h-3.5" />
                 Zero-Knowledge Privacy
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F4F5FF] tracking-tight">
+            <h1 className="font-display text-3xl sm:text-4xl uppercase font-extrabold text-[#f0f2eb] tracking-[0.02em]">
               Privacy, Consent &amp; Cryptographic Controls
             </h1>
-            <p className="text-xs sm:text-sm text-[#A6AEC8] max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#929b93] max-w-2xl leading-relaxed">
               Manage your identity credentials, interface language, zero-knowledge consent, and local data retention.
             </p>
           </div>
@@ -138,56 +145,56 @@ export const PrivacySettingsPage: React.FC = () => {
         </div>
 
         {/* SECURITY INTEGRITY STATS */}
-        <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-[#A6AEC8]/15 pt-6 text-left">
+        <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-[#929b93]/15 pt-6 text-left">
           <div className="pr-4 pb-4 lg:pb-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Storage Mode</span>
-            <span className="text-lg font-bold font-mono text-[#F4F5FF] block mt-1">Client Sandbox</span>
-            <span className="text-[11px] text-[#52D6B2]">Ephemeral memory</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Storage Mode</span>
+            <span className="text-lg font-bold font-mono text-[#f0f2eb] block mt-1">Client Sandbox</span>
+            <span className="text-[11px] text-[#a8db35]">Ephemeral memory</span>
           </div>
           <div className="px-0 sm:px-4 pt-4 lg:pt-0 pb-4 lg:pb-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Encryption</span>
-            <span className="text-lg font-bold font-mono text-[#8B7CFF] block mt-1">AES-256-GCM</span>
-            <span className="text-[11px] text-[#A6AEC8]">WebCrypto API</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Encryption</span>
+            <span className="text-lg font-bold font-mono text-[#d5ff54] block mt-1">AES-256-GCM</span>
+            <span className="text-[11px] text-[#929b93]">WebCrypto API</span>
           </div>
           <div className="pr-4 pt-4 lg:pt-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Evidence Digest</span>
-            <span className="text-lg font-bold font-mono text-[#52D6B2] block mt-1">SHA-256</span>
-            <span className="text-[11px] text-[#A6AEC8]">Sec 65B Compliant</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Evidence Digest</span>
+            <span className="text-lg font-bold font-mono text-[#a8db35] block mt-1">SHA-256</span>
+            <span className="text-[11px] text-[#929b93]">Sec 65B Compliant</span>
           </div>
           <div className="px-0 sm:px-4 pt-4 lg:pt-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Data Sovereignty</span>
-            <span className="text-lg font-bold font-mono text-[#648BFF] block mt-1">Zero-Telemetry</span>
-            <span className="text-[11px] text-[#A6AEC8]">No tracker scripts</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Data Sovereignty</span>
+            <span className="text-lg font-bold font-mono text-[#a8db35] block mt-1">Zero-Telemetry</span>
+            <span className="text-[11px] text-[#929b93]">No tracker scripts</span>
           </div>
         </div>
       </div>
 
       {/* 2. USER PROFILE & CONSENT IDENTIFIER */}
-      <div className="bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl p-6 sm:p-8 space-y-4 shadow-xl">
-        <div className="flex items-center justify-between pb-3 border-b border-[#A6AEC8]/15">
+      <div className="bg-[#111716]/85 border border-[rgba(225,239,221,0.15)] rounded-3xl p-6 sm:p-8 space-y-4 shadow-xl">
+        <div className="flex items-center justify-between pb-3 border-b border-[rgba(225,239,221,0.15)]">
           <div className="flex items-center gap-2.5">
-            <User className="w-4 h-4 text-[#8B7CFF]" />
-            <h2 className="text-base font-bold text-[#F4F5FF]">
+            <User className="w-4 h-4 text-[#d5ff54]" />
+            <h2 className="text-base font-bold text-[#f0f2eb]">
               {t.settings.profile}
             </h2>
           </div>
-          <span className="text-xs font-mono text-[#52D6B2] bg-[#52D6B2]/10 px-2.5 py-0.5 rounded-full border border-[#52D6B2]/25">
+          <span className="text-xs font-mono text-[#a8db35] bg-[#a8db35]/10 px-2.5 py-0.5 rounded-full border border-[#a8db35]/25">
             Authenticated Session
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs">
-          <div className="p-4 bg-[#0D1224] rounded-2xl border border-[#A6AEC8]/15 space-y-1">
-            <span className="text-[#A6AEC8] uppercase tracking-wider text-[10px] block font-medium">Complainant / Legal Name</span>
-            <p className="font-bold text-[#F4F5FF] text-sm">{user?.name || 'Anonymous Complainant'}</p>
+          <div className="p-4 bg-[#0d1110] rounded-2xl border border-[rgba(225,239,221,0.15)] space-y-1">
+            <span className="text-[#929b93] uppercase tracking-wider text-[10px] block font-medium">Complainant / Legal Name</span>
+            <p className="font-bold text-[#f0f2eb] text-sm">{user?.name || 'Anonymous Complainant'}</p>
           </div>
-          <div className="p-4 bg-[#0D1224] rounded-2xl border border-[#A6AEC8]/15 space-y-1">
-            <span className="text-[#A6AEC8] uppercase tracking-wider text-[10px] block font-medium">Registered Identifier</span>
-            <p className="font-mono text-[#8B7CFF] text-sm truncate">{user?.email || 'N/A'}</p>
+          <div className="p-4 bg-[#0d1110] rounded-2xl border border-[rgba(225,239,221,0.15)] space-y-1">
+            <span className="text-[#929b93] uppercase tracking-wider text-[10px] block font-medium">Registered Identifier</span>
+            <p className="font-mono text-[#d5ff54] text-sm truncate">{user?.email || 'N/A'}</p>
           </div>
-          <div className="p-4 bg-[#0D1224] rounded-2xl border border-[#A6AEC8]/15 space-y-1">
-            <span className="text-[#A6AEC8] uppercase tracking-wider text-[10px] block font-medium">Consent Acknowledged</span>
-            <p className="font-mono text-[#52D6B2] text-sm">
+          <div className="p-4 bg-[#0d1110] rounded-2xl border border-[rgba(225,239,221,0.15)] space-y-1">
+            <span className="text-[#929b93] uppercase tracking-wider text-[10px] block font-medium">Consent Acknowledged</span>
+            <p className="font-mono text-[#a8db35] text-sm">
               {user?.consent_date ? new Date(user.consent_date).toLocaleDateString() : 'Active Consent'}
             </p>
           </div>
@@ -195,15 +202,15 @@ export const PrivacySettingsPage: React.FC = () => {
       </div>
 
       {/* 3. INTERFACE LANGUAGE PREFERENCE */}
-      <div className="bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl p-6 sm:p-8 space-y-4 shadow-xl">
-        <div className="space-y-1 pb-3 border-b border-[#A6AEC8]/15">
+      <div className="bg-[#111716]/85 border border-[rgba(225,239,221,0.15)] rounded-3xl p-6 sm:p-8 space-y-4 shadow-xl">
+        <div className="space-y-1 pb-3 border-b border-[rgba(225,239,221,0.15)]">
           <div className="flex items-center gap-2.5">
-            <Languages className="w-4 h-4 text-[#8B7CFF]" />
-            <h2 className="text-base font-bold text-[#F4F5FF]">
+            <Languages className="w-4 h-4 text-[#d5ff54]" />
+            <h2 className="text-base font-bold text-[#f0f2eb]">
               {t.settings.language}
             </h2>
           </div>
-          <p className="text-xs text-[#A6AEC8]">
+          <p className="text-xs text-[#929b93]">
             SafeHER supports English, Kannada (ಕನ್ನಡ), and Hindi (हिन्दी) for victim accessibility.
           </p>
         </div>
@@ -224,15 +231,15 @@ export const PrivacySettingsPage: React.FC = () => {
                 }}
                 className={`p-5 rounded-2xl border transition-all cursor-pointer space-y-2 ${
                   isSelected
-                    ? 'bg-[#8B7CFF]/10 border-[#8B7CFF] shadow-lg shadow-[#8B7CFF]/10 ring-1 ring-[#8B7CFF]/40'
-                    : 'bg-[#0D1224] border-[#A6AEC8]/15 hover:border-[#8B7CFF]/30'
+                    ? 'bg-[#d5ff54]/10 border-[#d5ff54] shadow-lg shadow-[#d5ff54]/10 ring-1 ring-[#d5ff54]/40'
+                    : 'bg-[#0d1110] border-[rgba(225,239,221,0.15)] hover:border-[#d5ff54]/30'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-[#F4F5FF]">{lang.label}</h3>
-                  {isSelected && <CheckCircle2 className="w-4 h-4 text-[#8B7CFF]" />}
+                  <h3 className="text-sm font-bold text-[#f0f2eb]">{lang.label}</h3>
+                  {isSelected && <CheckCircle2 className="w-4 h-4 text-[#d5ff54]" />}
                 </div>
-                <p className="text-xs text-[#A6AEC8]">{lang.desc}</p>
+                <p className="text-xs text-[#929b93]">{lang.desc}</p>
               </div>
             )
           })}
@@ -240,15 +247,15 @@ export const PrivacySettingsPage: React.FC = () => {
       </div>
 
       {/* 4. SURVIVOR SAFETY & EMERGENCY CONTROLS (STAGE 6) */}
-      <div className="bg-[#171D35]/85 border border-[#8B7CFF]/20 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="space-y-1 pb-3 border-b border-[#A6AEC8]/15">
+      <div className="bg-[#111716]/85 border border-[#d5ff54]/20 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="space-y-1 pb-3 border-b border-[rgba(225,239,221,0.15)]">
           <div className="flex items-center gap-2.5">
-            <Radio className="w-4 h-4 text-[#FF5C7A]" />
-            <h2 className="text-base font-bold text-[#F4F5FF]">
+            <Radio className="w-4 h-4 text-[#ff927e]" />
+            <h2 className="text-base font-bold text-[#f0f2eb]">
               Survivor Safety &amp; Emergency Hub Controls
             </h2>
           </div>
-          <p className="text-xs text-[#A6AEC8]">
+          <p className="text-xs text-[#929b93]">
             Customize Quick Exit redirect destination, deterrent siren volume/duration, and discreet fake call simulator identity.
           </p>
         </div>
@@ -256,7 +263,7 @@ export const PrivacySettingsPage: React.FC = () => {
         <form onSubmit={handleSaveSafetySettings} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-[#F4F5FF] block mb-1">
+              <label className="text-xs font-semibold text-[#f0f2eb] block mb-1">
                 Quick Exit Redirect Target URL
               </label>
               <input
@@ -264,16 +271,16 @@ export const PrivacySettingsPage: React.FC = () => {
                 value={quickExitUrl}
                 onChange={(e) => setQuickExitUrl(e.target.value)}
                 required
-                className="w-full bg-[#0D1224] border border-[#A6AEC8]/20 focus:border-[#8B7CFF] rounded-xl px-3 py-2 text-xs text-[#F4F5FF]"
+                className="w-full bg-[#0d1110] border border-[rgba(225,239,221,0.20)] focus:border-[#d5ff54] rounded-xl px-3 py-2 text-xs text-[#f0f2eb]"
                 placeholder="https://www.weather.com"
               />
-              <span className="text-[10px] text-[#A6AEC8] mt-1 block">
+              <span className="text-[10px] text-[#929b93] mt-1 block">
                 Destination loaded immediately when clicking Quick Exit or pressing Alt+Q.
               </span>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-[#F4F5FF] block mb-1">
+              <label className="text-xs font-semibold text-[#f0f2eb] block mb-1">
                 Default Emergency Phone Number
               </label>
               <input
@@ -281,16 +288,16 @@ export const PrivacySettingsPage: React.FC = () => {
                 value={emergencyNum}
                 onChange={(e) => setEmergencyNum(e.target.value)}
                 required
-                className="w-full bg-[#0D1224] border border-[#A6AEC8]/20 focus:border-[#8B7CFF] rounded-xl px-3 py-2 text-xs text-[#F4F5FF]"
+                className="w-full bg-[#0d1110] border border-[rgba(225,239,221,0.20)] focus:border-[#d5ff54] rounded-xl px-3 py-2 text-xs text-[#f0f2eb]"
                 placeholder="112"
               />
-              <span className="text-[10px] text-[#A6AEC8] mt-1 block">
+              <span className="text-[10px] text-[#929b93] mt-1 block">
                 Default emergency service dialed via native dialer links.
               </span>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-[#F4F5FF] block mb-1">
+              <label className="text-xs font-semibold text-[#f0f2eb] block mb-1">
                 Siren Auto-Stop Duration: {sirenSecs} seconds
               </label>
               <input
@@ -300,9 +307,9 @@ export const PrivacySettingsPage: React.FC = () => {
                 step="5"
                 value={sirenSecs}
                 onChange={(e) => setSirenSecs(parseInt(e.target.value, 10))}
-                className="w-full accent-[#FF5C7A] h-2 bg-[#080B18] rounded-lg cursor-pointer"
+                className="w-full accent-[#ff927e] h-2 bg-[#070908] rounded-lg cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-[#A6AEC8]">
+              <div className="flex justify-between text-[10px] text-[#929b93]">
                 <span>10s</span>
                 <span>30s (Default)</span>
                 <span>120s</span>
@@ -310,7 +317,7 @@ export const PrivacySettingsPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-[#F4F5FF] block mb-1">
+              <label className="text-xs font-semibold text-[#f0f2eb] block mb-1">
                 Discreet Call Caller Name
               </label>
               <input
@@ -318,10 +325,10 @@ export const PrivacySettingsPage: React.FC = () => {
                 value={fakeCaller}
                 onChange={(e) => setFakeCaller(e.target.value)}
                 required
-                className="w-full bg-[#0D1224] border border-[#A6AEC8]/20 focus:border-[#52D6B2] rounded-xl px-3 py-2 text-xs text-[#F4F5FF]"
+                className="w-full bg-[#0d1110] border border-[rgba(225,239,221,0.20)] focus:border-[#a8db35] rounded-xl px-3 py-2 text-xs text-[#f0f2eb]"
                 placeholder="Mom"
               />
-              <span className="text-[10px] text-[#A6AEC8] mt-1 block">
+              <span className="text-[10px] text-[#929b93] mt-1 block">
                 Label shown on the simulated incoming call screen.
               </span>
             </div>
@@ -342,25 +349,25 @@ export const PrivacySettingsPage: React.FC = () => {
       </div>
 
       {/* 5. PRIVACY PURGE & DATA SOVEREIGNTY ACTION SUITE */}
-      <div className="bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="space-y-1 pb-3 border-b border-[#A6AEC8]/15">
+      <div className="bg-[#111716]/85 border border-[rgba(225,239,221,0.15)] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="space-y-1 pb-3 border-b border-[rgba(225,239,221,0.15)]">
           <div className="flex items-center gap-2.5">
-            <Database className="w-4 h-4 text-[#F0B96B]" />
-            <h2 className="text-base font-bold text-[#F4F5FF]">
+            <Database className="w-4 h-4 text-[#ff927e]" />
+            <h2 className="text-base font-bold text-[#f0f2eb]">
               Data Sovereignty &amp; Retention Controls
             </h2>
           </div>
-          <p className="text-xs text-[#A6AEC8]">
+          <p className="text-xs text-[#929b93]">
             Complete control over your personal records. Export encrypted archives or immediately purge client session memory.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Export Archive */}
-          <div className="p-5 bg-[#0D1224] rounded-2xl border border-[#A6AEC8]/15 flex flex-col justify-between space-y-4">
+          <div className="p-5 bg-[#0d1110] rounded-2xl border border-[rgba(225,239,221,0.15)] flex flex-col justify-between space-y-4">
             <div className="space-y-1.5">
-              <h3 className="text-sm font-bold text-[#F4F5FF]">Personal Data Archive</h3>
-              <p className="text-xs text-[#A6AEC8] leading-relaxed">
+              <h3 className="text-sm font-bold text-[#f0f2eb]">Personal Data Archive</h3>
+              <p className="text-xs text-[#929b93] leading-relaxed">
                 Download a JSON archive containing your incident metadata, evidence hashes, and case audit records for external legal retention.
               </p>
             </div>
@@ -369,17 +376,17 @@ export const PrivacySettingsPage: React.FC = () => {
               variant="secondary"
               size="sm"
               onClick={handleExportDataArchive}
-              leftIcon={<Download className="w-4 h-4 text-[#8B7CFF]" />}
+              leftIcon={<Download className="w-4 h-4 text-[#d5ff54]" />}
             >
               Export Personal Data Archive
             </Button>
           </div>
 
           {/* Purge Cache */}
-          <div className="p-5 bg-[#0D1224] rounded-2xl border border-[#FF718A]/25 flex flex-col justify-between space-y-4">
+          <div className="p-5 bg-[#0d1110] rounded-2xl border border-[#ff927e]/25 flex flex-col justify-between space-y-4">
             <div className="space-y-1.5">
-              <h3 className="text-sm font-bold text-[#FF718A]">Purge Session Cache</h3>
-              <p className="text-xs text-[#A6AEC8] leading-relaxed">
+              <h3 className="text-sm font-bold text-[#ff927e]">Purge Session Cache</h3>
+              <p className="text-xs text-[#929b93] leading-relaxed">
                 Immediately clear all uncommitted incident drafts and temporary keys stored in this browser session.
               </p>
             </div>
@@ -396,6 +403,42 @@ export const PrivacySettingsPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Operational Security & Integration Health */}
+      {opHealth && (
+        <div className="bg-[#111716] border border-[rgba(225,239,221,0.12)] rounded-2xl p-6 space-y-4">
+          <div className="flex items-center gap-2.5">
+            <ShieldCheck className="w-5 h-5 text-[#d5ff54]" />
+            <h2 className="text-base font-bold text-[#f0f2eb]">Operational Security &amp; Integration Status</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            <div className="p-3 rounded-xl bg-[#0d1110] border border-[rgba(225,239,221,0.08)]">
+              <div className="text-[#929b93] font-mono uppercase text-[10px]">Key Management (KMS)</div>
+              <div className="text-[#f0f2eb] font-semibold mt-1">
+                {opHealth.kms?.provider || 'local_env'} • {opHealth.kms?.status || 'unknown'}
+              </div>
+            </div>
+            <div className="p-3 rounded-xl bg-[#0d1110] border border-[rgba(225,239,221,0.08)]">
+              <div className="text-[#929b93] font-mono uppercase text-[10px]">Tampering Localization</div>
+              <div className="text-[#f0f2eb] font-semibold mt-1">
+                {opHealth.tampering_localization?.model_id || 'trufor'} • {opHealth.tampering_localization?.status || 'unknown'}
+              </div>
+            </div>
+            <div className="p-3 rounded-xl bg-[#0d1110] border border-[rgba(225,239,221,0.08)]">
+              <div className="text-[#929b93] font-mono uppercase text-[10px]">External SMS Gateway</div>
+              <div className="text-[#f0f2eb] font-semibold mt-1">
+                {opHealth.sms?.provider?.configured ? `${opHealth.sms.provider.provider} Ready` : (opHealth.sms?.configured ? 'Ready' : 'Unconfigured')}
+              </div>
+            </div>
+            <div className="p-3 rounded-xl bg-[#0d1110] border border-[rgba(225,239,221,0.08)]">
+              <div className="text-[#929b93] font-mono uppercase text-[10px]">ClamAV Antivirus</div>
+              <div className="text-[#f0f2eb] font-semibold mt-1">
+                {opHealth.malware?.clamav_online ? 'ClamAV Online' : `Heuristic (${opHealth.malware?.status || 'operational'})`}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

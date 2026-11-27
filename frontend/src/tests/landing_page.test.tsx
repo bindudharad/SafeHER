@@ -5,7 +5,7 @@ import { I18nProvider } from '../contexts/I18nContext'
 import { ToastProvider } from '../contexts/ToastContext'
 import { LandingPage } from '../pages/LandingPage'
 
-describe('ZSure-Inspired SafeHER Single-Page Website (LandingPage)', () => {
+describe('SafeHER Scroll Story Experience Homepage (LandingPage)', () => {
   const renderLandingPage = () => {
     return render(
       <MemoryRouter>
@@ -18,128 +18,124 @@ describe('ZSure-Inspired SafeHER Single-Page Website (LandingPage)', () => {
     )
   }
 
-  it('renders top navigation bar with logo, links, and Open SafeHER CTA', () => {
+  it('renders fixed top navigation with SafeHER brand, section links, Quick Exit, and workspace CTA', () => {
     renderLandingPage()
 
     expect(screen.getAllByText(/SAFEHER/i).length).toBeGreaterThan(0)
     expect(screen.getAllByText(/OPEN SAFEHER/i).length).toBeGreaterThan(0)
     expect(screen.getAllByText(/QUICK EXIT/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/REALITY TRUST CENTER/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/MEDIA VERIFIER/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('link', { name: /^Experience$/i }).length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('link', { name: /^Capabilities$/i }).length).toBeGreaterThan(0)
   })
 
-  it('renders Section 1: Cinematic Hero with typography, primary CTAs, and Meera video', () => {
+  it('renders Section 1: Cinematic Hero (MOVE WITHOUT doubt.), HUD status cards, 3D canvas, and CTAs', () => {
     renderLandingPage()
 
-    expect(screen.getAllByText(/YOUR DIGITAL/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/SAFETY/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Your Evidence. Your Voice./i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Get Started/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Watch Intro/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Explore SafeHER/i).length).toBeGreaterThan(0)
-    expect(screen.queryByText(/^TRY NOW$/i)).not.toBeInTheDocument()
-    expect(screen.getAllByText(/Meera/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/MOVE/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/WITHOUT/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/doubt\./i).length).toBeGreaterThan(0)
+    expect(screen.getByText(/PROTECTED/i)).toBeInTheDocument()
+    expect(screen.getByText(/MEDIA & TEXT AI/i)).toBeInTheDocument()
+    expect(screen.getByText(/SAFEHER NODE/i)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Explore SafeHER/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Verify Media AI/i })).toBeInTheDocument()
+    expect(document.getElementById('hero3d')).toBeInTheDocument()
   })
 
-  it('renders Section 2: PROVEN At SCALE with image conveyor and metrics', () => {
+  it('renders Section 3: Perspective Feature Gallery with interactive prev/next and card selection', () => {
     renderLandingPage()
 
-    expect(screen.getAllByText(/PROVEN/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/SCALE/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/100%/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/96.2%/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/TEST YOUR MEDIA/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/OPEN EVIDENCE VAULT/i).length).toBeGreaterThan(0)
+    expect(screen.getByText(/SAFETY,/i)).toBeInTheDocument()
+    expect(screen.getByText(/in motion\./i)).toBeInTheDocument()
+
+    const prevBtn = screen.getByLabelText(/Previous feature/i)
+    const nextBtn = screen.getByLabelText(/Next feature/i)
+    expect(prevBtn).toBeInTheDocument()
+    expect(nextBtn).toBeInTheDocument()
+
+    fireEvent.click(nextBtn)
+    expect(screen.getByRole('button', { name: /Open emergency drawer/i })).toBeInTheDocument()
+
+    const emergencyCard = screen.getByRole('button', { name: /Select Emergency signal/i })
+    fireEvent.click(emergencyCard)
+    expect(screen.getByRole('button', { name: /Open emergency drawer/i })).toBeInTheDocument()
   })
 
-  it('renders Section 3: What We Do (Three-point connected Response Center)', () => {
+  it('renders Section 4: Cinematic Journey Path with 01 Document, 02 Protect, 03 Analyse, 04 Respond', () => {
     renderLandingPage()
 
-    expect(screen.getAllByText(/what we do/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Evidence Vault™/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Threat Intelligence/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Legal Dossier Hub/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/01/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/02/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/03/i).length).toBeGreaterThan(0)
+    expect(screen.getByText(/FROM FIRST/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/Document/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Protect/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Analyse/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Respond/i).length).toBeGreaterThan(0)
   })
 
-  it('renders Section 4: 003 / CORE RISK Coverage 5-column grid', () => {
+  it('renders Section 5: 5-column Capability Grid connected to real SafeHER modules', () => {
     renderLandingPage()
 
-    expect(screen.getAllByText(/003 \//i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/CORE RISK/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Coverage/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Deepfake Threats/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Synthetic Identities/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Fake KYC Fraud/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Voice Cloning/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Digital Arrest Scams/i).length).toBeGreaterThan(0)
+    expect(screen.getByText(/ONE SYSTEM\./i)).toBeInTheDocument()
+    expect(screen.getByText(/Many layers\./i)).toBeInTheDocument()
+    expect(screen.getAllByText(/Encrypted Evidence Vault/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/AI Media Analysis/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Digital Abuse Detection/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Forensic Intelligence/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Case Management & Safety Tools/i).length).toBeGreaterThan(0)
+
+    const aiCard = screen.getByRole('button', { name: /AI Media Analysis/i })
+    fireEvent.click(aiCard)
+    expect(screen.getByText('LAYER / 02')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Run media scanner/i })).toHaveAttribute('href', '/detect')
   })
 
-  it('renders Section 5: Recognized by / Endorsed compliance section with partner logos', () => {
+  it('renders Section 6: Truthful Interactive Demo with explicit DEMO disclaimer and SOS simulation modal', () => {
     renderLandingPage()
 
-    expect(screen.getAllByText(/Recognized by/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/ENDORSED/i).length).toBeGreaterThan(0)
-    expect(screen.getByTitle(/Amazon Web Services/i)).toBeInTheDocument()
-    expect(screen.getByTitle(/NVIDIA Inception/i)).toBeInTheDocument()
-    expect(screen.getByTitle(/DPIIT #startupindia/i)).toBeInTheDocument()
-    expect(screen.getByTitle(/DPDP Act 2023/i)).toBeInTheDocument()
-    expect(screen.getByTitle(/Ministry of MSME/i)).toBeInTheDocument()
+    expect(screen.getByText(/A SAFER WAY/i)).toBeInTheDocument()
+    expect(screen.getByText(/DEMO ONLY/i)).toBeInTheDocument()
+    expect(screen.getByText(/NO REAL GPS LOCATION/i)).toBeInTheDocument()
+
+    const startBtn = screen.getByRole('button', { name: /Start journey/i })
+    fireEvent.click(startBtn)
+    expect(screen.getByText(/DEMO ACTIVE/i)).toBeInTheDocument()
+
+    const sosBtn = screen.getByRole('button', { name: /Run SOS demo/i })
+    fireEvent.click(sosBtn)
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Run simulation/i }))
+    expect(screen.getByText(/SOS DEMO ACTIVE/i)).toBeInTheDocument()
   })
 
-  it('renders Section 6: Press & Media Coverage 3D editorial card swap stack', () => {
+  it('renders Section 7 & 8: Manifesto Transition and 3-layer Technology Stack (Perceive, Understand, Respond)', () => {
     renderLandingPage()
 
-    expect(screen.getAllByText(/PRESS/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/MEDIA COVERAGE/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/120\+/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Hindustan Metro/i).length).toBeGreaterThan(0)
-    expect(screen.getByLabelText(/Next coverage card/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Previous coverage card/i)).toBeInTheDocument()
+    expect(screen.getByText(/SAFETY IS/i)).toBeInTheDocument()
+    expect(screen.getByText(/NOT A LIMIT\./i)).toBeInTheDocument()
+    expect(screen.getByText(/IT'S YOUR RIGHT\./i)).toBeInTheDocument()
+    expect(screen.getByText(/BUILT TO/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/Perceive/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Understand/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Respond/i).length).toBeGreaterThan(0)
   })
 
-  it('renders Section 7: Large Typographic Manifesto Statement with continuous marquees', () => {
+  it('renders Section 9: Footer with functional workspace routes and emergency helpline access', () => {
     renderLandingPage()
 
-    expect(screen.getAllByText(/YOUR SAFETY/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/SHOULD NOT DEPEND/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/ON WHAT YOU REMEMBER\./i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/A CLEAR RECORD CAN HELP\./i).length).toBeGreaterThan(0)
+    expect(screen.getByRole('link', { name: /Reality Trust Center/i })).toHaveAttribute('href', '/reality-trust-center')
+    expect(screen.getByRole('link', { name: /Complaint Assistant/i })).toHaveAttribute('href', '/complaints')
+    expect(screen.getByRole('button', { name: /Emergency Tools \(112 \/ 181\)/i })).toBeInTheDocument()
   })
 
-  it('renders Section 8: Technical White Paper document briefing', () => {
+  it('allows switching interface languages between EN, KN, and HI from the landing page', () => {
     renderLandingPage()
 
-    expect(screen.getAllByText(/WHITE PAPER/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/TECHNICAL RESEARCH/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/INSIDE THE SAFEHER ENGINE/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Three-Model Ensemble/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Download the Paper/i).length).toBeGreaterThan(0)
-  })
-
-  it('renders Section 9: Site Footer with official emergency helplines 1930 and 112', () => {
-    renderLandingPage()
-
-    expect(screen.getAllByText(/Emergency \(India\)/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/1930 · Cyber Fraud Helpline/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/112 · National Emergency/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/BACK TO TOP/i).length).toBeGreaterThan(0)
-  })
-
-  it('allows switching interface languages from the landing page', () => {
-    renderLandingPage()
-
-    const select = screen.getByLabelText(/Language/i)
+    const select = screen.getByLabelText(/Select interface language/i) as HTMLSelectElement
     expect(select).toBeInTheDocument()
 
-    // Switch to Kannada
     fireEvent.change(select, { target: { value: 'kn' } })
-    expect((select as HTMLSelectElement).value).toBe('kn')
+    expect(select.value).toBe('kn')
 
-    // Switch to Hindi
     fireEvent.change(select, { target: { value: 'hi' } })
-    expect((select as HTMLSelectElement).value).toBe('hi')
+    expect(select.value).toBe('hi')
   })
 })

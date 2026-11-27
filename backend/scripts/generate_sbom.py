@@ -154,7 +154,7 @@ def main():
     parser = argparse.ArgumentParser(description="Generate SafeHER CycloneDX SBOM")
     parser.add_argument("--req", default=os.path.join("backend", "requirements.txt"), help="Path to backend requirements.txt")
     parser.add_argument("--pkg", default=os.path.join("frontend", "package.json"), help="Path to frontend package.json")
-    parser.add_argument("--out", default=os.path.join("SAFEHER_STAGE6_STAGE7_REPORT", "sbom.json"), help="Output path for sbom.json")
+    parser.add_argument("--out", default="sbom.json", help="Output path for sbom.json")
     args = parser.parse_args()
 
     sbom = generate_sbom(args.req, args.pkg, args.out)

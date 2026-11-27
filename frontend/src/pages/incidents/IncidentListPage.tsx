@@ -74,26 +74,26 @@ export const IncidentListPage: React.FC = () => {
   return (
     <div className="space-y-8 text-left max-w-7xl mx-auto pb-12">
       {/* 1. DOSSIER REPOSITORY HEADER */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#171D35] via-[#0D1224] to-[#080B18] border border-[#A6AEC8]/18 rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
-        <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 bg-[#8B7CFF]/10 rounded-full blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 bg-[#55D6E8]/10 rounded-full blur-3xl" />
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#111716] via-[#0d1110] to-[#070908] border border-[rgba(225,239,221,0.16)] rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+        <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 bg-[#d5ff54]/10 rounded-full blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 bg-[#d5ff54]/10 rounded-full blur-3xl" />
 
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-[#A6AEC8]/15">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-[rgba(225,239,221,0.15)]">
           <div className="space-y-2">
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#8B7CFF] uppercase tracking-wider px-3 py-1 rounded-full bg-[#8B7CFF]/10 border border-[#8B7CFF]/25">
+              <span className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#d5ff54] uppercase tracking-wider px-3 py-1 rounded-full bg-[#d5ff54]/10 border border-[#d5ff54]/25">
                 <Layers className="w-3.5 h-3.5" />
                 Incident Management
               </span>
-              <span className="text-xs text-[#52D6B2] font-mono flex items-center gap-1.5 bg-[#52D6B2]/10 px-2.5 py-0.5 rounded-full border border-[#52D6B2]/20">
+              <span className="text-xs text-[#a8db35] font-mono flex items-center gap-1.5 bg-[#a8db35]/10 px-2.5 py-0.5 rounded-full border border-[#a8db35]/20">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 Zero-Knowledge Dossiers
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F4F5FF] tracking-tight">
+            <h1 className="font-display text-3xl sm:text-4xl uppercase font-extrabold text-[#f0f2eb] tracking-[0.02em]">
               Recorded Incident Dossiers
             </h1>
-            <p className="text-xs sm:text-sm text-[#A6AEC8] max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#929b93] max-w-2xl leading-relaxed">
               Complete chain-of-evidence dossiers for all documented cyber abuse incidents, platform grievances, and legal filings.
             </p>
           </div>
@@ -108,64 +108,64 @@ export const IncidentListPage: React.FC = () => {
         </div>
 
         {/* SUMMARY TELEMETRY STRIP */}
-        <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-[#A6AEC8]/15 pt-6 text-left">
+        <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-[#929b93]/15 pt-6 text-left">
           <div className="pr-4 pb-4 lg:pb-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Total Incidents</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Total Incidents</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-extrabold font-mono text-[#F4F5FF]">{incidents.length}</span>
-              <span className="text-xs text-[#727D9C]">logged cases</span>
+              <span className="text-3xl font-extrabold font-mono text-[#f0f2eb]">{incidents.length}</span>
+              <span className="text-xs text-[#929b93]">logged cases</span>
             </div>
           </div>
           <div className="px-0 sm:px-4 pt-4 lg:pt-0 pb-4 lg:pb-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Active Triage</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Active Triage</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-extrabold font-mono text-[#F0B96B]">
+              <span className="text-3xl font-extrabold font-mono text-[#ff927e]">
                 {incidents.filter((i) => i.status === 'open').length}
               </span>
-              <span className="text-xs text-[#F0B96B]">open</span>
+              <span className="text-xs text-[#ff927e]">open</span>
             </div>
           </div>
           <div className="pr-4 pt-4 lg:pt-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Under Legal Review</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Under Legal Review</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-extrabold font-mono text-[#648BFF]">
+              <span className="text-3xl font-extrabold font-mono text-[#a8db35]">
                 {incidents.filter((i) => i.status === 'under_review').length}
               </span>
-              <span className="text-xs text-[#648BFF]">in review</span>
+              <span className="text-xs text-[#a8db35]">in review</span>
             </div>
           </div>
           <div className="px-0 sm:px-4 pt-4 lg:pt-0">
-            <span className="text-xs text-[#A6AEC8] font-medium uppercase tracking-wider block">Resolved &amp; Closed</span>
+            <span className="text-xs text-[#929b93] font-medium uppercase tracking-wider block">Resolved &amp; Closed</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-extrabold font-mono text-[#52D6B2]">
+              <span className="text-3xl font-extrabold font-mono text-[#a8db35]">
                 {incidents.filter((i) => i.status === 'resolved').length}
               </span>
-              <span className="text-xs text-[#52D6B2]">resolved</span>
+              <span className="text-xs text-[#a8db35]">resolved</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* 2. FILTER & SEARCH CONTROLS */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#171D35]/85 p-4 rounded-2xl border border-[#A6AEC8]/15 shadow-md">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#111716]/85 p-4 rounded-2xl border border-[rgba(225,239,221,0.15)] shadow-md">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-[#A6AEC8] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-4 h-4 text-[#929b93] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by title, platform or details..."
-            className="w-full bg-[#0D1224] border border-[#A6AEC8]/20 rounded-xl pl-9 pr-4 py-2 text-xs text-[#F4F5FF] placeholder-[#727D9C] focus:outline-none focus:border-[#8B7CFF]/60 transition-colors"
+            className="w-full bg-[#0d1110] border border-[rgba(225,239,221,0.20)] rounded-xl pl-9 pr-4 py-2 text-xs text-[#f0f2eb] placeholder-[#929b93] focus:outline-none focus:border-[#d5ff54]/60 transition-colors"
           />
         </div>
 
         <div className="flex items-center gap-2.5 w-full sm:w-auto flex-wrap sm:flex-nowrap">
           <div className="flex items-center gap-2">
-            <Filter className="w-3.5 h-3.5 text-[#A6AEC8] shrink-0" />
+            <Filter className="w-3.5 h-3.5 text-[#929b93] shrink-0" />
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="bg-[#0D1224] border border-[#A6AEC8]/20 text-[#F4F5FF] text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#8B7CFF]/60 cursor-pointer"
+              className="bg-[#0d1110] border border-[rgba(225,239,221,0.20)] text-[#f0f2eb] text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#d5ff54]/60 cursor-pointer"
             >
               <option value="all">All Abuse Categories</option>
               <option value="online_harassment">Online Harassment</option>
@@ -180,7 +180,7 @@ export const IncidentListPage: React.FC = () => {
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="bg-[#0D1224] border border-[#A6AEC8]/20 text-[#F4F5FF] text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#8B7CFF]/60 cursor-pointer"
+              className="bg-[#0d1110] border border-[rgba(225,239,221,0.20)] text-[#f0f2eb] text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#d5ff54]/60 cursor-pointer"
             >
               <option value="all">All Statuses</option>
               <option value="open">Active / Open</option>
@@ -195,16 +195,16 @@ export const IncidentListPage: React.FC = () => {
       {isLoading ? (
         <div className="space-y-4 animate-pulse">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-32 bg-[#171D35]/80 border border-[#A6AEC8]/10 rounded-2xl" />
+            <div key={i} className="h-32 bg-[#111716]/80 border border-[rgba(225,239,221,0.10)] rounded-2xl" />
           ))}
         </div>
       ) : filteredIncidents.length === 0 ? (
-        <div className="p-12 text-center bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#0D1224] border border-[#A6AEC8]/20 flex items-center justify-center mx-auto text-[#8B7CFF]">
+        <div className="p-12 text-center bg-[#111716]/85 border border-[rgba(225,239,221,0.15)] rounded-3xl space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-[#0d1110] border border-[rgba(225,239,221,0.20)] flex items-center justify-center mx-auto text-[#d5ff54]">
             <AlertCircle className="w-6 h-6" />
           </div>
-          <h3 className="text-sm font-semibold text-[#F4F5FF]">No Incidents Found</h3>
-          <p className="text-xs text-[#A6AEC8] max-w-sm mx-auto">
+          <h3 className="text-sm font-semibold text-[#f0f2eb]">No Incidents Found</h3>
+          <p className="text-xs text-[#929b93] max-w-sm mx-auto">
             {searchQuery || selectedCategory !== 'all' || selectedStatus !== 'all'
               ? 'No incidents match your search or filter criteria.'
               : 'You have not logged any incidents yet. Start by creating a secure record.'}
@@ -222,48 +222,48 @@ export const IncidentListPage: React.FC = () => {
           {filteredIncidents.map((incident) => (
             <div
               key={incident.id}
-              className="bg-[#171D35]/85 border border-[#A6AEC8]/15 hover:border-[#8B7CFF]/40 rounded-2xl p-5 sm:p-6 transition-all duration-200 group shadow-lg shadow-[#080B18]/40"
+              className="bg-[#111716]/85 border border-[rgba(225,239,221,0.15)] hover:border-[#d5ff54]/40 rounded-2xl p-5 sm:p-6 transition-all duration-200 group shadow-lg shadow-[#070908]/40"
             >
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div className="space-y-2.5 flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2.5">
                     <Link to={`/incidents/${incident.id}`}>
-                      <h3 className="text-base font-bold text-[#F4F5FF] group-hover:text-[#8B7CFF] transition-colors truncate">
+                      <h3 className="text-base font-bold text-[#f0f2eb] group-hover:text-[#d5ff54] transition-colors truncate">
                         {incident.title}
                       </h3>
                     </Link>
                     {getStatusBadge(incident.status)}
-                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#0D1224] text-[#8B7CFF] font-mono border border-[#A6AEC8]/15">
+                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#0d1110] text-[#d5ff54] font-mono border border-[rgba(225,239,221,0.15)]">
                       {incident.platform}
                     </span>
-                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#1D2540] text-[#A6AEC8] capitalize border border-[#A6AEC8]/10">
+                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#111716] text-[#929b93] capitalize border border-[rgba(225,239,221,0.10)]">
                       {incident.category.replace('_', ' ')}
                     </span>
                   </div>
 
-                  <p className="text-xs text-[#A6AEC8] line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-[#929b93] line-clamp-2 leading-relaxed">
                     {incident.description}
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-4 text-[11px] text-[#727D9C] font-mono pt-1">
+                  <div className="flex flex-wrap items-center gap-4 text-[11px] text-[#929b93] font-mono pt-1">
                     <span className="flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5" />
                       {formatDate(incident.incident_date || incident.created_at)}
                     </span>
-                    <span className="flex items-center gap-1.5 text-[#55D6E8]">
+                    <span className="flex items-center gap-1.5 text-[#d5ff54]">
                       <HardDrive className="w-3.5 h-3.5" />
                       {incident.evidence_count} evidence files
                     </span>
-                    <span className="text-[#52D6B2] flex items-center gap-1">
+                    <span className="text-[#a8db35] flex items-center gap-1">
                       <ShieldCheck className="w-3.5 h-3.5" />
                       Sec 65B Preserved
                     </span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 self-end lg:self-center shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-[#A6AEC8]/10 w-full lg:w-auto justify-end">
+                <div className="flex items-center gap-2.5 self-end lg:self-center shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-[rgba(225,239,221,0.10)] w-full lg:w-auto justify-end">
                   <Link to={`/complaints?incidentId=${incident.id}`}>
-                    <Button variant="secondary" size="sm" leftIcon={<FileText className="w-3.5 h-3.5 text-[#52D6B2]" />}>
+                    <Button variant="secondary" size="sm" leftIcon={<FileText className="w-3.5 h-3.5 text-[#a8db35]" />}>
                       Draft Complaint
                     </Button>
                   </Link>

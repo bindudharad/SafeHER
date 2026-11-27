@@ -27,21 +27,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileMenu }) => {
     return unsub
   }, [])
 
-  const languages: { code: Language; label: string; flag: string }[] = [
-    { code: 'en', label: 'English', flag: 'EN' },
-    { code: 'kn', label: 'ಕನ್ನಡ', flag: 'KN' },
-    { code: 'hi', label: 'हिन्दी', flag: 'HI' },
+  const languages: { code: Language; label: string }[] = [
+    { code: 'en', label: 'English' },
+    { code: 'kn', label: 'ಕನ್ನಡ' },
+    { code: 'hi', label: 'हिन्दी' },
   ]
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#0D1224]/90 backdrop-blur-xl border-b border-[#A6AEC8]/15 px-3 sm:px-6 lg:px-8 py-3 shadow-[0_4px_24px_rgba(0,0,0,0.5)]">
+    <header className="sticky top-0 z-40 w-full bg-[#070908]/92 backdrop-blur-xl border-b border-[rgba(225,239,221,0.15)] px-3 sm:px-6 lg:px-8 py-3">
       <div className="w-full flex items-center justify-between gap-2 sm:gap-4">
-        {/* Left: Mobile Menu Toggle & Unified Brand Lockup */}
+        {/* Left: Mobile Menu Toggle & Brand Lockup */}
         <div className="flex items-center gap-2 sm:gap-3 min-w-0 shrink-0">
           {onToggleMobileMenu && (
             <button
               onClick={onToggleMobileMenu}
-              className="md:hidden p-1.5 text-[#A6AEC8] hover:text-[#F4F5FF] rounded-xl hover:bg-[#1D2540] focus:outline-none transition-colors shrink-0"
+              className="md:hidden p-1.5 text-[#929b93] hover:text-[#d5ff54] rounded-[3px] border border-[rgba(225,239,221,0.15)] hover:border-[#d5ff54]/45 transition-colors shrink-0"
               aria-label={t.navbar.toggleMenu}
             >
               <Menu className="w-5 h-5" />
@@ -58,61 +58,59 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileMenu }) => {
           </Link>
         </div>
 
-        {/* Center: Subtle Privacy & Live Backend Integrity Pill */}
-        <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full bg-[#171D35]/90 border border-[#A6AEC8]/15 text-[11px] font-mono text-[#A6AEC8]">
+        {/* Center: Integrity & Backend Status Pill */}
+        <div className="hidden lg:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#0d1110] border border-[rgba(225,239,221,0.15)] text-[10px] font-mono uppercase tracking-[0.12em] text-[#929b93]">
           <span
-            className={`w-2 h-2 rounded-full ${
-              dataMode === 'live' ? 'bg-[#52D6B2] animate-pulse' : 'bg-[#F0B96B]'
+            className={`w-1.5 h-1.5 rounded-full ${
+              dataMode === 'live'
+                ? 'bg-[#d5ff54] shadow-[0_0_10px_#d5ff54] animate-pulse'
+                : 'bg-[#ff927e]'
             }`}
           />
-          <span>
+          <span className={dataMode === 'live' ? 'text-[#f0f2eb]' : 'text-[#ff927e]'}>
             {dataMode === 'live' ? t.navbar.liveBackend : t.navbar.offlineDemo}
           </span>
-          <span className="text-[#727D9C]">|</span>
-          <span className="text-[#8B7CFF]">{t.navbar.sec65bReady}</span>
+          <span className="text-[rgba(225,239,221,0.2)]">|</span>
+          <span className="text-[#d5ff54]">{t.navbar.sec65bReady}</span>
         </div>
 
-        {/* Right: Emergency SOS, Quick Exit, Language Selector, User Profile */}
-        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-          {/* Emergency SOS Drawer Trigger */}
+        {/* Right: Emergency Hub, Quick Exit, Language, User */}
+        <div className="flex items-center gap-1 sm:gap-3 shrink-0">
           <button
             onClick={() => setIsEmergencyOpen(true)}
             aria-label="Open Emergency Hub"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#FF5C7A]/20 hover:bg-[#FF5C7A]/30 border border-[#FF5C7A]/40 text-[#FF5C7A] text-xs font-bold transition-all active:scale-95 shadow-sm"
+            className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 min-h-[34px] rounded-[3px] bg-[#ff927e] hover:bg-[#ffa898] text-[#170907] text-[10px] font-mono font-semibold uppercase tracking-[0.1em] transition-all active:scale-95"
           >
-            <ShieldAlert className="w-3.5 h-3.5 animate-pulse" />
+            <ShieldAlert className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">SOS HUB</span>
           </button>
 
-          {/* Quick Exit Button (Always Accessible) */}
           <QuickExitButton />
 
-          {/* Language Selector Dropdown */}
           <div className="relative flex items-center">
-            <Globe className="w-3.5 h-3.5 text-[#8B7CFF] absolute left-2 sm:left-2.5 pointer-events-none" />
+            <Globe className="w-3.5 h-3.5 text-[#d5ff54] absolute left-2 pointer-events-none" />
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value as Language)}
               aria-label={t.navbar.selectLanguage}
-              className="bg-[#171D35] border border-[#A6AEC8]/20 hover:border-[#8B7CFF]/50 text-[#F4F5FF] text-xs rounded-xl pl-7 sm:pl-8 pr-6 sm:pr-7 py-1.5 max-w-[88px] sm:max-w-none appearance-none focus:outline-none focus:border-[#8B7CFF] cursor-pointer transition-colors"
+              className="bg-[#0d1110] border border-[rgba(225,239,221,0.18)] hover:border-[#d5ff54]/55 text-[#f0f2eb] font-mono text-[10px] uppercase tracking-[0.06em] rounded-[3px] pl-6 sm:pl-8 pr-2 sm:pr-6 py-1.5 min-h-[34px] max-w-[78px] sm:max-w-none appearance-none focus:outline-none focus:border-[#d5ff54] cursor-pointer transition-colors"
             >
               {languages.map((l) => (
-                <option key={l.code} value={l.code} className="bg-[#0D1224] text-[#F4F5FF]">
+                <option key={l.code} value={l.code} className="bg-[#0d1110] text-[#f0f2eb]">
                   {l.label}
                 </option>
               ))}
             </select>
           </div>
 
-          {/* User Profile / Logout */}
-          {user && (
-            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-[#A6AEC8]/15">
-              <div className="w-7 h-7 rounded-full bg-[#1D2540] border border-[#A6AEC8]/25 flex items-center justify-center text-[#F4F5FF]">
+          {user ? (
+            <div className="hidden sm:flex items-center gap-2 pl-2.5 border-l border-[rgba(225,239,221,0.15)]">
+              <div className="w-7 h-7 rounded-[3px] bg-[#111716] border border-[rgba(225,239,221,0.2)] flex items-center justify-center text-[#d5ff54]">
                 <UserIcon className="w-3.5 h-3.5" />
               </div>
               <div className="hidden xl:block text-left">
-                <p className="text-xs font-semibold text-[#F4F5FF] leading-tight">{user.name}</p>
-                <p className="text-[10px] text-[#A6AEC8] leading-tight truncate max-w-[120px]">
+                <p className="text-xs font-semibold text-[#f0f2eb] leading-tight">{user.name}</p>
+                <p className="text-[10px] font-mono text-[#929b93] leading-tight truncate max-w-[130px]">
                   {user.email}
                 </p>
               </div>
@@ -120,20 +118,23 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileMenu }) => {
                 onClick={logout}
                 title={t.navbar.signOut}
                 aria-label={t.navbar.signOut}
-                className="p-1 text-[#A6AEC8] hover:text-[#FF718A] rounded-lg transition-colors"
+                className="p-1.5 text-[#929b93] hover:text-[#ff927e] rounded-[3px] transition-colors"
               >
                 <LogOut className="w-3.5 h-3.5" />
               </button>
             </div>
+          ) : (
+            <Link
+              to="/login"
+              className="hidden sm:inline-flex items-center px-3 min-h-[34px] rounded-[3px] border border-[rgba(225,239,221,0.2)] bg-[#111716] hover:border-[#d5ff54] text-[#f0f2eb] hover:text-[#d5ff54] font-mono text-[10px] uppercase tracking-[0.12em] transition-colors"
+            >
+              {t.auth.login}
+            </Link>
           )}
         </div>
       </div>
 
-      {/* Survivor Emergency Drawer */}
-      <EmergencyDrawer
-        isOpen={isEmergencyOpen}
-        onClose={() => setIsEmergencyOpen(false)}
-      />
+      <EmergencyDrawer isOpen={isEmergencyOpen} onClose={() => setIsEmergencyOpen(false)} />
     </header>
   )
 }

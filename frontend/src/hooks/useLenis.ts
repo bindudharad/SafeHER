@@ -16,7 +16,7 @@ export function useLenis(enabled: boolean = true) {
     )
       return
 
-    // Initialize Lenis with smooth easing matching ZSure
+    // Initialize Lenis with smooth easing for SafeHER
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

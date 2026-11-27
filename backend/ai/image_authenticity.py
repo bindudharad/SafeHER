@@ -141,9 +141,12 @@ def analyze_image_authenticity(
 
     # 3. Check for configured Effort-AIGI checkpoint
     checkpoint_path = os.environ.get("SAFEHER_EFFORT_AIGI_CHECKPOINT", "")
-    known_research_path = r"C:\Projects\SafeHER\SafeHER-Research\Effort-AIGI-Detection\training\weights\effort_clip_l14.pth"
-    if not checkpoint_path and os.path.exists(known_research_path):
-        checkpoint_path = known_research_path
+    if not checkpoint_path:
+        default_ckpt = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "models", "effort_clip_l14_genimage.pth")
+        )
+        if os.path.exists(default_ckpt):
+            checkpoint_path = default_ckpt
 
     if not checkpoint_path or not os.path.exists(checkpoint_path):
         elapsed = (time.time() - start_time) * 1000

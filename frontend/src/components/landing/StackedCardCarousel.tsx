@@ -99,18 +99,18 @@ export const StackedCardCarousel: React.FC = () => {
               <button
                 onClick={handlePrev}
                 aria-label="Previous article card"
-                className="w-12 h-12 rounded-xl bg-zcharcoal border border-zcyan/30 text-zcyan hover:border-zcyan hover:bg-[#0B121E] hover:shadow-[0_0_15px_rgba(0,212,255,0.3)] flex items-center justify-center transition-all active:scale-95 cursor-pointer"
+                className="w-12 h-12 rounded-xl bg-zcharcoal border border-zcyan/30 text-zcyan hover:border-zcyan hover:bg-[#070908] hover:shadow-[0_0_15px_rgba(0,212,255,0.3)] flex items-center justify-center transition-all active:scale-95 cursor-pointer"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={handleNext}
                 aria-label="Next article card"
-                className="w-12 h-12 rounded-xl bg-zcharcoal border border-zcyan/30 text-zcyan hover:border-zcyan hover:bg-[#0B121E] hover:shadow-[0_0_15px_rgba(0,212,255,0.3)] flex items-center justify-center transition-all active:scale-95 cursor-pointer"
+                className="w-12 h-12 rounded-xl bg-zcharcoal border border-zcyan/30 text-zcyan hover:border-zcyan hover:bg-[#070908] hover:shadow-[0_0_15px_rgba(0,212,255,0.3)] flex items-center justify-center transition-all active:scale-95 cursor-pointer"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
-              <span className="font-mono text-xs text-slate-400 pl-2">
+              <span className="font-mono text-xs text-[#929b93] pl-2">
                 {String(activeIndex + 1).padStart(2, '0')} / {String(CARDS.length).padStart(2, '0')}
               </span>
             </div>
@@ -167,7 +167,7 @@ export const StackedCardCarousel: React.FC = () => {
                     pointerEvents,
                     transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
                   }}
-                  className="absolute w-full max-w-[560px] rounded-2xl bg-[#080C14] border border-zcyan/40 p-7 sm:p-9 shadow-[0_24px_60px_rgba(0,0,0,0.9),0_0_40px_rgba(0,212,255,0.15)] flex flex-col justify-between hover:border-zcyan hover:shadow-[0_24px_70px_rgba(0,0,0,0.95),0_0_50px_rgba(0,212,255,0.25)]"
+                  className="absolute w-full max-w-[560px] rounded-2xl bg-[#070908] border border-zcyan/40 p-7 sm:p-9 shadow-[0_24px_60px_rgba(0,0,0,0.9),0_0_40px_rgba(0,212,255,0.15)] flex flex-col justify-between hover:border-zcyan hover:shadow-[0_24px_70px_rgba(0,0,0,0.95),0_0_50px_rgba(0,212,255,0.25)]"
                 >
                   <div>
                     {/* Header: Source and Badge */}
@@ -175,7 +175,7 @@ export const StackedCardCarousel: React.FC = () => {
                       <span className="font-mono text-xs font-bold text-zcyan uppercase tracking-widest">
                         {card.source}
                       </span>
-                      <span className="font-mono text-[10px] text-slate-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded">
+                      <span className="font-mono text-[10px] text-[#929b93] bg-white/5 border border-white/10 px-2 py-0.5 rounded">
                         {card.badge}
                       </span>
                     </div>
@@ -203,7 +203,7 @@ export const StackedCardCarousel: React.FC = () => {
                       <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </a>
 
-                    <div className="flex items-center gap-1.5 text-slate-500 font-mono text-[11px]">
+                    <div className="flex items-center gap-1.5 text-[#929b93] font-mono text-[11px]">
                       <ShieldCheck className="w-3.5 h-3.5 text-zcyan" />
                       <span>VERIFIED SOURCE</span>
                     </div>
