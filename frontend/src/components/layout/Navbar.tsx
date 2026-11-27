@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Globe, LogOut, Menu, User as UserIcon } from 'lucide-react'
+import { Globe, LogOut, Menu, User as UserIcon, ShieldAlert } from 'lucide-react'
 import { useI18n } from '../../contexts/I18nContext'
 import { useAuth } from '../../contexts/AuthContext'
 import { useSplash } from '../../contexts/SplashContext'
 import { apiClient, type DataMode } from '../../services/api/client'
 import { QuickExitButton } from './QuickExitButton'
+import { EmergencyDrawer } from './EmergencyDrawer'
 import { SafeHERBrandLockup } from '../common/SafeHERBrandLockup'
 import type { Language } from '../../i18n/translations'
 
@@ -18,6 +19,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileMenu }) => {
   const { user, logout } = useAuth()
   const { headerLogoHidden, registerLogoTarget } = useSplash()
   const [dataMode, setDataMode] = useState<DataMode>(() => apiClient.getDataMode())
+  const [isEmergencyOpen, setIsEmergencyOpen] = useState(false)
 
   useEffect(() => {
     const unsub = apiClient.subscribeDataMode(setDataMode)
@@ -70,8 +72,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileMenu }) => {
           <span className="text-[#8B7CFF]">{t.navbar.sec65bReady}</span>
         </div>
 
-        {/* Right: Quick Exit, Language Selector, User Profile */}
+        {/* Right: Emergency SOS, Quick Exit, Language Selector, User Profile */}
         <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          {/* Emergency SOS Drawer Trigger */}
+          <button
+            onClick={() => setIsEmergencyOpen(true)}
+            aria-label="Open Emergency Hub"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#FF5C7A]/20 hover:bg-[#FF5C7A]/30 border border-[#FF5C7A]/40 text-[#FF5C7A] text-xs font-bold transition-all active:scale-95 shadow-sm"
+          >
+            <ShieldAlert className="w-3.5 h-3.5 animate-pulse" />
+            <span className="hidden sm:inline">SOS HUB</span>
+          </button>
+
           {/* Quick Exit Button (Always Accessible) */}
           <QuickExitButton />
 
@@ -116,6 +128,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileMenu }) => {
           )}
         </div>
       </div>
+
+      {/* Survivor Emergency Drawer */}
+      <EmergencyDrawer
+        isOpen={isEmergencyOpen}
+        onClose={() => setIsEmergencyOpen(false)}
+      />
     </header>
   )
 }

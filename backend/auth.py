@@ -4,7 +4,7 @@ import hmac
 import json
 import os
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -16,7 +16,7 @@ _DEFAULT_DEV_SECRET = hashlib.sha256(
     f"safeher-dev-{os.path.abspath(__file__)}".encode("utf-8")
 ).hexdigest()
 _INSECURE_SECRETS = {"", "changeme", "secret", "default", "dev-secret", _DEFAULT_DEV_SECRET}
-TOKEN_EXPIRY_SECONDS = 60 * 60 * 24  # 24 hours
+TOKEN_EXPIRY_SECONDS = int(os.environ.get("SAFEHER_TOKEN_EXPIRY_SECONDS", 60 * 60 * 24))  # 24 hours default
 
 
 def is_production_env() -> bool:
@@ -70,12 +70,15 @@ def _b64url_decode(data: str) -> bytes:
     return base64.urlsafe_b64decode(data + padding)
 
 
-def create_access_token(user_id: str, email: str) -> str:
+def create_access_token(user_id: str, email: str, role: str = "survivor", jti: Optional[str] = None) -> str:
     header = {"alg": "HS256", "typ": "JWT"}
     now = int(time.time())
+    token_id = jti or f"tok-{os.urandom(12).hex()}"
     payload = {
         "sub": user_id,
         "email": email,
+        "role": role,
+        "jti": token_id,
         "iat": now,
         "exp": now + TOKEN_EXPIRY_SECONDS,
     }
@@ -102,12 +105,64 @@ def decode_access_token(token: str) -> Dict[str, Any]:
         payload = json.loads(_b64url_decode(p_enc).decode("utf-8"))
         if payload.get("exp", 0) < int(time.time()):
             raise ValueError("Token expired")
+
+        # Check if token has been revoked
+        token_id = payload.get("jti")
+        if token_id:
+            try:
+                with get_db() as conn:
+                    rev = conn.execute("SELECT token_id FROM revoked_tokens WHERE token_id = ?", (token_id,)).fetchone()
+                    if rev:
+                        raise ValueError("Token has been revoked")
+            except ValueError:
+                raise
+            except Exception:
+                pass  # If revoked_tokens table check fails gracefully continue
+
         return payload
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired authentication token",
+            detail=str(exc) if "revoked" in str(exc) else "Invalid or expired authentication token",
         ) from exc
+
+
+def is_token_revoked(token_id: str) -> bool:
+    """Checks whether a token jti is in the revoked_tokens blacklist."""
+    if not token_id:
+        return False
+    try:
+        with get_db() as conn:
+            row = conn.execute(
+                "SELECT token_id FROM revoked_tokens WHERE token_id = ?",
+                (token_id,),
+            ).fetchone()
+            return row is not None
+    except Exception:
+        return False
+
+
+def revoke_token(token_str: str, user_id: str = "") -> bool:
+    """Revokes an access token by inserting its jti into revoked_tokens."""
+    try:
+        # Decode without failing on already-revoked to get jti
+        parts = token_str.split(".")
+        if len(parts) != 3:
+            return False
+        payload = json.loads(_b64url_decode(parts[1]).decode("utf-8"))
+        token_id = payload.get("jti")
+        if not token_id:
+            return False
+        uid = user_id or payload.get("sub", "")
+        exp = payload.get("exp", int(time.time()) + 3600)
+        with get_db() as conn:
+            conn.execute(
+                "INSERT OR REPLACE INTO revoked_tokens (token_id, user_id, revoked_at, expires_at) VALUES (?, ?, datetime('now'), ?)",
+                (token_id, uid, exp),
+            )
+        return True
+    except Exception:
+        return False
 
 
 def get_current_user(
@@ -127,20 +182,39 @@ def get_current_user(
         )
     with get_db() as conn:
         row = conn.execute(
-            "SELECT id, name, email, consent_acknowledged, consent_date, preferred_language, created_at FROM users WHERE id = ?",
+            "SELECT id, name, email, consent_acknowledged, consent_date, preferred_language, created_at, role FROM users WHERE id = ?",
             (user_id,),
         ).fetchone()
+        if not row:
+            # Fallback if role column query had schema quirk
+            row = conn.execute(
+                "SELECT id, name, email, consent_acknowledged, consent_date, preferred_language, created_at FROM users WHERE id = ?",
+                (user_id,),
+            ).fetchone()
     if not row:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User not found",
         )
+    row_keys = row.keys()
     return {
         "id": row["id"],
         "name": row["name"],
         "email": row["email"],
+        "role": row["role"] if "role" in row_keys else "survivor",
         "consent_acknowledged": bool(row["consent_acknowledged"]),
         "consent_date": row["consent_date"],
         "preferred_language": row["preferred_language"],
         "created_at": row["created_at"],
     }
+
+
+def require_role(allowed_roles: List[str]):
+    def role_checker(current_user: Dict[str, Any] = Depends(get_current_user)):
+        if current_user.get("role", "survivor") not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Access denied: Requires role in {allowed_roles}",
+            )
+        return current_user
+    return role_checker

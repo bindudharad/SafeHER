@@ -115,7 +115,7 @@ async def check_image(file: UploadFile = File(...)):
         decision = "SAFE"
 
     # Evidence hash
-    evidence_hash = hashlib.md5(content).hexdigest()[:10]
+    evidence_hash = hashlib.sha256(content).hexdigest()[:10]
 
     return {
         "nudity_score": round(nsfw_score, 3),

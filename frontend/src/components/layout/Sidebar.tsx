@@ -16,6 +16,9 @@ import {
   Settings,
   X,
   Lock,
+  Network,
+  Clock,
+  ScanSearch,
 } from 'lucide-react'
 import { useI18n } from '../../contexts/I18nContext'
 import { cn } from '../../utils/cn'
@@ -42,6 +45,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
   const secondaryNav = [
     { to: '/incidents', label: t.sidebar.savedIncidents, icon: AlertCircle },
     { to: '/cases', label: t.sidebar.caseTracking, icon: CheckSquare },
+    { to: '/forensics/graph', label: 'Evidence Graph', icon: Network },
+    { to: '/forensics/timeline', label: 'Forensic Timeline', icon: Clock },
+    { to: '/analysis/tampering', label: 'Tampering Localization', icon: ScanSearch },
     { to: '/analysis/threat', label: t.sidebar.threatIntelligence, icon: ShieldAlert },
     { to: '/complaints', label: t.sidebar.complaintAssistant, icon: FileText },
     { to: '/reporting', label: t.sidebar.helpSafety, icon: ShieldCheck },

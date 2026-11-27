@@ -111,7 +111,7 @@ export const IncidentDetailPage: React.FC = () => {
                 onClick={() => navigate('/incidents')}
                 className="text-xs text-[#A6AEC8] hover:text-[#8B7CFF] flex items-center gap-1 font-mono transition-colors"
               >
-                <ArrowLeft className="w-3.5 h-3.5" /> Back to Dossiers
+                <ArrowLeft className="w-3.5 h-3.5" /> Back to Incidents
               </button>
               <span className="text-[#727D9C]">•</span>
               <span className="text-xs font-mono text-[#8B7CFF] bg-[#8B7CFF]/10 px-2.5 py-0.5 rounded-full border border-[#8B7CFF]/25">
@@ -134,12 +134,12 @@ export const IncidentDetailPage: React.FC = () => {
           <div className="flex items-center gap-3 shrink-0 flex-wrap sm:flex-nowrap">
             <Link to={`/complaints?incidentId=${incident.id}`}>
               <Button variant="primary" size="md" leftIcon={<FileText className="w-4 h-4" />}>
-                Generate Formal Complaint
+                Draft Complaint Letter
               </Button>
             </Link>
             <Link to={`/evidence?incidentId=${incident.id}`}>
               <Button variant="secondary" size="md" leftIcon={<Upload className="w-4 h-4 text-[#8B7CFF]" />}>
-                Deposit Evidence
+                Upload Evidence
               </Button>
             </Link>
           </div>
@@ -155,7 +155,7 @@ export const IncidentDetailPage: React.FC = () => {
                 : 'text-[#A6AEC8] hover:text-[#F4F5FF]'
             }`}
           >
-            Dossier Overview &amp; Facts
+            Overview &amp; Facts
           </button>
           <button
             onClick={() => setActiveTab('evidence')}
@@ -165,7 +165,7 @@ export const IncidentDetailPage: React.FC = () => {
                 : 'text-[#A6AEC8] hover:text-[#F4F5FF]'
             }`}
           >
-            Preserved Evidence ({evidenceList.length})
+            Evidence Files ({evidenceList.length})
           </button>
           <button
             onClick={() => setActiveTab('timeline')}
@@ -175,7 +175,7 @@ export const IncidentDetailPage: React.FC = () => {
                 : 'text-[#A6AEC8] hover:text-[#F4F5FF]'
             }`}
           >
-            Action Timeline &amp; Audit Trail
+            Activity &amp; Timeline
           </button>
         </div>
       </div>
@@ -186,7 +186,7 @@ export const IncidentDetailPage: React.FC = () => {
           <div className="lg:col-span-8 bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
             <div className="space-y-2">
               <h3 className="text-sm font-bold text-[#F4F5FF] uppercase tracking-wider">
-                Factual Narrative
+                What Happened (Incident Narrative)
               </h3>
               <p className="text-xs text-[#F4F5FF] leading-relaxed bg-[#0D1224] p-5 rounded-2xl border border-[#A6AEC8]/15 whitespace-pre-wrap">
                 {incident.description}
@@ -196,7 +196,7 @@ export const IncidentDetailPage: React.FC = () => {
             {incident.relevant_urls && incident.relevant_urls.length > 0 && (
               <div className="space-y-2">
                 <h3 className="text-sm font-bold text-[#F4F5FF] uppercase tracking-wider">
-                  Associated Links &amp; Profiles
+                  Relevant Links &amp; Profiles
                 </h3>
                 <div className="space-y-1.5">
                   {incident.relevant_urls.map((u, i) => (
@@ -219,10 +219,10 @@ export const IncidentDetailPage: React.FC = () => {
             <div className="bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl p-5 space-y-4 shadow-xl">
               <h3 className="text-xs font-bold text-[#F4F5FF] uppercase tracking-wider flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-[#52D6B2]" />
-                Legal Framework Applicability
+                Legal Framework &amp; Rights
               </h3>
               <p className="text-xs text-[#A6AEC8] leading-relaxed">
-                Based on the reported facts and platform, the following statutory provisions are relevant:
+                Based on what you reported, here are the applicable provisions under Indian law to protect you:
               </p>
               <div className="space-y-2 text-xs">
                 <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15">
@@ -248,8 +248,8 @@ export const IncidentDetailPage: React.FC = () => {
           {evidenceList.length === 0 ? (
             <div className="p-12 text-center bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl space-y-3">
               <HardDrive className="w-10 h-10 text-[#A6AEC8] mx-auto" />
-              <h3 className="text-sm font-semibold text-[#F4F5FF]">No Evidence Preserved for this Dossier</h3>
-              <p className="text-xs text-[#A6AEC8]">Upload screenshots or recordings to lock their SHA-256 fingerprints.</p>
+              <h3 className="text-sm font-semibold text-[#F4F5FF]">No Evidence Files Attached Yet</h3>
+              <p className="text-xs text-[#A6AEC8]">Upload screenshots, messages, or recordings to protect them with tamper-proof verification.</p>
               <Link to={`/evidence?incidentId=${incident.id}`}>
                 <Button variant="primary" size="sm" leftIcon={<Upload className="w-4 h-4" />}>
                   Upload Evidence Now
@@ -272,7 +272,7 @@ export const IncidentDetailPage: React.FC = () => {
                   </div>
                   <div className="p-2.5 bg-[#080B18] rounded-xl border border-[#A6AEC8]/15 text-[10px] font-mono space-y-1">
                     <div className="flex items-center justify-between text-[#A6AEC8]">
-                      <span>SHA-256 Fingerprint:</span>
+                      <span>File Integrity (SHA-256):</span>
                       <button onClick={() => copyToClipboard(evi.sha256_hash)} className="text-[#8B7CFF]">
                         {copiedHash === evi.sha256_hash ? 'Copied' : 'Copy'}
                       </button>

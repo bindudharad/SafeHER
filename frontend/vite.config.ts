@@ -28,6 +28,19 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    chunkSizeWarningLimit: 600,
+    rolldownOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes('node_modules/three')) return 'vendor-three'
+          if (id.includes('node_modules/jspdf') || id.includes('node_modules/html2canvas')) return 'vendor-pdf'
+          if (id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) return 'vendor-react'
+          if (id.includes('node_modules/lucide-react') || id.includes('node_modules/gsap')) return 'vendor-ui'
+        },
+      },
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',

@@ -59,6 +59,8 @@ export const MediaAnalysisPage: React.FC = () => {
   const [customFile, setCustomFile] = useState<File | null>(null)
   const [customFilePreview, setCustomFilePreview] = useState<string | null>(null)
   const [isSensitiveHidden, setIsSensitiveHidden] = useState(false)
+  const [isSubmittingJob, setIsSubmittingJob] = useState(false)
+  const [activeJobStatus, setActiveJobStatus] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchEvidence = async () => {
@@ -148,6 +150,59 @@ export const MediaAnalysisPage: React.FC = () => {
     } finally {
       clearInterval(stepInterval)
       setIsAnalyzing(false)
+    }
+  }
+
+  const handleDispatchWorkerJob = async () => {
+    if (!selectedEvidenceId) {
+      showToast('Please select preserved evidence to dispatch background worker.', 'warning')
+      return
+    }
+    setIsSubmittingJob(true)
+    setActiveJobStatus('queued')
+    try {
+      const job = await apiClient.submitAnalysisJob(selectedEvidenceId, 'full_forensics')
+      showToast(`Inference job dispatched to background worker (${job.job_id}).`, 'info')
+      setActiveJobStatus('processing')
+
+      let attempts = 0
+      const pollInterval = setInterval(async () => {
+        attempts += 1
+        try {
+          const statusRes = await apiClient.getAnalysisJob(selectedEvidenceId, job.job_id)
+          if (statusRes.status === 'completed') {
+            clearInterval(pollInterval)
+            setActiveJobStatus('completed')
+            setIsSubmittingJob(false)
+            if (statusRes.result) {
+              setAnalysisResult((prev) => ({
+                ...(prev || ({} as any)),
+                ...statusRes.result,
+                model_a_result: statusRes.result.model_a,
+                model_b_result: statusRes.result.model_b,
+                c2pa_analysis: statusRes.result.c2pa,
+                face_localization: statusRes.result.face_localization,
+              }))
+            }
+            showToast('Background inference job completed.', 'success')
+          } else if (statusRes.status === 'failed') {
+            clearInterval(pollInterval)
+            setActiveJobStatus('failed')
+            setIsSubmittingJob(false)
+            showToast(`Worker job failed: ${statusRes.error_message || 'Unknown error'}`, 'error')
+          }
+        } catch {
+          if (attempts > 30) {
+            clearInterval(pollInterval)
+            setIsSubmittingJob(false)
+            setActiveJobStatus(null)
+          }
+        }
+      }, 2000)
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to dispatch worker job', 'error')
+      setIsSubmittingJob(false)
+      setActiveJobStatus(null)
     }
   }
 
@@ -281,7 +336,18 @@ export const MediaAnalysisPage: React.FC = () => {
             </select>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              size="md"
+              onClick={handleDispatchWorkerJob}
+              isLoading={isSubmittingJob}
+              disabled={!selectedEvidenceId || isAnalyzing}
+              leftIcon={<HardDrive className="w-4 h-4 text-[#55D6E8]" />}
+            >
+              {activeJobStatus ? `Worker: ${activeJobStatus.toUpperCase()}` : 'Queue Worker Job'}
+            </Button>
             <Button
               type="button"
               variant="primary"
@@ -466,10 +532,334 @@ export const MediaAnalysisPage: React.FC = () => {
                 <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 flex items-center justify-between">
                   <span className="text-[#A6AEC8]">C2PA Provenance Manifest:</span>
                   <span className="text-[#F0B96B] font-medium">
-                    {analysisResult.c2pa_provenance?.detected ? 'Present' : 'Not Detected (Standard for Social Media)'}
+                    {analysisResult.c2pa_analysis?.manifest_present || analysisResult.c2pa_provenance?.detected ? 'Manifest Present' : 'Not Detected (Standard for Social Media)'}
                   </span>
                 </div>
               </div>
+            </Card>
+
+            {/* Stage 2 Integration: C2PA Content Credentials Analysis */}
+            <Card className="bg-[#171D35]/85 border-[#52D6B2]/20 p-5 space-y-3 md:col-span-2">
+              <div className="flex items-center justify-between border-b border-[#A6AEC8]/15 pb-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#52D6B2] uppercase tracking-wider">
+                  <ShieldCheck className="w-4 h-4 text-[#52D6B2]" />
+                  <span>Content Credentials (C2PA) Cryptographic Inspection</span>
+                </div>
+                <Badge
+                  variant={
+                    analysisResult.c2pa_analysis?.c2pa_status === 'valid_credentials'
+                      ? 'safe'
+                      : analysisResult.c2pa_analysis?.c2pa_status === 'invalid_credentials'
+                      ? 'critical'
+                      : 'neutral'
+                  }
+                >
+                  {analysisResult.c2pa_analysis?.c2pa_status === 'valid_credentials'
+                    ? 'Cryptographically Valid'
+                    : analysisResult.c2pa_analysis?.c2pa_status === 'invalid_credentials'
+                    ? 'Signature Invalid / Broken'
+                    : analysisResult.c2pa_analysis?.c2pa_status === 'unsupported_format'
+                    ? 'Unsupported Format'
+                    : 'Credentials Absent (Expected)'}
+                </Badge>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-1">
+                  <span className="text-[#A6AEC8] text-[11px]">Claim Generator:</span>
+                  <p className="font-mono text-[#F4F5FF] truncate">
+                    {analysisResult.c2pa_analysis?.claim_generator || 'None Detected'}
+                  </p>
+                </div>
+                <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-1">
+                  <span className="text-[#A6AEC8] text-[11px]">Signing Authority:</span>
+                  <p className="font-mono text-[#F4F5FF] truncate">
+                    {analysisResult.c2pa_analysis?.signing_info?.issuer || 'N/A (No Signed Claim)'}
+                  </p>
+                </div>
+                <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-1">
+                  <span className="text-[#A6AEC8] text-[11px]">SDK Version:</span>
+                  <p className="font-mono text-[#52D6B2] truncate">
+                    c2pa-python {analysisResult.c2pa_analysis?.sdk_version || '0.92.0'}
+                  </p>
+                </div>
+              </div>
+
+              {analysisResult.c2pa_analysis?.ingredients && analysisResult.c2pa_analysis.ingredients.length > 0 && (
+                <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-2 text-xs">
+                  <span className="text-[#A6AEC8] font-semibold">Ingredients / Component History:</span>
+                  <div className="space-y-1">
+                    {analysisResult.c2pa_analysis.ingredients.map((ing, idx) => (
+                      <div key={idx} className="flex justify-between text-[11px] text-[#F4F5FF]">
+                        <span>{ing.title || `Component ${idx + 1}`} ({ing.format || 'unknown'})</span>
+                        <span className="text-[#A6AEC8]">{ing.relationship || 'parentOf'}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <p className="text-[11px] text-[#A6AEC8] leading-relaxed italic bg-[#0D1224]/60 p-2.5 rounded-lg border border-[#A6AEC8]/10">
+                Notice: C2PA manifests establish cryptographic provenance. Messaging apps (WhatsApp, Telegram) and screenshots routinely discard headers during recompression. Absence does NOT indicate manipulation.
+              </p>
+            </Card>
+
+            {/* Stage 2 Integration: RetinaFace Facial Localization */}
+            <Card className="bg-[#171D35]/85 border-[#8B7CFF]/20 p-5 space-y-3 md:col-span-2">
+              <div className="flex items-center justify-between border-b border-[#A6AEC8]/15 pb-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#8B7CFF] uppercase tracking-wider">
+                  <Sparkles className="w-4 h-4 text-[#8B7CFF]" />
+                  <span>RetinaFace Pretrained Facial Localization (ResNet50 / PyTorch)</span>
+                </div>
+                <Badge
+                  variant={
+                    (analysisResult.face_localization?.face_count || (analysisResult.faces && analysisResult.faces.length) || 0) > 0
+                      ? 'primary'
+                      : 'neutral'
+                  }
+                >
+                  {(analysisResult.face_localization?.face_count || (analysisResult.faces && analysisResult.faces.length) || 0)} Face(s) Localized
+                </Badge>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
+                <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-1">
+                  <span className="text-[#A6AEC8] text-[11px]">Detector Architecture:</span>
+                  <p className="font-mono text-[#F4F5FF] text-[11px]">
+                    {analysisResult.face_localization?.detector_name || 'RetinaFace-ResNet50'}
+                  </p>
+                </div>
+                <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-1">
+                  <span className="text-[#A6AEC8] text-[11px]">Checkpoint:</span>
+                  <p className="font-mono text-[#F4F5FF] text-[11px]">
+                    {analysisResult.face_localization?.checkpoint_id || 'retinaface.pth'}
+                  </p>
+                </div>
+                <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-1">
+                  <span className="text-[#A6AEC8] text-[11px]">Resolution Checked:</span>
+                  <p className="font-mono text-[#F4F5FF] text-[11px]">
+                    {analysisResult.face_localization?.image_width || 'Auto'} × {analysisResult.face_localization?.image_height || 'Auto'}
+                  </p>
+                </div>
+                <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-1">
+                  <span className="text-[#A6AEC8] text-[11px]">Inference Time:</span>
+                  <p className="font-mono text-[#52D6B2] text-[11px]">
+                    {analysisResult.face_localization?.processing_time_ms ? `${analysisResult.face_localization.processing_time_ms} ms` : 'Real-time'}
+                  </p>
+                </div>
+              </div>
+
+              {((analysisResult.face_localization?.faces && analysisResult.face_localization.faces.length > 0) ||
+                (analysisResult.faces && analysisResult.faces.length > 0)) && (
+                <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-2 text-xs">
+                  <span className="text-[#A6AEC8] font-semibold">Localized Facial Geometries &amp; 5-Point Landmarks:</span>
+                  <div className="space-y-2">
+                    {(analysisResult.face_localization?.faces || analysisResult.faces || []).map((f, idx) => (
+                      <div key={idx} className="p-2.5 bg-[#171D35] rounded-lg border border-[#A6AEC8]/10 space-y-1 text-[11px]">
+                        <div className="flex justify-between items-center text-[#F4F5FF]">
+                          <span className="font-bold text-[#8B7CFF]">{f.face_id || `Face #${idx + 1}`}</span>
+                          <span className="font-mono text-[#52D6B2]">
+                            Confidence: {Math.round((f.detection_confidence || 0) * 1000) / 10}%
+                          </span>
+                        </div>
+                        <div className="text-[#A6AEC8] font-mono text-[10px]">
+                          Bounding Box: [x={f.bounding_box[0]}, y={f.bounding_box[1]}, w={f.bounding_box[2]}, h={f.bounding_box[3]}]
+                        </div>
+                        {f.landmarks && (
+                          <div className="text-[#A6AEC8] font-mono text-[10px]">
+                            Landmarks: {Object.keys(f.landmarks).join(', ')}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <p className="text-[11px] text-[#A6AEC8] leading-relaxed italic bg-[#0D1224]/60 p-2.5 rounded-lg border border-[#A6AEC8]/10">
+                Notice: RetinaFace performs multi-face spatial localization and landmark extraction. Face detection does NOT classify manipulation or determine whether a face is synthetic.
+              </p>
+            </Card>
+
+            {/* Stage 3 Integration: Model A Effort-AIGI-Detection */}
+            <Card className="bg-[#171D35]/85 border-[#8B7CFF]/30 p-5 space-y-4 md:col-span-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#A6AEC8]/15 pb-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#8B7CFF] uppercase tracking-wider">
+                  <Sparkles className="w-4 h-4 text-[#8B7CFF]" />
+                  <span>Model A: AI-Generated Image (AIGI) Detection — Effort Architecture</span>
+                </div>
+                <Badge
+                  variant={
+                    analysisResult.model_a_result?.prediction === 'synthetic'
+                      ? 'critical'
+                      : analysisResult.model_a_result?.prediction === 'authentic'
+                      ? 'safe'
+                      : 'neutral'
+                  }
+                >
+                  {analysisResult.model_a_result?.prediction === 'synthetic'
+                    ? 'AI-Generated / Synthetic Image'
+                    : analysisResult.model_a_result?.prediction === 'authentic'
+                    ? 'Authentic Camera Capture'
+                    : 'Analysis Available via Worker'}
+                </Badge>
+              </div>
+
+              {analysisResult.model_a_result ? (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-1.5">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-[#A6AEC8]">Synthetic Probability (AIGI):</span>
+                        <span className="font-bold text-[#FF718A]">
+                          {Math.round((analysisResult.model_a_result.synthetic_score || 0) * 1000) / 10}%
+                        </span>
+                      </div>
+                      <div className="w-full bg-[#171D35] h-2 rounded-full overflow-hidden">
+                        <div
+                          className="bg-gradient-to-r from-[#8B7CFF] to-[#FF718A] h-full rounded-full transition-all duration-500"
+                          style={{ width: `${Math.min(100, Math.max(0, (analysisResult.model_a_result.synthetic_score || 0) * 100))}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-1.5">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-[#A6AEC8]">Authentic Camera Probability:</span>
+                        <span className="font-bold text-[#52D6B2]">
+                          {Math.round((analysisResult.model_a_result.real_score || 0) * 1000) / 10}%
+                        </span>
+                      </div>
+                      <div className="w-full bg-[#171D35] h-2 rounded-full overflow-hidden">
+                        <div
+                          className="bg-[#52D6B2] h-full rounded-full transition-all duration-500"
+                          style={{ width: `${Math.min(100, Math.max(0, (analysisResult.model_a_result.real_score || 0) * 100))}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                    <div className="p-2.5 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/10 space-y-0.5">
+                      <span className="text-[#A6AEC8] text-[10px]">Backbone:</span>
+                      <p className="font-mono text-[#F4F5FF] text-[11px]">CLIP-ViT-L/14 (SVD r=1023)</p>
+                    </div>
+                    <div className="p-2.5 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/10 space-y-0.5">
+                      <span className="text-[#A6AEC8] text-[10px]">Checkpoint:</span>
+                      <p className="font-mono text-[#F4F5FF] text-[11px] truncate">{analysisResult.model_a_result.checkpoint_id}</p>
+                    </div>
+                    <div className="p-2.5 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/10 space-y-0.5">
+                      <span className="text-[#A6AEC8] text-[10px]">Device:</span>
+                      <p className="font-mono text-[#55D6E8] text-[11px] uppercase">{analysisResult.model_a_result.device}</p>
+                    </div>
+                    <div className="p-2.5 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/10 space-y-0.5">
+                      <span className="text-[#A6AEC8] text-[10px]">Latency:</span>
+                      <p className="font-mono text-[#52D6B2] text-[11px]">{analysisResult.model_a_result.processing_time_ms} ms</p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-[#A6AEC8] italic">Click "Queue Worker Job" or run scanner to process Effort-AIGI-Detection inference.</p>
+              )}
+              <p className="text-[11px] text-[#A6AEC8] leading-relaxed italic bg-[#0D1224]/60 p-2.5 rounded-lg border border-[#A6AEC8]/10">
+                Notice: Effort model operates under CC BY-NC 4.0 non-commercial research terms. Predictions are automated forensic decision-support signals, not definitive legal proof.
+              </p>
+            </Card>
+
+            {/* Stage 3 Integration: Model B DeepfakeBench Xception */}
+            <Card className="bg-[#171D35]/85 border-[#FF718A]/30 p-5 space-y-4 md:col-span-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#A6AEC8]/15 pb-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#FF718A] uppercase tracking-wider">
+                  <Activity className="w-4 h-4 text-[#FF718A]" />
+                  <span>Model B: Facial Deepfake Detection — DeepfakeBench Xception</span>
+                </div>
+                <Badge
+                  variant={
+                    analysisResult.model_b_result?.overall_prediction === 'manipulated'
+                      ? 'critical'
+                      : analysisResult.model_b_result?.overall_prediction === 'authentic'
+                      ? 'safe'
+                      : 'neutral'
+                  }
+                >
+                  {analysisResult.model_b_result?.overall_prediction === 'manipulated'
+                    ? 'Facial Deepfake Detected'
+                    : analysisResult.model_b_result?.overall_prediction === 'authentic'
+                    ? 'Authentic Human Faces'
+                    : analysisResult.model_b_result?.analysis_status === 'no_faces_detected'
+                    ? 'No Faces Detected'
+                    : 'Awaiting Analysis'}
+                </Badge>
+              </div>
+
+              {analysisResult.model_b_result ? (
+                <div className="space-y-3">
+                  <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-1.5">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-[#A6AEC8]">Peak Facial Manipulation Probability:</span>
+                      <span className={`font-bold ${analysisResult.model_b_result.max_manipulation_score > 0.5 ? 'text-[#FF718A]' : 'text-[#52D6B2]'}`}>
+                        {Math.round((analysisResult.model_b_result.max_manipulation_score || 0) * 1000) / 10}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-[#171D35] h-2 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${analysisResult.model_b_result.max_manipulation_score > 0.5 ? 'bg-gradient-to-r from-[#F0B96B] to-[#FF718A]' : 'bg-[#52D6B2]'}`}
+                        style={{ width: `${Math.min(100, Math.max(0, (analysisResult.model_b_result.max_manipulation_score || 0) * 100))}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {analysisResult.model_b_result.faces && analysisResult.model_b_result.faces.length > 0 && (
+                    <div className="p-3 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/15 space-y-2 text-xs">
+                      <span className="text-[#A6AEC8] font-semibold">Per-Face Deepfake Classification Breakdown:</span>
+                      <div className="space-y-2">
+                        {analysisResult.model_b_result.faces.map((f, idx) => (
+                          <div key={idx} className="p-2.5 bg-[#171D35] rounded-lg border border-[#A6AEC8]/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-[11px]">
+                            <div className="space-y-0.5">
+                              <span className="font-bold text-[#8B7CFF]">{f.face_id}</span>
+                              <p className="text-[#A6AEC8] font-mono text-[10px]">
+                                Box: [{f.face_bounding_box.x1}, {f.face_bounding_box.y1}, {f.face_bounding_box.width}×{f.face_bounding_box.height}]
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="font-mono text-[11px]">
+                                Manipulation: <span className={f.manipulation_score > 0.5 ? 'text-[#FF718A] font-bold' : 'text-[#52D6B2]'}>{Math.round(f.manipulation_score * 1000) / 10}%</span>
+                              </span>
+                              <Badge variant={f.prediction === 'manipulated' ? 'critical' : 'safe'}>
+                                {f.prediction.toUpperCase()}
+                              </Badge>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                    <div className="p-2.5 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/10 space-y-0.5">
+                      <span className="text-[#A6AEC8] text-[10px]">Architecture:</span>
+                      <p className="font-mono text-[#F4F5FF] text-[11px]">Xception 36-Layer</p>
+                    </div>
+                    <div className="p-2.5 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/10 space-y-0.5">
+                      <span className="text-[#A6AEC8] text-[10px]">Benchmark:</span>
+                      <p className="font-mono text-[#F4F5FF] text-[11px]">FaceForensics++ c23</p>
+                    </div>
+                    <div className="p-2.5 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/10 space-y-0.5">
+                      <span className="text-[#A6AEC8] text-[10px]">Checkpoint:</span>
+                      <p className="font-mono text-[#F4F5FF] text-[11px] truncate">{analysisResult.model_b_result.checkpoint_id}</p>
+                    </div>
+                    <div className="p-2.5 bg-[#0D1224] rounded-xl border border-[#A6AEC8]/10 space-y-0.5">
+                      <span className="text-[#A6AEC8] text-[10px]">Latency:</span>
+                      <p className="font-mono text-[#52D6B2] text-[11px]">{analysisResult.model_b_result.processing_time_ms} ms</p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-[#A6AEC8] italic">Click "Queue Worker Job" or run scanner to process DeepfakeBench Xception inference.</p>
+              )}
+              <p className="text-[11px] text-[#A6AEC8] leading-relaxed italic bg-[#0D1224]/60 p-2.5 rounded-lg border border-[#A6AEC8]/10">
+                Notice: DeepfakeBench Xception evaluates localized face crops for synthesis artifacts. Operates under CC BY-NC 4.0 terms.
+              </p>
             </Card>
 
             {/* 3. Why It Matters */}

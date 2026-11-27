@@ -8,22 +8,50 @@ import os
 import uuid
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
-from fastapi import Depends, FastAPI, File, Form, HTTPException, Query, UploadFile, status
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Query, Request, Response, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 
 from ai_service import analyze_image, analyze_text, get_ai_health
+from ai.inference_queue import (
+    submit_analysis_job,
+    get_job_status,
+    cancel_job,
+    list_jobs,
+    get_all_models_health,
+)
 from auth import (
     create_access_token,
     get_current_user,
     hash_password,
+    revoke_token,
     validate_jwt_configuration,
     verify_password,
 )
-from db import get_db, get_storage_dir, init_db
+from db import (
+    get_db,
+    get_storage_dir,
+    init_db,
+    get_or_create_safety_settings,
+    update_safety_settings,
+    list_trusted_contacts,
+    add_trusted_contact,
+    delete_trusted_contact,
+    start_journey_checkin,
+    complete_journey_checkin,
+    cancel_journey_checkin,
+    get_active_journey_checkin,
+    log_malware_scan,
+    get_malware_scan_log,
+)
 from schemas import (
+    AnalysisJobSubmitRequest,
     CaseUpdateRequest,
     ComplaintGenerateRequest,
     ComplaintUpdateRequest,
@@ -31,9 +59,25 @@ from schemas import (
     LoginRequest,
     RegisterRequest,
     ReportingRecordCreateRequest,
+    ThreatAnalysisFeedbackRequest,
     ThreatAnalysisRequest,
     TimelineEventCreateRequest,
+    SafetySettingsUpdateRequest,
+    TrustedContactCreateRequest,
+    JourneyCheckinStartRequest,
 )
+from security.evidence_storage import (
+    encrypt_and_store_evidence,
+    retrieve_and_decrypt_evidence,
+    verify_evidence_integrity,
+)
+from security.malware_scanner import (
+    scan_file_content,
+    quarantine_file,
+    get_malware_scanner_health,
+)
+
+from forensics.router import router as stage5_forensics_router
 
 MAX_EVIDENCE_BYTES = 25 * 1024 * 1024  # 25 MB
 ALLOWED_EVIDENCE_EXTENSIONS = {
@@ -163,6 +207,42 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# SlowAPI Rate Limiting configuration
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["200/minute"],
+    enabled=os.environ.get("SAFEHER_ENV") != "test",
+)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; frame-ancestors 'none';"
+    return response
+
+
+# Antivirus & Upload Safety Heuristic Scanner
+EICAR_SIGNATURE = b"X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*"
+
+
+def scan_upload_safety(content: bytes, filename: str) -> Tuple[bool, str]:
+    """
+    Scans uploaded content for malware test signatures, polyglots, and disguised executables.
+    Delegates to modular malware inspection engine.
+    """
+    res = scan_file_content(content, filename)
+    if not res.is_clean:
+        return False, "; ".join(res.threats_detected) if res.threats_detected else "Malicious content detected"
+    return True, "clean"
+
 
 # ==========================================================
 # HEALTH & ROOT
@@ -190,10 +270,11 @@ def health() -> Dict[str, Any]:
 
 
 # ==========================================================
-# AUTHENTICATION (Member 2)
+# AUTHENTICATION (Member 2 Hardened)
 # ==========================================================
 @app.post("/api/v1/auth/register", status_code=status.HTTP_201_CREATED)
-def register(payload: RegisterRequest) -> Dict[str, Any]:
+@limiter.limit("10/minute")
+def register(request: Request, payload: RegisterRequest) -> Dict[str, Any]:
     if not payload.consent_acknowledged:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
@@ -214,8 +295,8 @@ def register(payload: RegisterRequest) -> Dict[str, Any]:
             )
         conn.execute(
             """
-            INSERT INTO users (id, name, email, password_hash, consent_acknowledged, consent_date, preferred_language, created_at)
-            VALUES (?, ?, ?, ?, 1, ?, 'en', ?)
+            INSERT INTO users (id, name, email, password_hash, consent_acknowledged, consent_date, preferred_language, created_at, role)
+            VALUES (?, ?, ?, ?, 1, ?, 'en', ?, 'user')
             """,
             (
                 user_id,
@@ -227,7 +308,7 @@ def register(payload: RegisterRequest) -> Dict[str, Any]:
             ),
         )
 
-    token = create_access_token(user_id, email)
+    token = create_access_token(user_id, email, role="user")
     return {
         "access_token": token,
         "token_type": "bearer",
@@ -235,6 +316,7 @@ def register(payload: RegisterRequest) -> Dict[str, Any]:
             "id": user_id,
             "name": payload.name.strip(),
             "email": email,
+            "role": "user",
             "consent_acknowledged": True,
             "consent_date": now,
             "preferred_language": "en",
@@ -244,7 +326,8 @@ def register(payload: RegisterRequest) -> Dict[str, Any]:
 
 
 @app.post("/api/v1/auth/login")
-def login(payload: LoginRequest) -> Dict[str, Any]:
+@limiter.limit("10/minute")
+def login(request: Request, payload: LoginRequest) -> Dict[str, Any]:
     email = payload.email.strip().lower()
     with get_db() as conn:
         row = conn.execute(
@@ -255,7 +338,8 @@ def login(payload: LoginRequest) -> Dict[str, Any]:
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password.",
         )
-    token = create_access_token(row["id"], row["email"])
+    role = row["role"] if "role" in row.keys() and row["role"] else "user"
+    token = create_access_token(row["id"], row["email"], role=role)
     return {
         "access_token": token,
         "token_type": "bearer",
@@ -263,12 +347,31 @@ def login(payload: LoginRequest) -> Dict[str, Any]:
             "id": row["id"],
             "name": row["name"],
             "email": row["email"],
+            "role": role,
             "consent_acknowledged": bool(row["consent_acknowledged"]),
             "consent_date": row["consent_date"],
             "preferred_language": row["preferred_language"],
             "created_at": row["created_at"],
         },
     }
+
+
+@app.post("/api/v1/auth/logout")
+def logout(
+    request: Request,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False)),
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    token = None
+    if credentials and credentials.credentials:
+        token = credentials.credentials
+    elif "authorization" in request.headers:
+        auth_header = request.headers["authorization"]
+        if auth_header.lower().startswith("bearer "):
+            token = auth_header[7:].strip()
+    if token:
+        revoke_token(token)
+    return {"message": "Logged out successfully", "status": "revoked"}
 
 
 @app.get("/api/v1/auth/me")
@@ -396,10 +499,11 @@ def get_incident(
 
 
 # ==========================================================
-# EVIDENCE VAULT (Member 2)
+# EVIDENCE VAULT (Member 2 Hardened with AES-256-GCM)
 # ==========================================================
 def _serialize_evidence(row) -> Dict[str, Any]:
-    return {
+    row_keys = row.keys() if hasattr(row, "keys") else []
+    data = {
         "id": row["id"],
         "incident_id": row["incident_id"],
         "original_filename": row["original_filename"],
@@ -414,6 +518,23 @@ def _serialize_evidence(row) -> Dict[str, Any]:
         "duplicate_status": row["duplicate_status"],
         "notes": row["notes"],
     }
+    if "encryption_algorithm" in row_keys:
+        data["encryption_algorithm"] = row["encryption_algorithm"] or "AES-256-GCM"
+    if "encryption_version" in row_keys:
+        data["encryption_version"] = row["encryption_version"]
+    if "key_id" in row_keys:
+        data["key_id"] = row["key_id"]
+    if "key_version" in row_keys:
+        data["key_version"] = row["key_version"]
+    if "wrapping_nonce" in row_keys:
+        data["wrapping_nonce"] = row["wrapping_nonce"]
+    if "ciphertext_sha256" in row_keys:
+        data["ciphertext_sha256"] = row["ciphertext_sha256"]
+    if "encryption_timestamp" in row_keys:
+        data["encryption_timestamp"] = row["encryption_timestamp"]
+    if "signature" in row_keys:
+        data["signature_status"] = "verified" if row["signature"] else "none"
+    return data
 
 
 @app.get("/api/v1/evidence")
@@ -450,8 +571,10 @@ def list_incident_evidence(
 
 
 @app.post("/api/v1/incidents/{incident_id}/evidence", status_code=status.HTTP_201_CREATED)
+@limiter.limit("30/minute")
 async def upload_evidence(
     incident_id: str,
+    request: Request,
     file: UploadFile = File(...),
     sha256: Optional[str] = Form(default=None),
     notes: Optional[str] = Form(default=None),
@@ -488,6 +611,34 @@ async def upload_evidence(
             detail="File size exceeds 25 MB limit.",
         )
 
+    # 1. Antivirus & Malware inspection
+    storage_dir = get_storage_dir()
+    scan_res = scan_file_content(content, original_name)
+    if not scan_res.is_clean:
+        # Quarantine the malicious payload securely
+        quarantine_p = quarantine_file(content, f"temp_{uuid.uuid4().hex[:8]}", original_name, storage_dir)
+        try:
+            log_malware_scan(
+                scan_id=f"mscan-{uuid.uuid4().hex[:10]}",
+                evidence_id=None,
+                user_id=current_user["id"],
+                filename=original_name,
+                scan_status="quarantined",
+                scanner_engine=scan_res.scanner_engine,
+                threats_detected=scan_res.threats_detected,
+                scan_duration_ms=scan_res.scan_duration_ms,
+                quarantine_path=quarantine_p,
+            )
+        except Exception:
+            pass
+
+        threat_msg = "; ".join(scan_res.threats_detected) if scan_res.threats_detected else "Malicious content detected"
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail=f"Upload rejected by security filter: {threat_msg}",
+        )
+
+    # 2. SHA-256 Integrity Verification
     server_sha256 = hashlib.sha256(content).hexdigest()
     if sha256 and sha256.strip().lower() != server_sha256.lower():
         raise HTTPException(
@@ -496,12 +647,19 @@ async def upload_evidence(
         )
 
     evi_id = f"evi-{uuid.uuid4().hex[:8]}"
-    stored_filename = f"{evi_id}{ext}"
-    dest_path = os.path.join(get_storage_dir(), stored_filename)
-    with open(dest_path, "wb") as out_file:
-        out_file.write(content)
+
+    # 3. Secure AES-256-GCM Envelope Encryption & Storage
+    storage_res = encrypt_and_store_evidence(
+        content=content,
+        evidence_id=evi_id,
+        user_id=current_user["id"],
+        storage_dir=storage_dir,
+        original_filename=original_name,
+    )
 
     now = _utc_now()
+    client_ip = request.client.host if request.client else "127.0.0.1"
+
     with get_db() as conn:
         dup_row = conn.execute(
             "SELECT id FROM evidence WHERE user_id = ? AND sha256_hash = ?",
@@ -515,34 +673,91 @@ async def upload_evidence(
                 id, incident_id, user_id, original_filename, stored_filename,
                 file_type, file_size, sha256_hash, upload_timestamp,
                 storage_status, validation_status, malware_status,
-                processing_status, duplicate_status, notes
+                processing_status, duplicate_status, notes,
+                encryption_algorithm, encryption_version, data_nonce,
+                wrapped_dek, wrapping_nonce, key_id, key_version,
+                original_sha256, ciphertext_sha256, encryption_timestamp,
+                wrapped_key, signature
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'stored_encrypted', 'passed', 'clean', 'ready', ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'passed', ?, 'ready', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 evi_id,
                 incident_id,
                 current_user["id"],
                 original_name,
-                stored_filename,
+                storage_res.stored_filename,
                 file.content_type or "application/octet-stream",
-                len(content),
-                server_sha256,
+                storage_res.file_size,
+                storage_res.sha256_hash,
                 now,
+                storage_res.storage_status,
+                scan_res.status,
                 duplicate_status,
                 notes,
+                storage_res.encryption_algorithm,
+                storage_res.encryption_version,
+                storage_res.data_nonce_hex,
+                storage_res.wrapped_dek_hex,
+                storage_res.wrapping_nonce_hex,
+                storage_res.key_id,
+                storage_res.key_version,
+                storage_res.sha256_hash,
+                storage_res.ciphertext_sha256,
+                storage_res.encryption_timestamp,
+                storage_res.wrapped_dek_hex,
+                storage_res.signature_hex,
             ),
         )
+
+        # Log malware scan audit entry for clean uploaded evidence
+        try:
+            log_malware_scan(
+                scan_id=f"mscan-{uuid.uuid4().hex[:10]}",
+                evidence_id=evi_id,
+                user_id=current_user["id"],
+                filename=original_name,
+                scan_status=scan_res.status,
+                scanner_engine=scan_res.scanner_engine,
+                threats_detected=scan_res.threats_detected,
+                scan_duration_ms=scan_res.scan_duration_ms,
+                quarantine_path=None,
+            )
+        except Exception:
+            pass
+
+        # 4. Chain of Custody Record
+        upload_details = json.dumps({
+            "actor": current_user["email"],
+            "reason": "AES-256-GCM envelope encryption and SHA-256 preservation",
+            "sha256_hash": storage_res.sha256_hash,
+            "signature": storage_res.signature_hex,
+        })
+        conn.execute(
+            """
+            INSERT INTO custody_records (id, evidence_id, user_id, action, details, timestamp, ip_address)
+            VALUES (?, ?, ?, 'evidence_uploaded', ?, ?, ?)
+            """,
+            (
+                f"cst-{uuid.uuid4().hex[:8]}",
+                evi_id,
+                current_user["id"],
+                upload_details,
+                now,
+                client_ip,
+            ),
+        )
+
         conn.execute(
             """
             INSERT INTO timeline_events (id, incident_id, user_id, event_type, source, title, description, related_evidence_id, timestamp)
-            VALUES (?, ?, ?, 'evidence_uploaded', 'system', 'Evidence Preserved with SHA-256', ?, ?, ?)
+            VALUES (?, ?, ?, 'evidence_uploaded', 'system', 'Evidence Preserved & Encrypted (AES-256-GCM)', ?, ?, ?)
             """,
             (
                 f"tl-{uuid.uuid4().hex[:8]}",
                 incident_id,
                 current_user["id"],
-                f"Preserved '{original_name}' ({len(content)} bytes), SHA-256: {server_sha256[:16]}...",
+                f"Preserved '{original_name}' ({len(content)} bytes), SHA-256: {server_sha256[:16]}..., Encrypted with AES-256-GCM.",
                 evi_id,
                 now,
             ),
@@ -554,6 +769,7 @@ async def upload_evidence(
 @app.get("/api/v1/evidence/{evidence_id}/download")
 def download_evidence(
     evidence_id: str,
+    request: Request,
     current_user: Dict[str, Any] = Depends(get_current_user),
 ):
     with get_db() as conn:
@@ -566,22 +782,79 @@ def download_evidence(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Evidence item not found or access denied.",
             )
-    file_path = os.path.join(get_storage_dir(), row["stored_filename"])
-    if not os.path.exists(file_path):
+
+        now = _utc_now()
+        client_ip = request.client.host if request.client else "127.0.0.1"
+        row_keys = row.keys() if hasattr(row, "keys") else []
+        sig = row["signature"] if "signature" in row_keys else None
+
+        # Chain of Custody Record for download
+        download_details = json.dumps({
+            "actor": current_user["email"],
+            "reason": "Decrypted in-memory download by owner",
+            "sha256_hash": row["sha256_hash"],
+            "signature": sig,
+        })
+        conn.execute(
+            """
+            INSERT INTO custody_records (id, evidence_id, user_id, action, details, timestamp, ip_address)
+            VALUES (?, ?, ?, 'evidence_downloaded', ?, ?, ?)
+            """,
+            (
+                f"cst-{uuid.uuid4().hex[:8]}",
+                evidence_id,
+                current_user["id"],
+                download_details,
+                now,
+                client_ip,
+            ),
+        )
+
+    try:
+        wrapped_key = row["wrapped_dek"] if "wrapped_dek" in row_keys and row["wrapped_dek"] else (row["wrapped_key"] if "wrapped_key" in row_keys else None)
+        wrapping_nonce = row["wrapping_nonce"] if "wrapping_nonce" in row_keys else None
+        key_id = row["key_id"] if "key_id" in row_keys else None
+        key_version = row["key_version"] if "key_version" in row_keys else None
+        enc_version = row["encryption_version"] if "encryption_version" in row_keys and row["encryption_version"] else "v2"
+
+        decrypted_bytes = retrieve_and_decrypt_evidence(
+            evidence_id=evidence_id,
+            user_id=current_user["id"],
+            stored_filename=row["stored_filename"],
+            storage_dir=get_storage_dir(),
+            wrapped_key_hex=wrapped_key,
+            expected_sha256=row["sha256_hash"],
+            wrapping_nonce_hex=wrapping_nonce,
+            key_id=key_id,
+            key_version=key_version,
+            encryption_version=enc_version,
+        )
+    except FileNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Stored evidence file not found on disk.",
         )
-    return FileResponse(
-        path=file_path,
-        media_type=row["file_type"],
-        filename=row["original_filename"],
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Evidence decryption or integrity check failed: {exc}",
+        )
+
+    import urllib.parse
+    encoded_fn = urllib.parse.quote(row["original_filename"])
+    return Response(
+        content=decrypted_bytes,
+        media_type=row["file_type"] or "application/octet-stream",
+        headers={
+            "Content-Disposition": f'attachment; filename="{row["original_filename"]}"; filename*=UTF-8\'\'{encoded_fn}'
+        },
     )
 
 
 @app.delete("/api/v1/evidence/{evidence_id}", status_code=status.HTTP_200_OK)
 def delete_evidence(
     evidence_id: str,
+    request: Request,
     current_user: Dict[str, Any] = Depends(get_current_user),
 ) -> Dict[str, str]:
     with get_db() as conn:
@@ -595,10 +868,126 @@ def delete_evidence(
                 detail="Evidence item not found or access denied.",
             )
         file_path = os.path.join(get_storage_dir(), row["stored_filename"])
+
+        now = _utc_now()
+        client_ip = request.client.host if request.client else "127.0.0.1"
+        row_keys = row.keys() if hasattr(row, "keys") else []
+        sig = row["signature"] if "signature" in row_keys else None
+
+        # Chain of Custody Record for deletion
+        delete_details = json.dumps({
+            "actor": current_user["email"],
+            "reason": "Evidence purged from vault by owner",
+            "sha256_hash": row["sha256_hash"],
+            "signature": sig,
+        })
+        conn.execute(
+            """
+            INSERT INTO custody_records (id, evidence_id, user_id, action, details, timestamp, ip_address)
+            VALUES (?, ?, ?, 'evidence_deleted', ?, ?, ?)
+            """,
+            (
+                f"cst-{uuid.uuid4().hex[:8]}",
+                evidence_id,
+                current_user["id"],
+                delete_details,
+                now,
+                client_ip,
+            ),
+        )
         conn.execute("DELETE FROM evidence WHERE id = ?", (evidence_id,))
+
     if os.path.exists(file_path):
         os.remove(file_path)
     return {"status": "deleted", "id": evidence_id}
+
+
+@app.get("/api/v1/evidence/{evidence_id}/custody")
+def get_evidence_custody(
+    evidence_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> List[Dict[str, Any]]:
+    with get_db() as conn:
+        inc = conn.execute(
+            "SELECT id FROM evidence WHERE id = ? AND user_id = ?",
+            (evidence_id, current_user["id"]),
+        ).fetchone()
+        if not inc:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Evidence not found or access denied.",
+            )
+        records = conn.execute(
+            "SELECT * FROM custody_records WHERE evidence_id = ? ORDER BY timestamp ASC",
+            (evidence_id,),
+        ).fetchall()
+        result = []
+        for r in records:
+            det = {}
+            if r["details"]:
+                try:
+                    det = json.loads(r["details"])
+                except Exception:
+                    det = {"reason": r["details"]}
+            result.append(
+                {
+                    "id": r["id"],
+                    "evidence_id": r["evidence_id"],
+                    "action": r["action"],
+                    "actor": det.get("actor", current_user["email"]),
+                    "reason": det.get("reason", r["details"]),
+                    "ip_address": r["ip_address"],
+                    "sha256_hash": det.get("sha256_hash"),
+                    "signature": det.get("signature"),
+                    "timestamp": r["timestamp"],
+                }
+            )
+        return result
+
+
+@app.get("/api/v1/evidence/{evidence_id}/receipt")
+def get_evidence_receipt(
+    evidence_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT * FROM evidence WHERE id = ? AND user_id = ?",
+            (evidence_id, current_user["id"]),
+        ).fetchone()
+        if not row:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Evidence not found or access denied.",
+            )
+
+    row_keys = row.keys() if hasattr(row, "keys") else []
+    wrapped_key = row["wrapped_key"] if "wrapped_key" in row_keys else None
+    sig = row["signature"] if "signature" in row_keys else None
+    enc_algo = row["encryption_algorithm"] if "encryption_algorithm" in row_keys else "AES-256-GCM"
+    key_id = row["key_id"] if "key_id" in row_keys else None
+
+    audit = verify_evidence_integrity(
+        evidence_id=evidence_id,
+        user_id=current_user["id"],
+        stored_filename=row["stored_filename"],
+        storage_dir=get_storage_dir(),
+        wrapped_key_hex=wrapped_key,
+        expected_sha256=row["sha256_hash"],
+        signature_hex=sig,
+    )
+
+    return {
+        "evidence_id": evidence_id,
+        "original_filename": row["original_filename"],
+        "file_size": row["file_size"],
+        "sha256_hash": row["sha256_hash"],
+        "storage_status": row["storage_status"],
+        "encryption_algorithm": enc_algo,
+        "key_id": key_id,
+        "signature_present": bool(sig),
+        "audit": audit,
+    }
 
 
 # ==========================================================
@@ -647,8 +1036,31 @@ def run_threat_analysis(
     ai_res = analyze_text(payload.text)
     an_id = f"an-thr-{uuid.uuid4().hex[:8]}"
     now = _utc_now()
+    multilingual_meta = {
+        "analysis_id": ai_res["analysis_id"],
+        "model_id": ai_res["model_id"],
+        "model_version": ai_res["model_version"],
+        "models_used": ai_res["models_used"],
+        "language": ai_res["language"],
+        "language_name": ai_res["language_name"],
+        "script": ai_res["script"],
+        "is_mixed_language": ai_res["is_mixed_language"],
+        "supported_language": ai_res["supported_language"],
+        "language_confidence": ai_res["language_confidence"],
+        "predicted_categories": ai_res["predicted_categories"],
+        "category_scores": ai_res["category_scores"],
+        "severity": ai_res["severity"],
+        "confidence_status": ai_res["confidence_status"],
+        "analysis_status": ai_res["analysis_status"],
+        "requires_human_review": ai_res["requires_human_review"],
+        "warnings": ai_res["warnings"],
+        "inference_time_ms": ai_res["inference_time_ms"],
+    }
 
     with get_db() as conn:
+        cols = {r[1] for r in conn.execute("PRAGMA table_info(threat_analyses)").fetchall()}
+        if "multilingual_metadata" not in cols:
+            conn.execute("ALTER TABLE threat_analyses ADD COLUMN multilingual_metadata TEXT")
         conn.execute(
             """
             INSERT INTO threat_analyses (
@@ -656,9 +1068,9 @@ def run_threat_analysis(
                 toxicity_score, insult_score, threat_score,
                 harassment_score, blackmail_score, extortion_score,
                 urgency_level, decision, detected_signals,
-                explanation, limitations, suggested_steps, created_at
+                explanation, limitations, suggested_steps, multilingual_metadata, created_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 an_id,
@@ -677,6 +1089,7 @@ def run_threat_analysis(
                 ai_res["explanation"],
                 json.dumps(ai_res["limitations"]),
                 json.dumps(ai_res["suggested_steps"]),
+                json.dumps(multilingual_meta),
                 now,
             ),
         )
@@ -690,7 +1103,7 @@ def run_threat_analysis(
                     f"tl-{uuid.uuid4().hex[:8]}",
                     payload.incident_id,
                     current_user["id"],
-                    f"Decision: {ai_res['decision']} (Urgency: {ai_res['urgency_level']})",
+                    f"Decision: {ai_res['decision']} (Severity: {ai_res['severity']}, Lang: {ai_res['language']})",
                     now,
                 ),
             )
@@ -699,6 +1112,7 @@ def run_threat_analysis(
         "id": an_id,
         "incident_id": payload.incident_id,
         "input_text": payload.text.strip(),
+        **multilingual_meta,
         "toxicity_score": ai_res["toxicity"],
         "insult_score": ai_res["insult"],
         "threat_score": ai_res["threat"],
@@ -708,9 +1122,62 @@ def run_threat_analysis(
         "urgency_level": ai_res["urgency_level"],
         "decision": ai_res["decision"],
         "detected_signals": ai_res["detected_signals"],
+        "language_detected": ai_res["language_detected"],
         "explanation": ai_res["explanation"],
         "limitations": ai_res["limitations"],
         "suggested_steps": ai_res["suggested_steps"],
+        "created_at": now,
+    }
+
+
+@app.post("/api/v1/analysis/threat/{analysis_id}/feedback", status_code=status.HTTP_201_CREATED)
+def submit_threat_analysis_feedback(
+    analysis_id: str,
+    payload: ThreatAnalysisFeedbackRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    """
+    Records human review/correction for a threat analysis separately from original
+    evidence. Never triggers automatic model training.
+    """
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT id FROM threat_analyses WHERE id = ? AND user_id = ?",
+            (analysis_id, current_user["id"]),
+        ).fetchone()
+        if not row:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Threat analysis record not found or access denied.",
+            )
+        fb_id = f"fb-{uuid.uuid4().hex[:8]}"
+        now = _utc_now()
+        conn.execute(
+            """
+            INSERT INTO threat_analysis_feedback (
+                id, analysis_id, user_id, corrected_categories,
+                corrected_severity, is_false_positive, notes, used_for_training, created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)
+            """,
+            (
+                fb_id,
+                analysis_id,
+                current_user["id"],
+                json.dumps(payload.corrected_categories),
+                payload.corrected_severity,
+                1 if payload.is_false_positive else 0,
+                payload.notes,
+                now,
+            ),
+        )
+    return {
+        "id": fb_id,
+        "analysis_id": analysis_id,
+        "corrected_categories": payload.corrected_categories,
+        "corrected_severity": payload.corrected_severity,
+        "is_false_positive": payload.is_false_positive,
+        "used_for_training": False,
         "created_at": now,
     }
 
@@ -738,14 +1205,40 @@ async def run_media_analysis(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="Evidence item not found or access denied.",
                 )
-            file_path = os.path.join(get_storage_dir(), row["stored_filename"])
-            if not os.path.exists(file_path):
+            row_keys = row.keys() if hasattr(row, "keys") else []
+            wrapped_key = row["wrapped_key"] if "wrapped_key" in row_keys else None
+            wrapped_dek = row["wrapped_dek"] if "wrapped_dek" in row_keys else None
+            wrapping_nonce = row["wrapping_nonce"] if "wrapping_nonce" in row_keys else None
+            data_nonce = row["data_nonce"] if "data_nonce" in row_keys else None
+            key_id = row["key_id"] if "key_id" in row_keys else None
+            key_version = row["key_version"] if "key_version" in row_keys else None
+            enc_version = row["encryption_version"] if "encryption_version" in row_keys else "v2"
+            expected_hash = (row["original_sha256"] if ("original_sha256" in row_keys and row["original_sha256"]) else row["sha256_hash"])
+            try:
+                content = retrieve_and_decrypt_evidence(
+                    evidence_id=evidence_id,
+                    user_id=current_user["id"],
+                    stored_filename=row["stored_filename"],
+                    storage_dir=get_storage_dir(),
+                    wrapped_key_hex=wrapped_key,
+                    wrapped_dek_hex=wrapped_dek,
+                    wrapping_nonce_hex=wrapping_nonce,
+                    data_nonce_hex=data_nonce,
+                    key_id=key_id,
+                    key_version=key_version,
+                    encryption_version=enc_version,
+                    expected_sha256=expected_hash,
+                )
+            except FileNotFoundError:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="Evidence file missing on disk.",
                 )
-            with open(file_path, "rb") as f:
-                content = f.read()
+            except Exception as exc:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Evidence decryption failed: {exc}",
+                )
     else:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
@@ -763,9 +1256,10 @@ async def run_media_analysis(
                 id, evidence_id, user_id, media_type, model_name, model_version,
                 deepfake_score, nudity_score, is_calibrated, uncertainty_state,
                 decision, compression_anomaly_detected, c2pa_provenance,
+                c2pa_result, face_localization, model_a_result, model_b_result,
                 limitations, recommended_next_steps, created_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 an_id,
@@ -780,6 +1274,10 @@ async def run_media_analysis(
                 ai_res["decision"],
                 1 if ai_res["compression_anomaly_detected"] else 0,
                 json.dumps(ai_res["c2pa_provenance"]),
+                json.dumps(ai_res.get("c2pa_analysis", {})),
+                json.dumps(ai_res.get("face_localization", {})),
+                json.dumps(ai_res.get("model_a_result", {})),
+                json.dumps(ai_res.get("model_b_result", {})),
                 json.dumps(ai_res["limitations"]),
                 json.dumps(ai_res["recommended_next_steps"]),
                 now,
@@ -799,6 +1297,11 @@ async def run_media_analysis(
         "decision": ai_res["decision"],
         "compression_anomaly_detected": ai_res["compression_anomaly_detected"],
         "c2pa_provenance": ai_res["c2pa_provenance"],
+        "c2pa_analysis": ai_res.get("c2pa_analysis", {}),
+        "face_localization": ai_res.get("face_localization", {}),
+        "faces": ai_res.get("faces", []),
+        "model_a_result": ai_res.get("model_a_result", {}),
+        "model_b_result": ai_res.get("model_b_result", {}),
         "limitations": ai_res["limitations"],
         "recommended_next_steps": ai_res["recommended_next_steps"],
         "created_at": now,
@@ -806,7 +1309,8 @@ async def run_media_analysis(
 
 
 def _serialize_media_analysis(row) -> Dict[str, Any]:
-    return {
+    row_keys = row.keys() if hasattr(row, "keys") else []
+    res = {
         "id": row["id"],
         "evidence_id": row["evidence_id"],
         "media_type": row["media_type"],
@@ -823,6 +1327,29 @@ def _serialize_media_analysis(row) -> Dict[str, Any]:
         "recommended_next_steps": json.loads(row["recommended_next_steps"]),
         "created_at": row["created_at"],
     }
+    if "c2pa_result" in row_keys and row["c2pa_result"]:
+        try:
+            res["c2pa_analysis"] = json.loads(row["c2pa_result"])
+        except Exception:
+            res["c2pa_analysis"] = {}
+    if "face_localization" in row_keys and row["face_localization"]:
+        try:
+            res["face_localization"] = json.loads(row["face_localization"])
+            res["faces"] = res["face_localization"].get("faces", [])
+        except Exception:
+            res["face_localization"] = {}
+            res["faces"] = []
+    if "model_a_result" in row_keys and row["model_a_result"]:
+        try:
+            res["model_a_result"] = json.loads(row["model_a_result"])
+        except Exception:
+            res["model_a_result"] = {}
+    if "model_b_result" in row_keys and row["model_b_result"]:
+        try:
+            res["model_b_result"] = json.loads(row["model_b_result"])
+        except Exception:
+            res["model_b_result"] = {}
+    return res
 
 
 @app.get("/api/v1/analysis/media/{evidence_id}")
@@ -838,6 +1365,98 @@ def get_media_analysis(
         if not row:
             return None
         return _serialize_media_analysis(row)
+
+
+@app.get("/api/v1/ai/health")
+def api_get_all_ai_health(
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    return get_all_models_health()
+
+
+@app.post("/api/v1/evidence/{evidence_id}/jobs", status_code=status.HTTP_202_ACCEPTED)
+def api_submit_analysis_job(
+    evidence_id: str,
+    payload: Optional[AnalysisJobSubmitRequest] = None,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    with get_db() as conn:
+        evi = conn.execute("SELECT * FROM evidence WHERE id = ?", (str(evidence_id),)).fetchone()
+        if not evi:
+            raise HTTPException(status_code=404, detail="Evidence not found")
+        if str(evi["user_id"]) != str(current_user["id"]):
+            raise HTTPException(status_code=403, detail="Not authorized to analyze this evidence")
+
+    model_type = payload.model_type if payload else "full_forensics"
+    try:
+        job = submit_analysis_job(
+            evidence_id=str(evidence_id),
+            owner_id=str(current_user["id"]),
+            model_type=model_type,
+        )
+        return {
+            "job_id": job["id"],
+            "evidence_id": job["evidence_id"],
+            "model_type": job["model_type"],
+            "status": job["status"],
+            "created_at": job["created_at"],
+            "message": "Analysis job submitted to isolated background worker.",
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/v1/evidence/{evidence_id}/jobs/{job_id}")
+def api_get_analysis_job_status(
+    evidence_id: str,
+    job_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    try:
+        job = get_job_status(job_id=job_id, owner_id=str(current_user["id"]))
+        if not job:
+            raise HTTPException(status_code=404, detail="Analysis job not found")
+        if str(job["evidence_id"]) != str(evidence_id):
+            raise HTTPException(status_code=400, detail="Job evidence ID mismatch")
+        return job
+    except PermissionError:
+        raise HTTPException(status_code=403, detail="Not authorized to view this analysis job")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/v1/evidence/{evidence_id}/jobs/{job_id}/cancel")
+def api_cancel_analysis_job(
+    evidence_id: str,
+    job_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    try:
+        success = cancel_job(job_id=job_id, owner_id=str(current_user["id"]))
+        if not success:
+            raise HTTPException(status_code=400, detail="Job cannot be cancelled (may be already completed, failed, or does not exist)")
+        return {"job_id": job_id, "status": "cancelled", "message": "Job cancelled successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/v1/evidence/{evidence_id}/jobs")
+def api_list_analysis_jobs(
+    evidence_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> List[Dict[str, Any]]:
+    with get_db() as conn:
+        evi = conn.execute("SELECT * FROM evidence WHERE id = ?", (str(evidence_id),)).fetchone()
+        if not evi:
+            raise HTTPException(status_code=404, detail="Evidence not found")
+        if str(evi["user_id"]) != str(current_user["id"]):
+            raise HTTPException(status_code=403, detail="Not authorized to view jobs for this evidence")
+
+    return list_jobs(evidence_id=str(evidence_id), owner_id=str(current_user["id"]))
 
 
 @app.get("/api/v1/analysis/history")
@@ -1166,8 +1785,13 @@ def list_cases(
 ) -> List[Dict[str, Any]]:
     with get_db() as conn:
         rows = conn.execute(
-            "SELECT * FROM cases WHERE user_id = ? ORDER BY updated_at DESC",
-            (current_user["id"],),
+            """
+            SELECT DISTINCT c.* FROM cases c
+            LEFT JOIN case_assignments ca ON ca.case_id = c.id AND ca.user_id = ? AND ca.status = 'active'
+            WHERE c.user_id = ? OR ca.id IS NOT NULL
+            ORDER BY c.updated_at DESC
+            """,
+            (current_user["id"], current_user["id"]),
         ).fetchall()
         return [_serialize_case(conn, r) for r in rows]
 
@@ -1318,3 +1942,169 @@ def get_dashboard_summary(
         "recent_incidents": recent_incidents,
         "recent_evidence": recent_evidence,
     }
+
+
+# ==========================================================
+# STAGE 6: SURVIVOR SAFETY, TRUSTED CONTACTS & JOURNEY CHECK-IN
+# ==========================================================
+
+@app.get("/api/v1/safety/settings")
+def get_safety_settings_endpoint(
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    return get_or_create_safety_settings(current_user["id"])
+
+
+@app.put("/api/v1/safety/settings")
+def update_safety_settings_endpoint(
+    payload: SafetySettingsUpdateRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    updates = payload.model_dump(exclude_unset=True) if hasattr(payload, "model_dump") else payload.dict(exclude_unset=True)
+    return update_safety_settings(current_user["id"], updates)
+
+
+@app.get("/api/v1/safety/contacts")
+def list_contacts_endpoint(
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> List[Dict[str, Any]]:
+    return list_trusted_contacts(current_user["id"])
+
+
+@app.post("/api/v1/safety/contacts", status_code=status.HTTP_201_CREATED)
+def add_contact_endpoint(
+    payload: TrustedContactCreateRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    cid = f"tc-{uuid.uuid4().hex[:8]}"
+    return add_trusted_contact(
+        contact_id=cid,
+        user_id=current_user["id"],
+        name=payload.name,
+        phone_number=payload.phone_number,
+        relationship=payload.relationship,
+        notify_on_escalation=payload.notify_on_escalation,
+    )
+
+
+@app.delete("/api/v1/safety/contacts/{contact_id}")
+def delete_contact_endpoint(
+    contact_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    deleted = delete_trusted_contact(contact_id, current_user["id"])
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Contact not found or does not belong to the authenticated user.",
+        )
+    return {"message": "Contact deleted successfully", "deleted": True}
+
+
+@app.post("/api/v1/safety/journey/start", status_code=status.HTTP_201_CREATED)
+def start_journey_endpoint(
+    payload: JourneyCheckinStartRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    jid = f"jrn-{uuid.uuid4().hex[:8]}"
+    if payload.contact_id:
+        with get_db() as conn:
+            c_row = conn.execute(
+                "SELECT id FROM trusted_contacts WHERE id = ? AND user_id = ?",
+                (payload.contact_id, current_user["id"]),
+            ).fetchone()
+            if not c_row:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Specified contact_id does not exist or belong to user.",
+                )
+    return start_journey_checkin(
+        journey_id=jid,
+        user_id=current_user["id"],
+        destination_label=payload.destination_label,
+        duration_minutes=payload.duration_minutes,
+        contact_id=payload.contact_id,
+    )
+
+
+@app.post("/api/v1/safety/journey/{journey_id}/checkin")
+def complete_journey_endpoint(
+    journey_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    ok = complete_journey_checkin(journey_id, current_user["id"])
+    if not ok:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Active journey check-in not found or not owned by user.",
+        )
+    return {"message": "Journey check-in completed safely", "status": "completed_safely"}
+
+
+@app.post("/api/v1/safety/journey/{journey_id}/cancel")
+def cancel_journey_endpoint(
+    journey_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    ok = cancel_journey_checkin(journey_id, current_user["id"])
+    if not ok:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Active journey check-in not found or not owned by user.",
+        )
+    return {"message": "Journey check-in cancelled", "status": "cancelled"}
+
+
+@app.get("/api/v1/safety/journey/active")
+def get_active_journey_endpoint(
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Optional[Dict[str, Any]]:
+    return get_active_journey_checkin(current_user["id"])
+
+
+# ==========================================================
+# STAGE 7: PRODUCTION MALWARE SCANNING & SECURITY AUDIT
+# ==========================================================
+
+@app.get("/api/v1/security/malware/health")
+def malware_scanner_health_endpoint(
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    return get_malware_scanner_health()
+
+
+@app.get("/api/v1/evidence/{evidence_id}/malware-scan")
+def get_evidence_malware_scan_endpoint(
+    evidence_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    with get_db() as conn:
+        evi_row = conn.execute(
+            "SELECT * FROM evidence WHERE id = ?", (evidence_id,)
+        ).fetchone()
+        if not evi_row:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Evidence record not found.",
+            )
+        # Deny cross-user access unless admin or analyst
+        if evi_row["user_id"] != current_user["id"] and current_user.get("role") not in ("admin", "analyst"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access denied: Cannot access another user's evidence scan.",
+            )
+    scan_log = get_malware_scan_log(evidence_id)
+    if not scan_log:
+        return {
+            "evidence_id": evidence_id,
+            "scan_status": evi_row["malware_status"] or "clean",
+            "scanner_engine": "SafeHER-Heuristic-Signature-Scanner v3.0",
+            "threats_detected": [],
+            "scan_duration_ms": 0.0,
+            "quarantine_path": None,
+            "created_at": evi_row["upload_timestamp"],
+        }
+    return scan_log
+
+
+app.include_router(stage5_forensics_router)

@@ -26,6 +26,8 @@ import {
   Filter,
   Lock,
   Sparkles,
+  Info,
+  X,
 } from 'lucide-react'
 import {
   ResponsiveContainer,
@@ -55,6 +57,22 @@ export const DashboardPage: React.FC = () => {
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [ledgerSearch, setLedgerSearch] = useState('')
+  const [showGuide, setShowGuide] = useState(() => {
+    try {
+      return localStorage.getItem('safeher_dismiss_dashboard_guide') !== 'true'
+    } catch {
+      return true
+    }
+  })
+
+  const dismissGuide = () => {
+    setShowGuide(false)
+    try {
+      localStorage.setItem('safeher_dismiss_dashboard_guide', 'true')
+    } catch {
+      // Ignore localStorage errors
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -179,28 +197,31 @@ export const DashboardPage: React.FC = () => {
                 <span className="w-1.5 h-1.5 rounded-full bg-[#8B7CFF] animate-pulse" />
                 Digital Safety Overview
               </span>
-              <span className="text-xs text-[#52D6B2] font-mono flex items-center gap-1.5 bg-[#52D6B2]/10 px-2.5 py-0.5 rounded-full border border-[#52D6B2]/20">
+              <span
+                className="text-xs text-[#52D6B2] font-mono flex items-center gap-1.5 bg-[#52D6B2]/10 px-2.5 py-0.5 rounded-full border border-[#52D6B2]/20"
+                title="Your files are isolated and encrypted. Tamper-evident SHA-256 integrity verification is active."
+              >
                 <ShieldCheck className="w-3.5 h-3.5" />
                 User-Isolated Vault • SHA-256
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F4F5FF] tracking-tight">
-              Incident Intelligence &amp; Active Safety Console
+              Digital Safety &amp; Evidence Dashboard
             </h1>
             <p className="text-xs sm:text-sm text-[#A6AEC8] max-w-2xl leading-relaxed">
-              Consolidated command center for victim assistance, evidentiary chain-of-custody, and algorithmic risk mitigation.
+              A private, secure workspace to document online abuse, protect your evidence, and take guided legal action.
             </p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0 flex-wrap sm:flex-nowrap">
             <Link to="/incidents/new">
               <Button variant="primary" size="md" leftIcon={<PlusCircle className="w-4 h-4" />}>
-                Log New Incident
+                Record an Incident
               </Button>
             </Link>
             <Link to="/evidence">
               <Button variant="secondary" size="md" leftIcon={<Upload className="w-4 h-4 text-[#8B7CFF]" />}>
-                Deposit Evidence
+                Upload Evidence
               </Button>
             </Link>
           </div>
@@ -220,7 +241,7 @@ export const DashboardPage: React.FC = () => {
               </span>
               <span className="text-xs text-[#A6AEC8]">active records</span>
             </div>
-            <p className="text-[11px] text-[#727D9C] mt-1">Verified abuse cases in vault</p>
+            <p className="text-[11px] text-[#727D9C] mt-1">Abuse cases documented in vault</p>
           </div>
 
           {/* Segment 2: Preserved Evidence */}
@@ -248,7 +269,7 @@ export const DashboardPage: React.FC = () => {
               <span className="text-3xl font-extrabold font-mono text-[#52D6B2]">
                 {summary?.completed_analyses ?? 0}
               </span>
-              <span className="text-xs text-[#A6AEC8]">AI screenings</span>
+              <span className="text-xs text-[#A6AEC8]">AI safety checks</span>
             </div>
             <p className="text-[11px] text-[#727D9C] mt-1">Deepfake &amp; risk verifications</p>
           </div>
@@ -257,20 +278,78 @@ export const DashboardPage: React.FC = () => {
           <div className="px-0 sm:px-4 pt-4 lg:pt-0">
             <div className="flex items-center gap-2 text-xs text-[#A6AEC8] font-medium">
               <Clock className="w-3.5 h-3.5 text-[#F0B96B]" />
-              <span className="uppercase tracking-wider">Action Triage</span>
+              <span className="uppercase tracking-wider">Action Follow-ups</span>
             </div>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-3xl font-extrabold font-mono text-[#F0B96B]">
                 {summary?.pending_follow_ups ?? 0}
               </span>
-              <span className="text-xs text-[#A6AEC8]">follow-ups pending</span>
+              <span className="text-xs text-[#A6AEC8]">deadlines pending</span>
             </div>
-            <p className="text-[11px] text-[#727D9C] mt-1">Time-sensitive platform deadlines</p>
+            <p className="text-[11px] text-[#727D9C] mt-1">Time-sensitive platform takedowns</p>
           </div>
         </div>
       </div>
 
-      {/* 2. ANALYTICS & THREAT VELOCITY DECK (8-col Velocity AreaChart + 4-col Threat Distribution Donut) */}
+      {/* ONBOARDING & SAFETY GUIDANCE (Dismissable) */}
+      {showGuide && (
+        <div className="relative overflow-hidden bg-gradient-to-r from-[#171D35]/95 via-[#0D1224]/95 to-[#171D35]/95 border border-[#8B7CFF]/25 rounded-2xl p-5 shadow-lg">
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#8B7CFF]" />
+                <h2 className="text-sm font-bold text-[#F4F5FF]">
+                  How SafeHER Helps You Stay Safe &amp; In Control
+                </h2>
+              </div>
+              <p className="text-xs text-[#A6AEC8] max-w-3xl">
+                Facing online abuse or impersonation is overwhelming. SafeHER provides a quiet, secure space to document what happened and take action step-by-step.
+              </p>
+            </div>
+            <button
+              onClick={dismissGuide}
+              aria-label="Dismiss guide"
+              className="text-[#A6AEC8] hover:text-[#F4F5FF] p-1 rounded-lg hover:bg-[#1D2540] transition-colors shrink-0"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-[#A6AEC8]/15 text-xs text-left">
+            <div className="bg-[#080B18]/70 p-3.5 rounded-xl border border-[#A6AEC8]/10 space-y-1.5">
+              <span className="text-[10px] font-mono font-bold text-[#8B7CFF] uppercase tracking-wider block">
+                Step 1 • Document
+              </span>
+              <p className="font-semibold text-[#F4F5FF]">Record What Happened</p>
+              <p className="text-[11px] text-[#A6AEC8] leading-relaxed">
+                Log dates, platforms, and messages. All notes stay strictly confidential and accessible only to you.
+              </p>
+            </div>
+
+            <div className="bg-[#080B18]/70 p-3.5 rounded-xl border border-[#A6AEC8]/10 space-y-1.5">
+              <span className="text-[10px] font-mono font-bold text-[#55D6E8] uppercase tracking-wider block">
+                Step 2 • Protect
+              </span>
+              <p className="font-semibold text-[#F4F5FF]">Secure Your Evidence</p>
+              <p className="text-[11px] text-[#A6AEC8] leading-relaxed">
+                Upload screenshots or recordings. Each file receives tamper-evident SHA-256 hashing to meet Indian legal standards (BSA Sec 63 / Sec 65B).
+              </p>
+            </div>
+
+            <div className="bg-[#080B18]/70 p-3.5 rounded-xl border border-[#A6AEC8]/10 space-y-1.5">
+              <span className="text-[10px] font-mono font-bold text-[#52D6B2] uppercase tracking-wider block">
+                Step 3 • Respond
+              </span>
+              <p className="font-semibold text-[#F4F5FF]">Take Guided Action</p>
+              <p className="text-[11px] text-[#A6AEC8] leading-relaxed">
+                Generate formal complaint letters with statutory takedown notices (IT Rules 24-hr mandate) or reach the 1930 National Cyber Helpline.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. ANALYTICS & ACTIVITY TIMELINE DECK */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left 8-col: Incident Velocity & Chronological Trend */}
         <AnimatedDataPanel className="lg:col-span-8 p-6 flex flex-col justify-between">
@@ -279,11 +358,11 @@ export const DashboardPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-[#8B7CFF]" />
                 <h3 className="text-sm font-bold text-[#F4F5FF] uppercase tracking-wider">
-                  Incident Activity Velocity &amp; Chronology
+                  Incident Activity &amp; Timeline
                 </h3>
               </div>
               <p className="text-xs text-[#A6AEC8] mt-0.5">
-                Temporal distribution of documented cyber threats and harassment events.
+                Chronological overview of documented incidents to help identify patterns over time.
               </p>
             </div>
             <span className="text-xs font-mono text-[#8B7CFF] bg-[#8B7CFF]/10 px-2.5 py-1 rounded-full border border-[#8B7CFF]/25 self-start sm:self-auto">
@@ -381,11 +460,11 @@ export const DashboardPage: React.FC = () => {
             <div className="flex items-center gap-2">
               <PieIcon className="w-4 h-4 text-[#52D6B2]" />
               <h3 className="text-sm font-bold text-[#F4F5FF] uppercase tracking-wider">
-                Threat Vector Distribution
+                Incident Types &amp; Categories
               </h3>
             </div>
             <p className="text-xs text-[#A6AEC8] mt-0.5">
-              Proportion of threats across categories.
+              Breakdown of recorded abuse types across your vault.
             </p>
           </div>
 
@@ -454,11 +533,11 @@ export const DashboardPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-[#8B7CFF]" />
                 <h3 className="text-sm font-bold text-[#F4F5FF] uppercase tracking-wider">
-                  Active Incidents Ledger
+                  Your Recorded Cases
                 </h3>
               </div>
               <p className="text-xs text-[#A6AEC8] mt-0.5">
-                Documented harassment dossiers with cryptographic hash links.
+                Securely stored incident reports with tamper-proof verification.
               </p>
             </div>
 
@@ -501,9 +580,9 @@ export const DashboardPage: React.FC = () => {
               <table className="w-full text-left text-xs">
                 <thead className="bg-[#0D1224]/70 text-[#A6AEC8] border-b border-[#A6AEC8]/15 font-mono uppercase text-[10px]">
                   <tr>
-                    <th className="py-3 px-3 font-semibold">Incident Dossier</th>
+                    <th className="py-3 px-3 font-semibold">Incident Record</th>
                     <th className="py-3 px-3 font-semibold">Platform</th>
-                    <th className="py-3 px-3 font-semibold">Logged On</th>
+                    <th className="py-3 px-3 font-semibold">Date</th>
                     <th className="py-3 px-3 font-semibold">Evidence</th>
                     <th className="py-3 px-3 font-semibold">Status</th>
                     <th className="py-3 px-3 font-semibold text-right">Action</th>
@@ -540,7 +619,7 @@ export const DashboardPage: React.FC = () => {
                           to={`/incidents/${inc.id}`}
                           className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#8B7CFF] hover:text-[#A99BFF] hover:underline"
                         >
-                          <span>Inspect</span>
+                          <span>View Details</span>
                           <ArrowRight className="w-3 h-3" />
                         </Link>
                       </td>
@@ -558,7 +637,7 @@ export const DashboardPage: React.FC = () => {
           <div className="bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl p-5 space-y-3 shadow-lg shadow-[#080B18]/50">
             <h3 className="text-xs font-bold text-[#F4F5FF] uppercase tracking-wider flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-[#8B7CFF]" />
-              Response Action Suite
+              Safety &amp; Action Tools
             </h3>
             <div className="grid grid-cols-1 gap-2 pt-1">
               <Link
@@ -622,7 +701,7 @@ export const DashboardPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold text-[#F4F5FF] uppercase tracking-wider flex items-center gap-2">
                 <Phone className="w-4 h-4 text-[#FF718A]" />
-                Emergency &amp; Citizen Support
+                Immediate Help &amp; Helplines
               </h3>
               <span className="text-[10px] font-mono text-[#FF718A] bg-[#FF718A]/10 px-2 py-0.5 rounded-full border border-[#FF718A]/25">
                 24/7 Hotlines

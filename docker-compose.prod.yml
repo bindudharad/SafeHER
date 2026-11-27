@@ -1,0 +1,115 @@
+version: "3.8"
+
+networks:
+  safeher-internal:
+    driver: bridge
+    internal: true
+  safeher-edge:
+    driver: bridge
+
+volumes:
+  evidence_storage:
+  quarantine_storage:
+  sqlite_data:
+  clamav_defs:
+
+services:
+  # 1. ClamAV Antivirus Daemon
+  clamav:
+    image: clamav/clamav:latest
+    container_name: safeher-clamav
+    restart: unless-stopped
+    networks:
+      - safeher-internal
+    volumes:
+      - clamav_defs:/var/lib/clamav
+    environment:
+      - CLAMAV_NO_FRESHCLAMD=false
+    healthcheck:
+      test: ["CMD", "clamdscan", "--ping", "3310"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 45s
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 1536M
+          cpus: "1.0"
+
+  # 2. Hardened FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: safeher-backend
+    restart: unless-stopped
+    networks:
+      - safeher-internal
+    depends_on:
+      clamav:
+        condition: service_healthy
+    volumes:
+      - evidence_storage:/app/storage/evidence
+      - quarantine_storage:/app/storage/quarantine
+      - sqlite_data:/app/data
+    environment:
+      - SAFEHER_ENV=production
+      - SAFEHER_ENABLE_CLAMAV=true
+      - SAFEHER_CLAMAV_HOST=clamav
+      - SAFEHER_CLAMAV_PORT=3310
+      - SAFEHER_KEK_B64=${SAFEHER_KEK_B64}
+      - SAFEHER_JWT_SECRET_KEY=${SAFEHER_JWT_SECRET_KEY}
+      - SAFEHER_STORAGE_DIR=/app/storage
+      - SAFEHER_DB_PATH=/app/data/safeher.db
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 2048M
+          cpus: "2.0"
+
+  # 3. Static UI Container (Non-root)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: safeher-frontend
+    restart: unless-stopped
+    networks:
+      - safeher-internal
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
+
+  # 4. Edge Reverse Proxy & TLS Terminator
+  gateway:
+    image: nginx:alpine
+    container_name: safeher-gateway
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - safeher-edge
+      - safeher-internal
+    depends_on:
+      - backend
+      - frontend
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"

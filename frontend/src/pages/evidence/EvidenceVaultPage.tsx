@@ -55,6 +55,24 @@ export const EvidenceVaultPage: React.FC = () => {
   const [copiedHash, setCopiedHash] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [inspectorItem, setInspectorItem] = useState<Evidence | null>(null)
+  const [forensicMetadata, setForensicMetadata] = useState<Record<string, any> | null>(null)
+  const [metadataLoading, setMetadataLoading] = useState(false)
+
+  useEffect(() => {
+    setForensicMetadata(null)
+  }, [inspectorItem?.id])
+
+  const handleInspectMetadata = async (evidenceId: string) => {
+    setMetadataLoading(true)
+    try {
+      const data = await apiClient.getEvidenceMetadata(evidenceId)
+      setForensicMetadata(data)
+    } catch {
+      showToast('Could not load forensic metadata for this item.', 'error')
+    } finally {
+      setMetadataLoading(false)
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -565,7 +583,49 @@ export const EvidenceVaultPage: React.FC = () => {
               >
                 Download Verified Package
               </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full"
+                onClick={() => handleInspectMetadata(inspectorItem.id)}
+                disabled={metadataLoading}
+              >
+                {metadataLoading ? 'Inspecting Forensic Metadata...' : 'Inspect Forensic Metadata'}
+              </Button>
             </div>
+
+            {/* Expandable Technical Forensic Details (Magic-Byte, EXIF, pHash) */}
+            {forensicMetadata && (
+              <div className="p-3 bg-[#080B18] rounded-2xl border border-[#A6AEC8]/20 space-y-2 text-[11px]">
+                <div className="font-mono uppercase font-bold text-[#8B7CFF] text-[10px]">
+                  Technical Forensic Metadata
+                </div>
+                {forensicMetadata.file_type && (
+                  <div className="flex items-center justify-between text-[#A6AEC8]">
+                    <span>Magic-Byte Format:</span>
+                    <span className="font-mono text-[#F4F5FF]">
+                      {forensicMetadata.file_type.detected_mime || 'Unknown'}
+                      {forensicMetadata.file_type.extension_mismatch ? ' (Mismatch!)' : ' (Verified)'}
+                    </span>
+                  </div>
+                )}
+                {forensicMetadata.exif && (
+                  <div className="flex items-center justify-between text-[#A6AEC8]">
+                    <span>EXIF / GPS:</span>
+                    <span className="font-mono text-[#F4F5FF]">
+                      {forensicMetadata.exif.exif_present ? `${forensicMetadata.exif.tag_count} tags` : 'None'}
+                      {forensicMetadata.exif.gps_present ? ' · GPS Present' : ''}
+                    </span>
+                  </div>
+                )}
+                {forensicMetadata.perceptual_hashes?.available && (
+                  <div className="flex items-center justify-between text-[#A6AEC8]">
+                    <span>Perceptual Hash (pHash):</span>
+                    <span className="font-mono text-[#55D6E8]">{forensicMetadata.perceptual_hashes.phash}</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>

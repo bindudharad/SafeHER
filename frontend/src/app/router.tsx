@@ -17,6 +17,10 @@ import { ThreatAnalysisPage } from '../pages/analysis/ThreatAnalysisPage'
 import { ComplaintWizardPage } from '../pages/complaints/ComplaintWizardPage'
 import { ReportingAssistantPage } from '../pages/reporting/ReportingAssistantPage'
 import { CaseTrackingPage } from '../pages/cases/CaseTrackingPage'
+import { CaseWorkspacePage } from '../pages/cases/CaseWorkspacePage'
+import { EvidenceGraphPage } from '../pages/forensics/EvidenceGraphPage'
+import { TamperingAnalysisPage } from '../pages/forensics/TamperingAnalysisPage'
+import { NormalizedTimelinePage } from '../pages/forensics/NormalizedTimelinePage'
 import { PrivacySettingsPage } from '../pages/settings/PrivacySettingsPage'
 import { RealityTrustCenterPage } from '../pages/trust/RealityTrustCenterPage'
 import { KnowledgeHubPage } from '../pages/knowledge/KnowledgeHubPage'
@@ -99,6 +103,22 @@ export const router = createBrowserRouter([
       {
         path: '/cases',
         element: <CaseTrackingPage />,
+      },
+      {
+        path: '/cases/:caseId',
+        element: <CaseWorkspacePage />,
+      },
+      {
+        path: '/forensics/graph',
+        element: <EvidenceGraphPage />,
+      },
+      {
+        path: '/forensics/timeline',
+        element: <NormalizedTimelinePage />,
+      },
+      {
+        path: '/analysis/tampering',
+        element: <TamperingAnalysisPage />,
       },
       {
         path: '/settings',

@@ -1,0 +1,84 @@
+{
+  "dataset_name": "SafeHER Multilingual Digital Abuse & Threat Evaluation Benchmark",
+  "version": "1.0.0",
+  "total_samples": 120,
+  "is_synthetic": true,
+  "contains_real_survivor_data": false,
+  "contains_pii": false,
+  "license": "CC0-1.0 (SafeHER Synthetic Evaluation Benchmark)",
+  "taxonomy": [
+    "BENIGN",
+    "INSULT",
+    "HARASSMENT",
+    "CYBERSTALKING",
+    "DIRECT_THREAT",
+    "BLACKMAIL",
+    "FINANCIAL_EXTORTION",
+    "SEXUAL_HARASSMENT",
+    "NON_CONSENSUAL_IMAGE_THREAT",
+    "COERCION",
+    "IMPERSONATION_OR_SOCIAL_ENGINEERING",
+    "OTHER_ABUSE"
+  ],
+  "counts_by_language": {
+    "kn": 20,
+    "kn-Latn": 20,
+    "kn-en": 20,
+    "hi": 20,
+    "hi-Latn": 20,
+    "en": 20
+  },
+  "counts_by_script": {
+    "Kannada": 20,
+    "Latin": 64,
+    "Mixed": 16,
+    "Devanagari": 20
+  },
+  "counts_by_primary_category": {
+    "BENIGN": 24,
+    "INSULT": 12,
+    "HARASSMENT": 7,
+    "CYBERSTALKING": 7,
+    "DIRECT_THREAT": 16,
+    "BLACKMAIL": 6,
+    "NON_CONSENSUAL_IMAGE_THREAT": 6,
+    "FINANCIAL_EXTORTION": 12,
+    "SEXUAL_HARASSMENT": 6,
+    "COERCION": 8,
+    "IMPERSONATION_OR_SOCIAL_ENGINEERING": 11,
+    "OTHER_ABUSE": 5
+  },
+  "counts_by_all_labels": {
+    "BENIGN": 24,
+    "INSULT": 12,
+    "HARASSMENT": 24,
+    "CYBERSTALKING": 19,
+    "DIRECT_THREAT": 18,
+    "BLACKMAIL": 31,
+    "NON_CONSENSUAL_IMAGE_THREAT": 23,
+    "COERCION": 23,
+    "FINANCIAL_EXTORTION": 14,
+    "SEXUAL_HARASSMENT": 11,
+    "IMPERSONATION_OR_SOCIAL_ENGINEERING": 11,
+    "OTHER_ABUSE": 6
+  },
+  "counts_by_severity": {
+    "LOW": 30,
+    "MODERATE": 17,
+    "HIGH": 33,
+    "URGENT_REVIEW": 40
+  },
+  "splits": {
+    "test": {
+      "path": "splits/test.jsonl",
+      "count": 120,
+      "sha256": "03eb1efabfd53cf487e5cdc741b47f705471665330e81bc7136afdcc7fd02b10",
+      "purpose": "Locked held-out multilingual evaluation benchmark (never used for training)"
+    }
+  },
+  "eval_file": {
+    "path": "safeher_eval_v1.jsonl",
+    "count": 120,
+    "sha256": "03eb1efabfd53cf487e5cdc741b47f705471665330e81bc7136afdcc7fd02b10"
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Shield,
   Lock,
@@ -14,12 +14,17 @@ import {
   Languages,
   Database,
   FileCheck2,
+  Radio,
+  Sliders,
+  Save,
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useI18n } from '../../contexts/I18nContext'
 import { useToast } from '../../contexts/ToastContext'
 import { Button } from '../../components/common/Button'
+import { apiClient } from '../../services/api/client'
 import type { Language } from '../../i18n/translations'
+import type { UserSafetySettings } from '../../types'
 
 export const PrivacySettingsPage: React.FC = () => {
   const { user, logout } = useAuth()
@@ -27,6 +32,46 @@ export const PrivacySettingsPage: React.FC = () => {
   const { showToast } = useToast()
 
   const [isPurging, setIsPurging] = useState(false)
+  const [safetySettings, setSafetySettings] = useState<UserSafetySettings | null>(null)
+  const [quickExitUrl, setQuickExitUrl] = useState('https://www.weather.com')
+  const [sirenSecs, setSirenSecs] = useState(30)
+  const [sirenVol, setSirenVol] = useState(0.8)
+  const [fakeCaller, setFakeCaller] = useState('Mom')
+  const [emergencyNum, setEmergencyNum] = useState('112')
+  const [isSavingSettings, setIsSavingSettings] = useState(false)
+
+  useEffect(() => {
+    apiClient.getSafetySettings().then((res) => {
+      if (res) {
+        setSafetySettings(res)
+        setQuickExitUrl(res.quick_exit_url || 'https://www.weather.com')
+        setSirenSecs(res.siren_duration_seconds || 30)
+        setSirenVol(res.siren_volume ?? 0.8)
+        setFakeCaller(res.fake_call_caller_name || 'Mom')
+        setEmergencyNum(res.emergency_number || '112')
+      }
+    }).catch(() => undefined)
+  }, [])
+
+  const handleSaveSafetySettings = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSavingSettings(true)
+    try {
+      const updated = await apiClient.updateSafetySettings({
+        quick_exit_url: quickExitUrl.trim(),
+        siren_duration_seconds: sirenSecs,
+        siren_volume: sirenVol,
+        fake_call_caller_name: fakeCaller.trim(),
+        emergency_number: emergencyNum.trim(),
+      })
+      setSafetySettings(updated)
+      showToast('Safety settings updated successfully.', 'success')
+    } catch {
+      showToast('Failed to save safety settings.', 'error')
+    } finally {
+      setIsSavingSettings(false)
+    }
+  }
 
   const handlePurgeSession = () => {
     if (window.confirm('Are you sure you want to purge all local cached drafts and session storage from this browser?')) {
@@ -194,7 +239,109 @@ export const PrivacySettingsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. PRIVACY PURGE & DATA SOVEREIGNTY ACTION SUITE */}
+      {/* 4. SURVIVOR SAFETY & EMERGENCY CONTROLS (STAGE 6) */}
+      <div className="bg-[#171D35]/85 border border-[#8B7CFF]/20 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="space-y-1 pb-3 border-b border-[#A6AEC8]/15">
+          <div className="flex items-center gap-2.5">
+            <Radio className="w-4 h-4 text-[#FF5C7A]" />
+            <h2 className="text-base font-bold text-[#F4F5FF]">
+              Survivor Safety &amp; Emergency Hub Controls
+            </h2>
+          </div>
+          <p className="text-xs text-[#A6AEC8]">
+            Customize Quick Exit redirect destination, deterrent siren volume/duration, and discreet fake call simulator identity.
+          </p>
+        </div>
+
+        <form onSubmit={handleSaveSafetySettings} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-semibold text-[#F4F5FF] block mb-1">
+                Quick Exit Redirect Target URL
+              </label>
+              <input
+                type="url"
+                value={quickExitUrl}
+                onChange={(e) => setQuickExitUrl(e.target.value)}
+                required
+                className="w-full bg-[#0D1224] border border-[#A6AEC8]/20 focus:border-[#8B7CFF] rounded-xl px-3 py-2 text-xs text-[#F4F5FF]"
+                placeholder="https://www.weather.com"
+              />
+              <span className="text-[10px] text-[#A6AEC8] mt-1 block">
+                Destination loaded immediately when clicking Quick Exit or pressing Alt+Q.
+              </span>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-[#F4F5FF] block mb-1">
+                Default Emergency Phone Number
+              </label>
+              <input
+                type="text"
+                value={emergencyNum}
+                onChange={(e) => setEmergencyNum(e.target.value)}
+                required
+                className="w-full bg-[#0D1224] border border-[#A6AEC8]/20 focus:border-[#8B7CFF] rounded-xl px-3 py-2 text-xs text-[#F4F5FF]"
+                placeholder="112"
+              />
+              <span className="text-[10px] text-[#A6AEC8] mt-1 block">
+                Default emergency service dialed via native dialer links.
+              </span>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-[#F4F5FF] block mb-1">
+                Siren Auto-Stop Duration: {sirenSecs} seconds
+              </label>
+              <input
+                type="range"
+                min="10"
+                max="120"
+                step="5"
+                value={sirenSecs}
+                onChange={(e) => setSirenSecs(parseInt(e.target.value, 10))}
+                className="w-full accent-[#FF5C7A] h-2 bg-[#080B18] rounded-lg cursor-pointer"
+              />
+              <div className="flex justify-between text-[10px] text-[#A6AEC8]">
+                <span>10s</span>
+                <span>30s (Default)</span>
+                <span>120s</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-[#F4F5FF] block mb-1">
+                Discreet Call Caller Name
+              </label>
+              <input
+                type="text"
+                value={fakeCaller}
+                onChange={(e) => setFakeCaller(e.target.value)}
+                required
+                className="w-full bg-[#0D1224] border border-[#A6AEC8]/20 focus:border-[#52D6B2] rounded-xl px-3 py-2 text-xs text-[#F4F5FF]"
+                placeholder="Mom"
+              />
+              <span className="text-[10px] text-[#A6AEC8] mt-1 block">
+                Label shown on the simulated incoming call screen.
+              </span>
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <Button
+              type="submit"
+              variant="primary"
+              size="sm"
+              isLoading={isSavingSettings}
+              leftIcon={<Save className="w-3.5 h-3.5" />}
+            >
+              Save Safety Settings
+            </Button>
+          </div>
+        </form>
+      </div>
+
+      {/* 5. PRIVACY PURGE & DATA SOVEREIGNTY ACTION SUITE */}
       <div className="bg-[#171D35]/85 border border-[#A6AEC8]/15 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="space-y-1 pb-3 border-b border-[#A6AEC8]/15">
           <div className="flex items-center gap-2.5">

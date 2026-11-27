@@ -25,6 +25,16 @@ export function performQuickExit(): void {
     globalExitTimer = null
   }, 1500)
 
+  // Clear in-memory & local session credentials to protect survivor privacy
+  try {
+    sessionStorage.clear()
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    localStorage.removeItem('safeher_auth_token')
+  } catch {
+    // ignore in sandboxed environments
+  }
+
   // Same-tab navigation only (never window.open); replaces current history entry
   window.location.replace(NEUTRAL_REDIRECT_URL)
 }

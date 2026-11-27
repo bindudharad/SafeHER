@@ -10,12 +10,24 @@ import type {
   Evidence,
   MediaAnalysisResult,
   ThreatAnalysisResult,
+  ThreatAnalysisFeedbackPayload,
   TimelineEvent,
   ComplaintDraft,
   ReportingDestination,
   ReportingRecord,
   CaseTrackingItem,
   DashboardSummary,
+  EvidenceGraphData,
+  GraphEdge,
+  NormalizedTimelineEvent,
+  TamperingAnalysisResult,
+  CaseWorkspaceData,
+  InvestigationSummaryReport,
+  UserSafetySettings,
+  TrustedContact,
+  JourneyCheckin,
+  MalwareScanLog,
+  MalwareScannerHealth,
 } from '../../types'
 
 import {
@@ -559,6 +571,74 @@ export const apiClient = {
     return result
   },
 
+  async submitAnalysisJob(evidenceId: string, modelType: string = 'full_forensics'): Promise<any> {
+    if (!USE_MOCK) {
+      const token = this.getToken()
+      const res = await apiFetch(
+        `/api/v1/evidence/${evidenceId}/jobs`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({ model_type: modelType }),
+        },
+        15000
+      )
+      return await res.json()
+    }
+    return {
+      job_id: 'job-mock-' + Date.now(),
+      evidence_id: evidenceId,
+      model_type: modelType,
+      status: 'queued',
+      created_at: new Date().toISOString(),
+    }
+  },
+
+  async getAnalysisJob(evidenceId: string, jobId: string): Promise<any> {
+    if (!USE_MOCK) {
+      const token = this.getToken()
+      const res = await apiFetch(
+        `/api/v1/evidence/${evidenceId}/jobs/${jobId}`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+        15000
+      )
+      return await res.json()
+    }
+    return {
+      id: jobId,
+      evidence_id: evidenceId,
+      model_type: 'full_forensics',
+      status: 'completed',
+      created_at: new Date().toISOString(),
+    }
+  },
+
+  async getAiHealth(): Promise<any> {
+    if (!USE_MOCK) {
+      const token = this.getToken()
+      const res = await apiFetch(
+        `/api/v1/ai/health`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+        15000
+      )
+      return await res.json()
+    }
+    return {
+      status: 'operational',
+      engines: {
+        model_a: { model_name: 'Effort-AIGI-Detection', status: 'ready' },
+        model_b: { model_name: 'DeepfakeBench-Xception', status: 'ready' },
+      },
+    }
+  },
+
   async runThreatAnalysis(text: string, incidentId?: string): Promise<ThreatAnalysisResult> {
     if (!USE_MOCK) {
       try {
@@ -628,6 +708,29 @@ export const apiClient = {
 
     if (incidentId) mockThreatAnalyses[incidentId] = result
     return result
+  },
+
+  async submitThreatAnalysisFeedback(
+    analysisId: string,
+    payload: ThreatAnalysisFeedbackPayload
+  ): Promise<{ id: string; analysis_id: string; used_for_training: boolean }> {
+    const token = this.getToken()
+    if (!USE_MOCK && token) {
+      const res = await apiFetch(
+        `/api/v1/analysis/threat/${encodeURIComponent(analysisId)}/feedback`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        },
+        15000
+      )
+      return await res.json()
+    }
+    return { id: `fb-local-${Date.now()}`, analysis_id: analysisId, used_for_training: false }
   },
 
   // ----------------------------------------------------
@@ -932,5 +1035,330 @@ Complainant Signature: _______________________
     targetCase.updated_at = new Date().toISOString()
     if (notes) targetCase.notes = notes
     return targetCase
+  },
+
+  // ----------------------------------------------------
+  // Stage 5: Evidence Intelligence Graph
+  // ----------------------------------------------------
+  async syncIncidentGraph(incidentId: string): Promise<EvidenceGraphData> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/graph/incidents/${incidentId}/sync`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async getIncidentGraph(
+    incidentId: string,
+    filters?: { relationship_type?: string; verification_status?: string }
+  ): Promise<EvidenceGraphData> {
+    const token = this.getToken()
+    const params = new URLSearchParams()
+    if (filters?.relationship_type) params.set('relationship_type', filters.relationship_type)
+    if (filters?.verification_status) params.set('verification_status', filters.verification_status)
+    const qs = params.toString() ? `?${params.toString()}` : ''
+    const res = await apiFetch(`/api/v1/graph/incidents/${incidentId}${qs}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async reviewGraphEdge(
+    edgeId: string,
+    status: 'human_verified' | 'disputed' | 'rejected',
+    reviewNote?: string
+  ): Promise<GraphEdge> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/graph/edges/${edgeId}/review`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ status, review_note: reviewNote || null }),
+    })
+    return await res.json()
+  },
+
+  // ----------------------------------------------------
+  // Stage 5: Normalized Incident Timeline
+  // ----------------------------------------------------
+  async reconstructTimeline(incidentId: string): Promise<{ events: NormalizedTimelineEvent[]; events_created: number; correlations_suggested: number }> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/incidents/${incidentId}/timeline/reconstruct`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async getNormalizedTimeline(
+    incidentId: string,
+    filters?: { event_type?: string; time_source?: string; search?: string }
+  ): Promise<NormalizedTimelineEvent[]> {
+    const token = this.getToken()
+    const params = new URLSearchParams()
+    if (filters?.event_type) params.set('event_type', filters.event_type)
+    if (filters?.time_source) params.set('time_source', filters.time_source)
+    if (filters?.search) params.set('search', filters.search)
+    const qs = params.toString() ? `?${params.toString()}` : ''
+    const res = await apiFetch(`/api/v1/incidents/${incidentId}/timeline/normalized${qs}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async addNormalizedTimelineEvent(
+    incidentId: string,
+    payload: {
+      event_type: string
+      title: string
+      description: string
+      event_time_original?: string
+      timezone_original?: string
+      time_precision?: string
+      time_source?: string
+      related_evidence_id?: string
+    }
+  ): Promise<NormalizedTimelineEvent> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/incidents/${incidentId}/timeline/normalized`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(payload),
+    })
+    return await res.json()
+  },
+
+  // ----------------------------------------------------
+  // Stage 5: Image Tampering Localization
+  // ----------------------------------------------------
+  async analyzeTampering(
+    evidenceId: string,
+    preferredModel: 'trufor' | 'catnet' | 'mantranet' = 'trufor'
+  ): Promise<TamperingAnalysisResult> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/tampering/${evidenceId}/analyze`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ preferred_model: preferredModel, async_job: false }),
+    }, 20000)
+    return await res.json()
+  },
+
+  async listTamperingAnalyses(evidenceId: string): Promise<TamperingAnalysisResult[]> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/tampering/${evidenceId}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  // ----------------------------------------------------
+  // Stage 5: Advanced Case Management & Custody
+  // ----------------------------------------------------
+  async getCaseWorkspace(caseId: string): Promise<CaseWorkspaceData> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/cases/${caseId}/workspace`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async transitionCaseStatus(caseId: string, status: string, reason?: string, notes?: string): Promise<Record<string, unknown>> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/cases/${caseId}/transition`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ status, reason: reason || null, notes: notes || null }),
+    })
+    return await res.json()
+  },
+
+  async assignCaseCollaborator(caseId: string, email: string, role: 'collaborator' | 'investigator' | 'legal_adviser'): Promise<Record<string, unknown>> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/cases/${caseId}/collaborators`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ email, role }),
+    })
+    return await res.json()
+  },
+
+  async revokeCaseCollaborator(caseId: string, userId: string): Promise<Record<string, unknown>> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/cases/${caseId}/collaborators/${userId}`, {
+      method: 'DELETE',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async addCaseNote(caseId: string, content: string, noteType = 'investigation', evidenceId?: string): Promise<Record<string, unknown>> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/cases/${caseId}/notes`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ content, note_type: noteType, evidence_id: evidenceId || null }),
+    })
+    return await res.json()
+  },
+
+  async getInvestigationSummary(caseId: string): Promise<InvestigationSummaryReport> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/cases/${caseId}/investigation-summary`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async verifyEvidenceCustody(evidenceId: string): Promise<Record<string, unknown>> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/evidence/${evidenceId}/custody/verify`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async getEvidenceMetadata(evidenceId: string): Promise<Record<string, unknown>> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/evidence/${evidenceId}/metadata`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  // ==========================================
+  // STAGE 6: SURVIVOR SAFETY & JOURNEY CHECK-IN
+  // ==========================================
+
+  async getSafetySettings(): Promise<UserSafetySettings> {
+    const token = this.getToken()
+    const res = await apiFetch('/api/v1/safety/settings', {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async updateSafetySettings(updates: Partial<UserSafetySettings>): Promise<UserSafetySettings> {
+    const token = this.getToken()
+    const res = await apiFetch('/api/v1/safety/settings', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(updates),
+    })
+    return await res.json()
+  },
+
+  async listTrustedContacts(): Promise<TrustedContact[]> {
+    const token = this.getToken()
+    const res = await apiFetch('/api/v1/safety/contacts', {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async addTrustedContact(contact: { name: string; phone_number: string; relationship: string; notify_on_escalation?: boolean }): Promise<TrustedContact> {
+    const token = this.getToken()
+    const res = await apiFetch('/api/v1/safety/contacts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(contact),
+    })
+    return await res.json()
+  },
+
+  async deleteTrustedContact(contactId: string): Promise<{ message: string; deleted: boolean }> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/safety/contacts/${contactId}`, {
+      method: 'DELETE',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async startJourneyCheckin(destinationLabel: string, durationMinutes: number, contactId?: string | null): Promise<JourneyCheckin> {
+    const token = this.getToken()
+    const res = await apiFetch('/api/v1/safety/journey/start', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        destination_label: destinationLabel,
+        duration_minutes: durationMinutes,
+        contact_id: contactId || null,
+      }),
+    })
+    return await res.json()
+  },
+
+  async completeJourneyCheckin(journeyId: string): Promise<{ message: string; status: string }> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/safety/journey/${journeyId}/checkin`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async cancelJourneyCheckin(journeyId: string): Promise<{ message: string; status: string }> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/safety/journey/${journeyId}/cancel`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async getActiveJourneyCheckin(): Promise<JourneyCheckin | null> {
+    const token = this.getToken()
+    const res = await apiFetch('/api/v1/safety/journey/active', {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  // ==========================================
+  // STAGE 7: MALWARE SCANNER STATUS & LOGS
+  // ==========================================
+
+  async getMalwareScannerHealth(): Promise<MalwareScannerHealth> {
+    const token = this.getToken()
+    const res = await apiFetch('/api/v1/security/malware/health', {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
+  },
+
+  async getEvidenceMalwareScan(evidenceId: string): Promise<MalwareScanLog> {
+    const token = this.getToken()
+    const res = await apiFetch(`/api/v1/evidence/${evidenceId}/malware-scan`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    return await res.json()
   },
 }
